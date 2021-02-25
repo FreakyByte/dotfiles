@@ -206,6 +206,8 @@ gaps inner 8
 gaps bottom 35
 
 # Rounded Corners - https://github.com/resloved/i3
+# Installation: https://www.reddit.com/r/unixporn/comments/benebi/i3gaps_i3_rounded_corners/eqrmews/
+# Dependencies: https://github.com/Airblader/i3/wiki/Building-from-source
 border_radius 2
 
 ### BAR

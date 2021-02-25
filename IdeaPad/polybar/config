@@ -3,7 +3,7 @@
 ; If unspecified, the application will pick the first one it finds.
 ; $ polybar -m | cut -d ':' -f 1
 ; $ xrandr -q | grep " connected" | cut -d ' ' -f1
-monitor = HDMI-0
+monitor = eDP
 
 ; Use the specified monitor as a fallback if the main one is not found.
 ; monitor-fallback =
@@ -102,7 +102,7 @@ font-2 = unifont:size=10;3
 ;   modules-left = cpu ram
 ;   modules-center = xwindow xbacklight
 ;   modules-right = ipc clock
-modules-left = i3 spotify
+modules-left = i3 
 modules-center =
 modules-right = wireless-network sep memory sep cpu sep pulseaudio sep date
 
@@ -377,7 +377,7 @@ enable-ipc = false
 ; If unspecified, the application will pick the first one it finds.
 ; $ polybar -m | cut -d ':' -f 1
 ; $ xrandr -q | grep " connected" | cut -d ' ' -f1
-monitor = HDMI-0
+monitor = eDP
 
 ; Use the specified monitor as a fallback if the main one is not found.
 ; monitor-fallback =
@@ -476,8 +476,8 @@ font-2 = unifont:size=10;3
 ;   modules-left = cpu ram
 ;   modules-center = xwindow xbacklight
 ;   modules-right = ipc clock
-modules-left = blank
-modules-center =
+modules-left = 
+modules-center = sep
 modules-right = 
 
 ; The separator will be inserted between the output of each module
@@ -642,7 +642,7 @@ label-foreground = #D8DEE9
 
 [module/wireless-network]
 type = internal/network
-interface = wlxdc4ef4086545
+interface = wlp2s0
 
 label-connected = %local_ip% - %essid%
 format-connected = <ramp-signal>  <label-connected>
