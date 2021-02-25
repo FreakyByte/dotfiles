@@ -1,0 +1,48 @@
+/**
+ * @name Frosted Glass
+ * @author Gibbu#1211
+ * @version 2.0.0
+ * @description Display your picture of choice with adjustable blur and brightness. Dark theme is required
+ * @invite ZHthyCw
+ * @donate https://paypal.me/IanRGibson
+ * @authorId 174868361040232448
+ * @source https://github.com/Gibbu/BetterDiscord-Themes/tree/master/FrostedGlass
+ * @website https://gibbu.me
+*/
+
+@import url('https://discordstyles.github.io/FrostedGlass/base.css');
+@import url('https://discord-custom-covers.github.io/usrbg/snippets/userPopouts.css');
+@import url('https://discord-custom-covers.github.io/usrbg/snippets/modals.css');
+@import url('https://monstrousdev.github.io/themes/addons/user-tags.css');
+@import url('https://gibbu.github.io/BetterDiscord-Themes/addons/windows-titlebar.css');
+
+:root {
+  --background-image: ;
+  --background-image-blur: 0px;
+  --background-image-size: cover;
+  --background-image-position: center center;
+  --popout-modal-image: ;
+  --popout-modal-blur: 0px;
+  --popout-modal-size: cover;
+  --popout-modal-position: center center;
+  --home-button-image: url('https://gibbu.github.io/BetterDiscord-Themes/FrostedGlass/assets/discord.svg');
+  --home-button-size: cover;
+  --home-button-position: center center;
+  --serverlist-brightness: 0.9;
+  --left-brightness: 0.84;
+  --middle-brightness: 0.7;
+  --right-brightness: 0.24;
+  --popout-modal-brightness: 0.9;
+  --gradient-primary: 23,145,122;
+  --gradient-secondary: 18,113,95;
+  --scrollbar-colour: rgba(255,255,255,0.15);
+  --link-colour: #00b0f4;
+  --gradient-direction: 290deg;
+  --tint-colour: 255,51,159;
+  --tint-brightness: 0;
+  --font: 'Whitney';
+  --window-padding: undefinedpx;
+  --window-roundness: 10px;
+  --show-gift-gif-buttons: block;
+  --update-notice-1: none;
+}
