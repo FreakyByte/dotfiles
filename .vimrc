@@ -17,8 +17,11 @@ Plugin 'itchyny/lightline.vim'
 Bundle 'sonph/onehalf', {'rtp': 'vim/'}
 Plugin 'tpope/vim-eunuch'
 Plugin 'tpope/vim-surround'
+Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'lervag/vimtex'
+Plugin 'KeitaNakamura/tex-conceal.vim'		"improved concealing
+Plugin 'sirver/ultisnips'
 Plugin 'svermeulen/vim-easyclip'
 Plugin 'dylanaraps/wal.vim'
 Plugin 'luochen1990/rainbow'
@@ -39,6 +42,8 @@ let mapleader = "," " map leader to comma
 let maplocalleader = "," " map leader to comma
 
 let g:rainbow_active = 1
+
+set complete=.,w,b,u,t
 
 "colorscheme wal
 
@@ -62,16 +67,47 @@ autocmd VimEnter * silent! iunmap <buffer> ]]
 autocmd VimEnter * imap <C-]> <Plug>(vimtex-delim-close)  
 "disable indentation of &s
 let g:vimtex_indent_on_ampersands = 0
-""" YouCompleteMe
-let g:ycm_path_to_python_interpreter = "/usr/bin/python3"
+
+" conceal $ etc. and replace stuff with actual math symbols
+set conceallevel=1
+let g:tex_conceal='abdmg'
+let g:tex_conceal_frac=1
+" no background on concealed things
+hi Conceal ctermbg=NONE
+hi Conceal ctermfg=NONE
+hi Conceal guifg=NONE
+hi Conceal guibg=NONE
+
+
 
 """ YouCompleteMe - vimtex - https://github.com/lervag/vimtex/blob/master/doc/vimtex.txt
 if !exists('g:ycm_semantic_triggers')
    	   let g:ycm_semantic_triggers = {}
    endif
 
+let g:ycm_path_to_python_interpreter = "/usr/bin/python3"
+
+" this next line effectlively disables YCM pattern matching in tex files,
+" cause that breakes UltiSnip Auto Expand
+autocmd FileType tex let g:ycm_min_num_of_chars_for_completion = 99
+
+" change autocomplete hotkeys in accordance with Supertab
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+
+""" Ultisnips
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+
+
 """ enable copying between vim instances
 let g:EasyClipShareYanks=1
 nmap M <Plug>MoveMotionEndOfLinePlug
 "the above binds m to cut (delete and copy to clipboard)
+
+
 

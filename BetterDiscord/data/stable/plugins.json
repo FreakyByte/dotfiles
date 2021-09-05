@@ -1,0 +1,21 @@
+{
+    "BDFDB": true,
+    "ShowHiddenChannels": false,
+    "CallTimeCounter": true,
+    "ZeresPluginLibrary": true,
+    "CopyRawMessage": true,
+    "CustomQuoter": true,
+    "FreeEmojis": true,
+    "ImageUtilities": true,
+    "JoinedAtDate": true,
+    "LastMessageDate": true,
+    "MemberCount": true,
+    "RemoveNicknames": true,
+    "ServerCounter": true,
+    "SplitLargeMessages": true,
+    "TeX": true,
+    "Translator": true,
+    "TypingUsersAvatars": true,
+    "Zalgo": true,
+    "discordExperiments": true
+}

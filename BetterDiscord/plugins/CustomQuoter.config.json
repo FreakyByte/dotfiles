@@ -1,0 +1,14 @@
+{
+	"dates": {
+		"quoteDate": {}
+	},
+	"formats": {
+		"Quote": "$quote",
+		"Standard": "$quote $mention"
+	},
+	"general": {
+		"autoAddNewLine": true,
+		"holdShiftToolbar": false,
+		"alwaysCopy": false
+	}
+}
