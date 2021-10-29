@@ -114,8 +114,7 @@ endsnippet
 
 snippet dm "Math" wA
 \[
-${1:${VISUAL}}
-.\] $0
+${1:${VISUAL}} .\] $0
 endsnippet
 
 snippet ali "Align" bA
@@ -584,7 +583,7 @@ snippet nnn "bigcap" iA
 endsnippet
 
 snippet OO "emptyset" iA
-\O
+\emptyset
 endsnippet
 
 snippet RR "real" iA
@@ -675,6 +674,30 @@ endsnippet
 
 snippet DD "D" iA
 \mathbb{D}
+endsnippet
+
+snippet " "Anfuhrungszeichen" i
+\glqq ${1}\grqq`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ' ','(',')']:
+	snip.rv = '\ '
+else:
+	snip.rv = ''
+`$2
+endsnippet
+
+context "math()"
+snippet game "game" wA
+\\{$1 \mid $2\\}$0
+endsnippet
+
+context "math()"
+snippet form "surreal number form" wA
+\\langle $1 \mid $2\\rangle $0
+endsnippet
+
+context "math()"
+snippet No "surreal numbers" wA
+\mathbf{No}
 endsnippet
 
 # vim:ft=snippets

@@ -262,7 +262,7 @@ exec --no-startup-id discord
 # blueman
 exec --no-startup-id blueman-applet
 # Slack
-exec --no-startup-id slack
+#exec --no-startup-id slack
 
 ### show workspaces 1 and 6
 exec --no-startup-id i3-msg 'workspace 6; workspace 1'

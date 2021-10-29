@@ -476,8 +476,8 @@ font-2 = unifont:size=10;3
 ;   modules-left = cpu ram
 ;   modules-center = xwindow xbacklight
 ;   modules-right = ipc clock
-modules-left = blank
-modules-center =
+modules-left = 
+modules-center = sep
 modules-right = 
 
 ; The separator will be inserted between the output of each module
