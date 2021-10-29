@@ -33,6 +33,10 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# Use light to adjust backlight brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id light -A 10
+bindsym XF86MonBrightnessDown exec --no-startup-id light -U 10
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -110,17 +114,17 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
-## assign workspaces to screens
-#workspace 1 output HDMI-0
-#workspace 2 output HDMI-0
-#workspace 3 output HDMI-0
-#workspace 4 output HDMI-0
-#workspace 5 output HDMI-0
-#workspace 6 output DVI-0
-#workspace 7 output DVI-0
-#workspace 8 output DVI-0
-#workspace 9 output DVI-0
-#workspace 10 output DVI-0
+# assign workspaces to screens
+#workspace 1 output eDP
+#workspace 2 output eDP
+#workspace 3 output eDP
+#workspace 4 output eDP
+#workspace 5 output eDP
+#workspace 6 output HDMI-A-0
+#workspace 7 output HDMI-A-0
+#workspace 8 output HDMI-A-0
+#workspace 9 output HDMI-A-0
+#workspace 10 output HDMI-A-0
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -224,6 +228,9 @@ for_window [class="Slack"] move to workspace $ws8
 for_window [class="discord"] move to workspace $ws9
 for_window [class="Spotify"] move to workspace $ws10
 
+### SET TO FLOATING BY DEFAULT
+for_window [title="^Figure "] floating enable
+
 ### START PROGRAMS
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
@@ -235,12 +242,13 @@ bindsym $mod+Shift+Return exec nemo
 bindsym $Control_L+Alt_L+Delete exec gnome-system-manager
 # start shmupmametgm
 bindsym $mod+m exec "/home/reiti/mame/mametgm64 -inipath /home/reiti/mame/.;ini;ini/presets"
+# start redshift
+bindsym $mod+XF86MonBrightnessUp exec redshift
+bindsym $mod+XF86MonBrightnessDown exec redshift -x
 
 ### WALLPAPER AND WAL
-exec --no-startup-id wal -i /home/reiti/Pictures/Wallpapers/used
-exec --no-startup-id /opt/spicetify-cli/spicetify apply
-exec --no-startup-id wal-steam
-bindsym $mod+BackSpace exec --no-startup-id wal -i /home/reiti/Pictures/Wallpapers/used && /opt/spicetify-cli/spicetify apply && wal-steam
+exec --no-startup-id $HOME/.config/wallpaper.sh
+bindsym $mod+BackSpace exec --no-startup-id $HOME/.config/wallpaper.sh
 
 ### SUSPEND SYSTEM
 bindsym $mod+Shift+s exec --no-startup-id systemctl suspend
@@ -263,6 +271,10 @@ exec --no-startup-id dropbox start
 exec --no-startup-id blueman-applet
 ## Slack
 #exec --no-startup-id slack
+## Touchegg
+exec --no-startup-id touchegg
+## Redshift
+exec --no-startup-id redshift
 
 ### show workspace 1
 exec --no-startup-id i3-msg 'workspace 1'
