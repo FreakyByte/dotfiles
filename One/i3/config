@@ -224,6 +224,9 @@ for_window [class="Slack"] move to workspace $ws8
 for_window [class="discord"] move to workspace $ws9
 for_window [class="Spotify"] move to workspace $ws10
 
+### AUTOFLOAT
+for_window [class="Pavucontrol"] floating enable
+
 ### START PROGRAMS
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
@@ -232,9 +235,13 @@ bindsym $mod+w exec firefox
 # start a file explorer
 bindsym $mod+Shift+Return exec nemo
 # start "task manager"
-bindsym $Control_L+Alt_L+Delete exec gnome-system-manager
+bindsym $mod+Control+Delete exec gnome-system-monitor
 # start shmupmametgm
 bindsym $mod+m exec "/home/reiti/mame/mametgm64 -inipath /home/reiti/mame/.;ini;ini/presets"
+# change cpu governor
+bindsym $mod+KP_Add exec "/home/reiti/dotfiles/change-cpu-governor.sh"
+# start reaper
+bindsym $mod+XF86AudioPlay exec reaper
 
 ### WALLPAPER AND WAL
 exec --no-startup-id wal -i /home/reiti/Pictures/Wallpapers/used
@@ -263,6 +270,8 @@ exec --no-startup-id discord
 exec --no-startup-id blueman-applet
 # Slack
 #exec --no-startup-id slack
+# Cadence
+exec --no-startup-id cadence --minimized
 
 ### show workspaces 1 and 6
 exec --no-startup-id i3-msg 'workspace 6; workspace 1'
