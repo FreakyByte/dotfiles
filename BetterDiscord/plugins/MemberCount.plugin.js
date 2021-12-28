@@ -1,7 +1,7 @@
 /**
  * @name MemberCount
  * @author Arashiryuu
- * @version 2.2.6
+ * @version 2.2.10
  * @description Displays a server's member-count at the top of the member-list, can be styled with the #MemberCount selector.
  * @authorId 238108500109033472
  * @authorLink https://github.com/Arashiryuu
@@ -49,16 +49,31 @@ var MemberCount = (() => {
 					twitter_username: ''
 				}
 			],
-			version: '2.2.6',
+			version: '2.2.10',
 			description: 'Displays a server\'s member-count at the top of the member-list, can be styled with the #MemberCount selector.',
 			github: 'https://github.com/Arashiryuu',
 			github_raw: 'https://raw.githubusercontent.com/Arashiryuu/crap/master/ToastIntegrated/MemberCount/MemberCount.plugin.js'
 		},
 		strings: {
 			pl: {
-				INCLUDE: 'Obejmują Serwer',
-				EXCLUDE: 'Wykluczyć Serwer',
+				INCLUDE: 'Dołącz serwer',
+				EXCLUDE: 'Wyklucz serwer',
 				MEMBERS: 'Członkowie'
+			},
+			ru: {
+				INCLUDE: 'Включить отображение участников',
+				EXCLUDE: 'Отключить отображение участников',
+				MEMBERS: 'Участники'
+			},
+			fr: {
+				INCLUDE: 'Inclure le serveur',
+				EXCLUDE: 'Exclure le serveur',
+				MEMBERS: 'Membres'
+			},
+			de: {
+				INCLUDE: 'Server einschließen',
+				EXCLUDE: 'Server ausschließen',
+				MEMBERS: 'Mitglieder'
 			},
 			en: {
 				INCLUDE: 'Include Server',
@@ -67,22 +82,27 @@ var MemberCount = (() => {
 			}
 		},
 		changelog: [
+			{
+				title: 'Maintenance',
+				type: 'progress',
+				items: [
+					'General maintenance.'
+				]
+			}
 			// {
 			// 	title: 'Evolving?',
 			// 	type: 'improved',
 			// 	items: [
-			// 		'Added flexibility to the memberlist patch, should allow for better multi-patch compatibility.',
-			// 		'Refactored how the counter gets its strings.',
-			// 		'Refactored how the context menu item gets its labels and actions.'
+			// 		'Added Russian translations.'
 			// 	]
 			// }
-			{
-				title: 'Bugs Squashed!',
-				type: 'fixed',
-				items: [
-					'Works again!'
-				]
-			}
+			// {
+			// 	title: 'Bugs Squashed!',
+			// 	type: 'fixed',
+			// 	items: [
+			// 		'Works again!'
+			// 	]
+			// }
 		]
 	};
 	
@@ -184,7 +204,7 @@ var MemberCount = (() => {
 								React.createElement('span', {
 									children: [
 										Counter.strings.MEMBERS,
-										'—',
+										' — ',
 										this.props.count
 									]
 								})
@@ -235,17 +255,6 @@ var MemberCount = (() => {
 				})
 			]
 		});
-
-		const blacklistData = {
-			actions: {
-				true: (id, context) => () => context.unlistGuild(id),
-				false: (id, context) => () => context.blacklistGuild(id)
-			},
-			strings: {
-				true: (context) => context.strings.INCLUDE,
-				false: (context) => context.strings.EXCLUDE
-			}
-		};
 		
 		return class MemberCount extends Plugin {
 			constructor() {
@@ -313,7 +322,7 @@ var MemberCount = (() => {
 						? value.find((item) => item && !item.key)
 						: value;
 					const props = this.getProps(val, 'props');
-					if (!props || !props.id || !props.id.startsWith('members')) return value;
+					if (!props || !props['data-list-id'] || !props['data-list-id'].startsWith('members')) return value;
 					
 					const guildId = SelectedGuildStore.getGuildId();
 					const list = document.querySelector(`${DiscordSelectors.MemberList.membersWrap}`);
@@ -447,11 +456,15 @@ var MemberCount = (() => {
 			}
 
 			getAction(id, blacklisted) {
-				return blacklistData.actions[blacklisted](id, this);
+				return blacklisted
+					? () => this.unlistGuild(id)
+					: () => this.blacklistGuild(id);
 			}
 
 			getLabel(blacklisted) {
-				return blacklistData.strings[blacklisted](this);
+				return blacklisted
+					? this.strings.INCLUDE
+					: this.strings.EXCLUDE;
 			}
 
 			blacklistGuild(id) {

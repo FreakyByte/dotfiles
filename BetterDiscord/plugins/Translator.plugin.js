@@ -2,7 +2,7 @@
  * @name Translator
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 2.3.1
+ * @version 2.3.2
  * @description Allows you to translate Messages and your outgoing Messages within Discord
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -17,7 +17,7 @@ module.exports = (_ => {
 		"info": {
 			"name": "Translator",
 			"author": "DevilBro",
-			"version": "2.3.1",
+			"version": "2.3.2",
 			"description": "Allows you to translate Messages and your outgoing Messages within Discord"
 		},
 		"changeLog": {
@@ -25,12 +25,13 @@ module.exports = (_ => {
 				"Yandex": "Fixed crashes with Yandex"
 			},
 			"added": {
-				"Baidu": "Added"
+				"Baidu": "Added",
+				"Google": "Added zh-TW"
 			}
 		}
 	};
 	
-	return (window.Lightcord || window.LightCord) ? class {
+	return (window.Lightcord && !Node.prototype.isPrototypeOf(window.Lightcord) || window.LightCord && !Node.prototype.isPrototypeOf(window.LightCord) || window.Astra && !Node.prototype.isPrototypeOf(window.Astra)) ? class {
 		getName () {return config.info.name;}
 		getAuthor () {return config.info.author;}
 		getVersion () {return config.info.version;}
@@ -287,7 +288,7 @@ module.exports = (_ => {
 			"0":"−−−−−", "1":"·−−−−", "2":"··−−−", "3":"···−−", "4":"····−", "5":"·····", "6":"−····", "7":"−−···", "8":"−−−··", "9":"−−−−·", "!":"−·−·−−", "\"":"·−··−·", "$":"···−··−", "&":"·−···", "'":"·−−−−·", "(":"−·−−·", ")":"−·−−·−", "+":"·−·−·", ",":"−−··−−", "-":"−····−", ".":"·−·−·−", "/":"−··−·", ":":"−−−···", ";":"−·−·−·", "=":"−···−", "?":"··−−··", "@":"·−−·−·", "a":"·−", "b":"−···", "c":"−·−·", "d":"−··", "e":"·", "f":"··−·", "g":"−−·", "h":"····", "i":"··", "j":"·−−−", "k":"−·−", "l":"·−··", "m":"−−", "n":"−·", "o":"−−−", "p":"·−−·", "q":"−−·−", "r":"·−·", "s":"···", "t":"−", "u":"··−", "v":"···−", "w":"·−−", "x":"−··−", "y":"−·−−", "z":"−−··", "·":"e", "··":"i", "···":"s", "····":"h", "·····":"5", "····−":"4", "···−":"v", "···−··−":"$", "···−−":"3", "··−":"u", "··−·":"f", "··−−··":"?", "··−−·−":"_", "··−−−":"2", "·−":"a", "·−·":"r", "·−··":"l", "·−···":"&", "·−··−·":"\"", "·−·−·":"+", "·−·−·−":".", "·−−":"w", "·−−·":"p", "·−−·−·":"@", "·−−−":"j", "·−−−−":"1", "·−−−−·":"'", "−":"t", "−·":"n", "−··":"d", "−···":"b", "−····":"6", "−····−":"-", "−···−":"=", "−··−":"x", "−··−·":"/", "−·−":"k", "−·−·":"c", "−·−·−·":";", "−·−·−−":"!", "−·−−":"y", "−·−−·":"(", "−·−−·−":")", "−−":"m", "−−·":"g", "−−··":"z", "−−···":"7", "−−··−−":",", "−−·−":"q", "−−−":"o", "−−−··":"8", "−−−···":":", "−−−−·":"9", "−−−−−":"0", "_":"··−−·−"
 		};
 		
-		const googleLanguages = ["af","am","ar","az","be","bg","bn","bs","ca","ceb","co","cs","cy","da","de","el","en","eo","es","et","eu","fa","fi","fr","fy","ga","gd","gl","gu","ha","haw","hi","hmn","hr","ht","hu","hy","id","ig","is","it","iw","ja","jw","ka","kk","km","kn","ko","ku","ky","la","lb","lo","lt","lv","mg","mi","mk","ml","mn","mr","ms","mt","my","ne","nl","no","ny","or","pa","pl","ps","pt","ro","ru","rw","sd","si","sk","sl","sm","sn","so","sq","sr","st","su","sv","sw","ta","te","tg","th","tk","tl","tr","tt","ug","uk","ur","uz","vi","xh","yi","yo","zh-CN","zu"];
+		const googleLanguages = ["af","am","ar","az","be","bg","bn","bs","ca","ceb","co","cs","cy","da","de","el","en","eo","es","et","eu","fa","fi","fr","fy","ga","gd","gl","gu","ha","haw","hi","hmn","hr","ht","hu","hy","id","ig","is","it","iw","ja","jw","ka","kk","km","kn","ko","ku","ky","la","lb","lo","lt","lv","mg","mi","mk","ml","mn","mr","ms","mt","my","ne","nl","no","ny","or","pa","pl","ps","pt","ro","ru","rw","sd","si","sk","sl","sm","sn","so","sq","sr","st","su","sv","sw","ta","te","tg","th","tk","tl","tr","tt","ug","uk","ur","uz","vi","xh","yi","yo","zh-CN","zh-TW","zu"];
 		const translationEngines = {
 			googleapi: {
 				name: "Google",
@@ -300,6 +301,7 @@ module.exports = (_ => {
 				auto: true,
 				funcName: "deepLTranslate",
 				languages: ["bg","cs","da","de","en","el","es","et","fi","fr","hu","it","ja","lt","lv","nl","pl","pt","ro","ru","sk","sl","sv","zh"],
+				premium: true,
 				key: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx"
 			},
 			itranslate: {
@@ -415,6 +417,11 @@ module.exports = (_ => {
 			}
 			
 			onStart () {
+				// REMOVE 24.09.2021
+				let oldAuthKeys = BDFDB.DataUtils.load(this, "authKeys");
+				for (let key in oldAuthKeys) if (!BDFDB.ObjectUtils.is(oldAuthKeys[key])) oldAuthKeys[key] = {key: oldAuthKeys[key]};
+				BDFDB.DataUtils.save(oldAuthKeys, this, "authKeys")
+				
 				this.forceUpdateAll();
 			}
 			
@@ -443,17 +450,44 @@ module.exports = (_ => {
 						
 						settingsItems.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SettingsPanelList, {
 							title: "Own Auth Keys:",
-							children: Object.keys(translationEngines).filter(key => translationEngines[key].key).map(key => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SettingsItem, {
-								type: "TextInput",
-								basis: "75%",
-								label: translationEngines[key].name,
-								placeholder: translationEngines[key].key,
-								value: authKeys[key],
-								onChange: value => {
-									authKeys[key] = (value || "").trim();
-									if (!authKeys[key]) delete authKeys[key];
-									BDFDB.DataUtils.save(authKeys, this, "authKeys");
-								}
+							children: Object.keys(translationEngines).filter(key => translationEngines[key].key).map(key => BDFDB.ReactUtils.createElement("div", {
+								className: BDFDB.disCN.marginbottom8,
+								children: [
+									BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Flex, {
+										className: BDFDB.disCN.marginbottom8,
+										align: BDFDB.LibraryComponents.Flex.Align.CENTER,
+										direction: BDFDB.LibraryComponents.Flex.Direction.HORIZONTAL,
+										children: [
+											BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.FormComponents.FormTitle, {
+												className: BDFDB.disCN.marginreset,
+												tag: BDFDB.LibraryComponents.FormComponents.FormTitle.Tags.H5,
+												children: translationEngines[key].name
+											}),
+											translationEngines[key].premium && BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SettingsItem, {
+												type: "Switch",
+												margin: 0,
+												grow: 0,
+												label: "Paid Version",
+												tag: BDFDB.LibraryComponents.FormComponents.FormTitle.Tags.H5,
+												value: authKeys[key] && authKeys[key].paid,
+												onChange: value => {
+													if (!authKeys[key]) authKeys[key] = {};
+													authKeys[key].paid = value;
+													BDFDB.DataUtils.save(authKeys, this, "authKeys");
+												}
+											})
+										]
+									}),
+									BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TextInput, {
+										placeholder: translationEngines[key].key,
+										value: authKeys[key] && authKeys[key].key,
+										onChange: value => {
+											if (!authKeys[key]) authKeys[key] = {};
+											authKeys[key].key = (value || "").trim();
+											BDFDB.DataUtils.save(authKeys, this, "authKeys");
+										}
+									})
+								]
 							}))
 						}));
 						
@@ -628,7 +662,7 @@ module.exports = (_ => {
 					if (this.isTranslationEnabled(e.instance.props.channel.id)) {
 						e2.stopOriginalMethodCall();
 						this.translateText(e2.methodArguments[0], messageTypes.SENT, (translation, input, output) => {
-							translation = !translation ? e2.methodArguments[0] : (this.settings.general.sendOriginalMessage ? (e2.methodArguments[0] + "\n\n" + translation) : translation);
+							translation = !translation ? e2.methodArguments[0] : (this.settings.general.sendOriginalMessage ? (translation + "\n\n> *" + e2.methodArguments[0].split("\n").join("*\n> *") + "*") : translation);
 							e2.originalMethod(translation);
 						});
 						return Promise.resolve({
@@ -940,7 +974,7 @@ module.exports = (_ => {
 			}
 			
 			deepLTranslate (data, callback) {
-				BDFDB.LibraryRequires.request(`https://api-free.deepl.com/v2/translate?auth_key=${authKeys.deepl || "75cc2f40-fdae-14cd-7242-6a384e2abb9c:fx"}&text=${encodeURIComponent(data.text)}${data.input.auto ? "" : `&source_lang=${data.input.id}`}&target_lang=${data.output.id}`, (error, response, body) => {
+				BDFDB.LibraryRequires.request(`${authKeys.deepl && authKeys.deepl.paid ? "https://api.deepl.com/v2/translate" : "https://api-free.deepl.com/v2/translate"}?auth_key=${authKeys.deepl && authKeys.deepl.key || "75cc2f40-fdae-14cd-7242-6a384e2abb9c:fx"}&text=${encodeURIComponent(data.text)}${data.input.auto ? "" : `&source_lang=${data.input.id}`}&target_lang=${data.output.id}`, (error, response, body) => {
 					if (!error && body && response.statusCode == 200) {
 						try {
 							body = JSON.parse(body);
@@ -975,7 +1009,7 @@ module.exports = (_ => {
 					BDFDB.LibraryRequires.request.post({
 						url: "https://web-api.itranslateapp.com/v3/texts/translate",
 						headers: {
-							"API-KEY": authKeys.itranslate || data.engine.APIkey
+							"API-KEY": authKeys.itranslate && authKeys.itranslate.key || data.engine.APIkey
 						},
 						body: JSON.stringify({
 							source: {
@@ -1015,7 +1049,7 @@ module.exports = (_ => {
 						}
 					});
 				};
-				if (authKeys.itranslate || data.engine.APIkey) translate();
+				if (authKeys.itranslate && authKeys.itranslate.key || data.engine.APIkey) translate();
 				else BDFDB.LibraryRequires.request("https://www.itranslate.com/js/webapp/main.js", {gzip: true}, (error, response, body) => {
 					if (!error && body) {
 						let APIkey = /var API_KEY = "(.+)"/.exec(body);
@@ -1030,7 +1064,7 @@ module.exports = (_ => {
 			}
 			
 			yandexTranslate (data, callback) {
-				BDFDB.LibraryRequires.request(`https://translate.yandex.net/api/v1.5/tr/translate?key=${authKeys.yandex || "trnsl.1.1.20191206T223907Z.52bd512eca953a5b.1ec123ce4dcab3ae859f312d27cdc8609ab280de"}&text=${encodeURIComponent(data.text)}&lang=${data.specialCase || data.input.auto ? data.output.id : (data.input.id + "-" + data.output.id)}&options=1`, (error, response, body) => {
+				BDFDB.LibraryRequires.request(`https://translate.yandex.net/api/v1.5/tr/translate?key=${authKeys.yandex && authKeys.yandex.key || "trnsl.1.1.20191206T223907Z.52bd512eca953a5b.1ec123ce4dcab3ae859f312d27cdc8609ab280de"}&text=${encodeURIComponent(data.text)}&lang=${data.specialCase || data.input.auto ? data.output.id : (data.input.id + "-" + data.output.id)}&options=1`, (error, response, body) => {
 					if (!error && body && response.statusCode == 200) {
 						try {
 							body = BDFDB.DOMUtils.create(body);
@@ -1066,7 +1100,7 @@ module.exports = (_ => {
 			}
 			
 			papagoTranslate (data, callback) {
-				const credentials = (authKeys.papago || "kUNGxtAmTJQFbaFehdjk zC70k3VhpM").split(" ");
+				const credentials = (authKeys.papago && authKeys.papago.key || "kUNGxtAmTJQFbaFehdjk zC70k3VhpM").split(" ");
 				BDFDB.LibraryRequires.request.post({
 					url: "https://openapi.naver.com/v1/papago/n2mt",
 					form: {
@@ -1103,7 +1137,7 @@ module.exports = (_ => {
 			}
 			
 			baiduTranslate (data, callback) {
-				const credentials = (authKeys.baidu || "20210425000799880 e12h9h4rh39r8h12r8 D90usZcbznwthzKC1KOb").split(" ");
+				const credentials = (authKeys.baidu && authKeys.baidu.key || "20210425000799880 e12h9h4rh39r8h12r8 D90usZcbznwthzKC1KOb").split(" ");
 				BDFDB.LibraryRequires.request.post({
 					url: "https://fanyi-api.baidu.com/api/trans/vip/translate",
 					form: {
@@ -1319,7 +1353,7 @@ module.exports = (_ => {
 				switch (BDFDB.LanguageUtils.getLanguage().id) {
 					case "bg":		// Bulgarian
 						return {
-							context_translator:		"Търсене превод",
+							context_translator:					"Търсене превод",
 							context_messagetranslateoption:		"Превод на съобщението",
 							context_messageuntranslateoption:	"Превод на съобщението",
 							popout_translateoption:				"Превод",
@@ -1331,7 +1365,7 @@ module.exports = (_ => {
 						};
 					case "da":		// Danish
 						return {
-							context_translator:		"Søg oversættelse",
+							context_translator:					"Søg oversættelse",
 							context_messagetranslateoption:		"Oversæt besked",
 							context_messageuntranslateoption:	"Ikke-oversat besked",
 							popout_translateoption:				"Oversætte",
@@ -1343,7 +1377,7 @@ module.exports = (_ => {
 						};
 					case "de":		// German
 						return {
-							context_translator:		"Übersetzung suchen",
+							context_translator:					"Übersetzung suchen",
 							context_messagetranslateoption:		"Nachricht übersetzen",
 							context_messageuntranslateoption:	"Nachricht unübersetzen",
 							popout_translateoption:				"Übersetzen",
@@ -1355,7 +1389,7 @@ module.exports = (_ => {
 						};
 					case "el":		// Greek
 						return {
-							context_translator:		"Αναζήτηση μετάφρασης",
+							context_translator:					"Αναζήτηση μετάφρασης",
 							context_messagetranslateoption:		"Μετάφραση μηνύματος",
 							context_messageuntranslateoption:	"Μη μετάφραση μηνύματος",
 							popout_translateoption:				"Μεταφράζω",
@@ -1367,7 +1401,7 @@ module.exports = (_ => {
 						};
 					case "es":		// Spanish
 						return {
-							context_translator:		"Buscar traducción",
+							context_translator:					"Buscar traducción",
 							context_messagetranslateoption:		"Traducir mensaje",
 							context_messageuntranslateoption:	"Mensaje sin traducir",
 							popout_translateoption:				"Traducir",
@@ -1379,7 +1413,7 @@ module.exports = (_ => {
 						};
 					case "fi":		// Finnish
 						return {
-							context_translator:		"Hae käännöstä",
+							context_translator:					"Hae käännöstä",
 							context_messagetranslateoption:		"Käännä viesti",
 							context_messageuntranslateoption:	"Käännä viesti",
 							popout_translateoption:				"Kääntää",
@@ -1391,7 +1425,7 @@ module.exports = (_ => {
 						};
 					case "fr":		// French
 						return {
-							context_translator:		"Recherche de traduction",
+							context_translator:					"Recherche de traduction",
 							context_messagetranslateoption:		"Traduire le message",
 							context_messageuntranslateoption:	"Message non traduit",
 							popout_translateoption:				"Traduire",
@@ -1403,7 +1437,7 @@ module.exports = (_ => {
 						};
 					case "hr":		// Croatian
 						return {
-							context_translator:		"Pretraži prijevod",
+							context_translator:					"Pretraži prijevod",
 							context_messagetranslateoption:		"Prevedi poruku",
 							context_messageuntranslateoption:	"Prevedi poruku",
 							popout_translateoption:				"Prevedi",
@@ -1415,7 +1449,7 @@ module.exports = (_ => {
 						};
 					case "hu":		// Hungarian
 						return {
-							context_translator:		"Keresés a fordításban",
+							context_translator:					"Keresés a fordításban",
 							context_messagetranslateoption:		"Üzenet lefordítása",
 							context_messageuntranslateoption:	"Az üzenet lefordítása",
 							popout_translateoption:				"fordít",
@@ -1427,7 +1461,7 @@ module.exports = (_ => {
 						};
 					case "it":		// Italian
 						return {
-							context_translator:		"Cerca traduzione",
+							context_translator:					"Cerca traduzione",
 							context_messagetranslateoption:		"Traduci messaggio",
 							context_messageuntranslateoption:	"Annulla traduzione messaggio",
 							popout_translateoption:				"Tradurre",
@@ -1439,7 +1473,7 @@ module.exports = (_ => {
 						};
 					case "ja":		// Japanese
 						return {
-							context_translator:		"翻訳を検索",
+							context_translator:					"翻訳を検索",
 							context_messagetranslateoption:		"メッセージの翻訳",
 							context_messageuntranslateoption:	"メッセージの翻訳解除",
 							popout_translateoption:				"翻訳する",
@@ -1451,7 +1485,7 @@ module.exports = (_ => {
 						};
 					case "ko":		// Korean
 						return {
-							context_translator:		"번역 검색",
+							context_translator:					"번역 검색",
 							context_messagetranslateoption:		"메시지 번역",
 							context_messageuntranslateoption:	"메시지 번역 취소",
 							popout_translateoption:				"옮기다",
@@ -1463,7 +1497,7 @@ module.exports = (_ => {
 						};
 					case "lt":		// Lithuanian
 						return {
-							context_translator:		"Paieškos vertimas",
+							context_translator:					"Paieškos vertimas",
 							context_messagetranslateoption:		"Versti pranešimą",
 							context_messageuntranslateoption:	"Išversti pranešimą",
 							popout_translateoption:				"Išversti",
@@ -1475,7 +1509,7 @@ module.exports = (_ => {
 						};
 					case "nl":		// Dutch
 						return {
-							context_translator:		"Zoek vertaling",
+							context_translator:					"Zoek vertaling",
 							context_messagetranslateoption:		"Bericht vertalen",
 							context_messageuntranslateoption:	"Bericht onvertalen",
 							popout_translateoption:				"Vertalen",
@@ -1487,7 +1521,7 @@ module.exports = (_ => {
 						};
 					case "no":		// Norwegian
 						return {
-							context_translator:		"Søk i oversettelse",
+							context_translator:					"Søk i oversettelse",
 							context_messagetranslateoption:		"Oversett melding",
 							context_messageuntranslateoption:	"Ikke oversett melding",
 							popout_translateoption:				"Oversette",
@@ -1499,7 +1533,7 @@ module.exports = (_ => {
 						};
 					case "pl":		// Polish
 						return {
-							context_translator:		"Wyszukaj tłumaczenie",
+							context_translator:					"Wyszukaj tłumaczenie",
 							context_messagetranslateoption:		"Przetłumacz wiadomość",
 							context_messageuntranslateoption:	"Nieprzetłumacz wiadomość",
 							popout_translateoption:				"Tłumaczyć",
@@ -1511,7 +1545,7 @@ module.exports = (_ => {
 						};
 					case "pt-BR":	// Portuguese (Brazil)
 						return {
-							context_translator:		"Tradução de pesquisa",
+							context_translator:					"Tradução de pesquisa",
 							context_messagetranslateoption:		"Traduzir mensagem",
 							context_messageuntranslateoption:	"Mensagem não traduzida",
 							popout_translateoption:				"Traduzir",
@@ -1523,7 +1557,7 @@ module.exports = (_ => {
 						};
 					case "ro":		// Romanian
 						return {
-							context_translator:		"Căutare traducere",
+							context_translator:					"Căutare traducere",
 							context_messagetranslateoption:		"Traduceți mesajul",
 							context_messageuntranslateoption:	"Untraduceți mesajul",
 							popout_translateoption:				"Traduceți",
@@ -1535,7 +1569,7 @@ module.exports = (_ => {
 						};
 					case "ru":		// Russian
 						return {
-							context_translator:		"Искать перевод",
+							context_translator:					"Искать перевод",
 							context_messagetranslateoption:		"Перевести сообщение",
 							context_messageuntranslateoption:	"Непереведенное сообщение",
 							popout_translateoption:				"Переведите",
@@ -1547,7 +1581,7 @@ module.exports = (_ => {
 						};
 					case "sv":		// Swedish
 						return {
-							context_translator:		"Sök översättning",
+							context_translator:					"Sök översättning",
 							context_messagetranslateoption:		"Översätt meddelande",
 							context_messageuntranslateoption:	"Untranslate meddelande",
 							popout_translateoption:				"Översätt",
@@ -1559,7 +1593,7 @@ module.exports = (_ => {
 						};
 					case "th":		// Thai
 						return {
-							context_translator:		"ค้นหาคำแปล",
+							context_translator:					"ค้นหาคำแปล",
 							context_messagetranslateoption:		"แปลข้อความ",
 							context_messageuntranslateoption:	"ยกเลิกการแปลข้อความ",
 							popout_translateoption:				"แปลภาษา",
@@ -1571,7 +1605,7 @@ module.exports = (_ => {
 						};
 					case "tr":		// Turkish
 						return {
-							context_translator:		"Çeviri ara",
+							context_translator:					"Çeviri ara",
 							context_messagetranslateoption:		"Mesajı Çevir",
 							context_messageuntranslateoption:	"Çeviriyi Kaldır Mesajı",
 							popout_translateoption:				"Çevirmek",
@@ -1583,7 +1617,7 @@ module.exports = (_ => {
 						};
 					case "uk":		// Ukrainian
 						return {
-							context_translator:		"Пошук перекладу",
+							context_translator:					"Пошук перекладу",
 							context_messagetranslateoption:		"Перекласти повідомлення",
 							context_messageuntranslateoption:	"Неперекладене повідомлення",
 							popout_translateoption:				"Перекласти",
@@ -1595,7 +1629,7 @@ module.exports = (_ => {
 						};
 					case "vi":		// Vietnamese
 						return {
-							context_translator:		"Tìm kiếm bản dịch",
+							context_translator:					"Tìm kiếm bản dịch",
 							context_messagetranslateoption:		"Dịch tin nhắn",
 							context_messageuntranslateoption:	"Thư chưa dịch",
 							popout_translateoption:				"Phiên dịch",
@@ -1607,31 +1641,31 @@ module.exports = (_ => {
 						};
 					case "zh-CN":	// Chinese (China)
 						return {
-							context_translator:		"搜索翻译",
+							context_translator:					"搜索翻译",
 							context_messagetranslateoption:		"翻译消息",
 							context_messageuntranslateoption:	"取消翻译消息",
 							popout_translateoption:				"翻译",
 							popout_untranslateoption:			"取消翻译",
 							toast_translating:					"正在翻译",
 							toast_translating_failed:			"翻译失败",
-							toast_translating_tryanother:		"尝试其他翻译器",
+							toast_translating_tryanother:		"尝试其它翻译器",
 							translated_watermark:				"已翻译"
 						};
 					case "zh-TW":	// Chinese (Taiwan)
 						return {
-							context_translator:		"搜索翻譯",
+							context_translator:					"搜尋翻譯",
 							context_messagetranslateoption:		"翻譯訊息",
 							context_messageuntranslateoption:	"取消翻譯訊息",
 							popout_translateoption:				"翻譯",
 							popout_untranslateoption:			"取消翻譯",
 							toast_translating:					"正在翻譯",
-							toast_translating_failed:			"翻譯失敗",
-							toast_translating_tryanother:		"嘗試其他翻譯器",
+							toast_translating_failed:			"無法翻譯",
+							toast_translating_tryanother:		"嘗試其它翻譯器",
 							translated_watermark:				"已翻譯"
 						};
 					default:		// English
 						return {
-							context_translator:		"Search Translation",
+							context_translator:					"Search Translation",
 							context_messagetranslateoption:		"Translate Message",
 							context_messageuntranslateoption:	"Untranslate Message",
 							popout_translateoption:				"Translate",

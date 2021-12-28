@@ -2,7 +2,7 @@
  * @name ServerCounter
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.0.3
+ * @version 1.0.5
  * @description Adds a Server Counter to the Server List
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -17,17 +17,12 @@ module.exports = (_ => {
 		"info": {
 			"name": "ServerCounter",
 			"author": "DevilBro",
-			"version": "1.0.3",
+			"version": "1.0.5",
 			"description": "Adds a Server Counter to the Server List"
-		},
-		"changeLog": {
-			"fixed": {
-				"Works again": "Can discord stop messing with the server list, jeez"
-			}
 		}
 	};
 
-	return (window.Lightcord || window.LightCord) ? class {
+	return (window.Lightcord && !Node.prototype.isPrototypeOf(window.Lightcord) || window.LightCord && !Node.prototype.isPrototypeOf(window.LightCord) || window.Astra && !Node.prototype.isPrototypeOf(window.Astra)) ? class {
 		getName () {return config.info.name;}
 		getAuthor () {return config.info.author;}
 		getVersion () {return config.info.version;}
@@ -77,46 +72,21 @@ module.exports = (_ => {
 			onLoad () {
 				this.patchedModules = {
 					after: {
-						Guilds: "render"
+						Guilds: "type"
 					}
 				};
 			}
 			
 			onStart () {
-				BDFDB.PatchUtils.forceAllUpdates(this);
+				BDFDB.GuildUtils.rerenderAll();
 			}
 			
 			onStop () {
-				BDFDB.PatchUtils.forceAllUpdates(this);
+				BDFDB.GuildUtils.rerenderAll();
 			}
 		
 			processGuilds (e) {
-				if (typeof e.returnvalue.props.children == "function") {
-					let childrenRender = e.returnvalue.props.children;
-					e.returnvalue.props.children = BDFDB.TimeUtils.suppress((...args) => {
-						let children = childrenRender(...args);
-						this.checkTree(children);
-						return children;
-					}, "", this);
-				}
-				else this.checkTree(e.returnvalue);
-			}
-			
-			checkTree (returnvalue) {
-				let tree = BDFDB.ReactUtils.findChild(returnvalue, {filter: n => n && n.props && typeof n.props.children == "function"});
-				if (tree) {
-					let childrenRender = tree.props.children;
-					tree.props.children = BDFDB.TimeUtils.suppress((...args) => {
-						let children = childrenRender(...args);
-						this.injectCounter(children);
-						return children;
-					}, "", this);
-				}
-				else this.injectCounter(returnvalue);
-			}
-			
-			injectCounter (returnvalue) {
-				let [children, index] = BDFDB.ReactUtils.findParent(returnvalue, {name: "ConnectedUnreadDMs"});
+				let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {name: "UnreadDMs"});
 				if (index > -1) children.splice(index + 1, 0, BDFDB.ReactUtils.createElement("div", {
 					className: BDFDB.disCNS.guildouter + BDFDB.disCN._servercounterservercountwrap,
 					children: BDFDB.ReactUtils.createElement("div", {
