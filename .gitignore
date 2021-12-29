@@ -1,6 +1,16 @@
 spicetify/Backup/
 spicetify/Extracted/
 spicetify/Extracted/
+
 BetterDiscord/data/
 BetterDiscord/emote_data.json
+
 fish/fish_variables
+fish/completions/
+fish/functions/
+!/fish/functions
+fish/functions/*
+!fish/functions/fish_prompt.fish
+
+fish/fish_plugins
+fish/conf.d/
