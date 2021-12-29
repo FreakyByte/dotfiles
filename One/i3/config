@@ -229,7 +229,7 @@ for_window [class="Pavucontrol"] floating enable
 
 ### START PROGRAMS
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec kitty
 # start a webbrowser
 bindsym $mod+w exec firefox
 # start a file explorer
