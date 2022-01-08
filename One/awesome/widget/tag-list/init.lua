@@ -3,6 +3,8 @@ local wibox = require('wibox')
 local dpi = require('beautiful').xresources.apply_dpi
 local clickable_container = require('widget.clickable-container')
 local icons = require('theme.icons')
+-- xmonad-style tag management (workspaces) using the Charitabe library
+local charitable = require("charitable") 	
 
 --- Common method to create buttons.
 -- @tab buttons
@@ -56,7 +58,7 @@ local function list_update(w, buttons, label, data, objects)
 			}
 			ibm = wibox.widget {
 				ib,
-				margins = dpi(10),
+			margins = dpi(6),
 				widget = wibox.container.margin
 			}
 			l = wibox.layout.fixed.horizontal()
@@ -114,15 +116,15 @@ local function list_update(w, buttons, label, data, objects)
 end
 
 local tag_list = function(s)
-	return awful.widget.taglist(
-		s,
-		awful.widget.taglist.filter.all,
-		awful.util.table.join(
+	return awful.widget.taglist({
+		screen = s,
+		filter = awful.widget.taglist.filter.noempty,
+		buttons = awful.util.table.join(
 			awful.button(
 				{},
 				1,
 				function(t)
-					t:view_only()
+					charitable.select_tag(t, awful.screen.focused())
 				end
 			),
 			awful.button(
@@ -131,7 +133,6 @@ local tag_list = function(s)
 				function(t)
 					if _G.client.focus then
 						_G.client.focus:move_to_tag(t)
-						t:view_only()
 					end
 				end
 			),
@@ -141,7 +142,7 @@ local tag_list = function(s)
 				3,
 				function(t)
 					if _G.client.focus then
-						_G.client.focus:toggle_tag(t)
+						charitable.toggle_tag(t, awful.screen.focused())
 					end
 				end
 			),
@@ -160,9 +161,9 @@ local tag_list = function(s)
 				end
 			)
 		),
-		{},
-		list_update,
-		wibox.layout.fixed.vertical()
-	)
+		update_function = list_update,
+		layout = wibox.layout.fixed.horizontal(),
+	})
 end
 return tag_list
+

@@ -16,7 +16,7 @@ local client_keys = awful.util.table.join(
 		{description = 'toggle fullscreen', group = 'client'}
 	),
 	awful.key(
-		{modkey},
+		{modkey, 'Shift'},
 		'q',
 		function(c)
 			c:kill()
@@ -25,7 +25,7 @@ local client_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey},
-		'd',
+		'j',
 		function()
 			awful.client.focus.byidx(1)
 		end,
@@ -33,7 +33,7 @@ local client_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey},
-		'a',
+		'k',
 		function()
 			awful.client.focus.byidx(-1)
 		end,
@@ -41,7 +41,7 @@ local client_keys = awful.util.table.join(
 	),
 	awful.key(
 		{ modkey, 'Shift'  },
-		'd',
+		'j',
 		function ()
 			awful.client.swap.byidx(1)
 		end,
@@ -49,11 +49,11 @@ local client_keys = awful.util.table.join(
 	),
 	awful.key(
 		{ modkey, 'Shift' },
-		'a',
+		'k',
 		function ()
 			awful.client.swap.byidx(-1)
 		end,
-		{description = 'swap with next client by index', group = 'client'}
+		{description = 'swap with previous client by index', group = 'client'}
 	),
 	awful.key(
 		{modkey}, 
@@ -93,8 +93,8 @@ local client_keys = awful.util.table.join(
 		{description = 'align a client to the center of the focused screen', group = 'client'}
 	),
 	awful.key(
-		{modkey},
-		'c',
+		{modkey, 'Shift'},
+		'f',
 		function(c)
 			c.fullscreen = false
 			c.maximized = false

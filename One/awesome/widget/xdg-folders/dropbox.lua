@@ -8,35 +8,35 @@ local dpi = require('beautiful').xresources.apply_dpi
 
 --local config_dir = gears.filesystem.get_configuration_dir()
 --local widget_icon_dir = config_dir .. 'widget/xdg-folders/icons/'
-local widget_icon_dir = "/usr/share/icons/Flat-Remix-Green-Dark/places/scalable/"
+local widget_icon = "/usr/share/icons/Flat-Remix-Green-Dark/apps/scalable/dropbox.svg"
 
 local create_widget = function()
-	local docu_widget =	wibox.widget {
+	local db_widget = wibox.widget {
 		{
-			image = widget_icon_dir .. 'folder-documents' .. '.svg',
+			image = widget_icon,
 			resize = true,
 			widget = wibox.widget.imagebox
 		},
 		layout = wibox.layout.align.horizontal
 	}
 
-	local docu_button = wibox.widget {
+	local dropbox_button = wibox.widget {
 		{
-			docu_widget,
+			db_widget,
 			margins = dpi(10),
 			widget = wibox.container.margin
 		},
 		widget = clickable_container
 	}
 
-	docu_button:buttons(
+	dropbox_button:buttons(
 		gears.table.join(
 			awful.button(
 				{},
 				1,
 				nil,
 				function()
-					awful.spawn.with_shell('xdg-open $(xdg-user-dir DOCUMENTS)')
+					awful.spawn.with_shell('xdg-open $(xdg-user-dir)/Dropbox')
 				end
 			)
 		)
@@ -44,17 +44,17 @@ local create_widget = function()
 
 	awful.tooltip(
 		{
-			objects = {docu_button},
+			objects = {dropbox_button},
 			mode = 'outside',
 			align = 'right',
-			text = 'Documents',
+			text = 'Dropbox',
 			margin_leftright = dpi(8),
 			margin_topbottom = dpi(8),
 			preferred_positions = {'top', 'bottom', 'right', 'left'}
 		}
 	)
 
-	return docu_button
+	return dropbox_button
 end
 
 return create_widget

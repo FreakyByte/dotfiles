@@ -124,6 +124,23 @@ ruled.client.connect_signal(
 				placement = awful.placement.centered
 			}
 		}
+		
+		-- Browsers 
+		ruled.client.append_rule {
+			id = 'internet',
+			rule_any = {
+				class = {
+					'firefox',
+					'Tor Browser',
+					'Chromium',
+					'Google-chrome',
+				}
+			},
+			properties = {
+				tag = '1'
+			}
+		}
+
 
 		-- Terminal emulators
 		ruled.client.append_rule {
@@ -138,48 +155,10 @@ ruled.client.connect_signal(
 				}
 			},
 			properties = {
-				tag = '1',
+				tag = '2',
 				switch_to_tags = true,
 				size_hints_honor = false,
 				titlebars_enabled = true
-			}
-		}
-
-		-- Browsers and chats
-		ruled.client.append_rule {
-			id = 'internet',
-			rule_any = {
-				class = {
-					'firefox',
-					'Tor Browser',
-					'discord',
-					'Chromium',
-					'Google-chrome',
-					'TelegramDesktop'
-				}
-			},
-			properties = {
-				tag = '2'
-			}
-		}
-
-		-- Text editors and word processing
-		ruled.client.append_rule {
-			id = 'text',
-			rule_any = {
-				class = {
-					'Geany',
-					'Atom',
-					'Subl3',
-					'code-oss'
-				},
-				name  = {
-					'LibreOffice',
-					'libreoffice'
-				}
-			},
-			properties = {
-				tag = '3'
 			}
 		}
 
@@ -195,8 +174,65 @@ ruled.client.connect_signal(
 				}
 			},
 			properties = {
+				tag = '3',
+				switch_to_tags = true
+			}
+		}
+		
+		-- DAW
+		ruled.client.append_rule {
+			id = 'daw',
+			rule_any = {
+				class = {
+					'REAPER',
+				}
+			},
+			properties = {
 				tag = '4',
 				switch_to_tags = true
+			}
+		}
+
+		-- Gaming
+		ruled.client.append_rule {
+			id = 'gaming',
+			rule_any = {
+				class = {
+					'dolphin-emu',
+					'Steam',
+					'Citra',
+					'supertuxkart'
+				},
+				name = {'Steam'}
+			},
+			properties = {
+				tag = '5',
+				skip_decoration = true,
+				switch_to_tags = true,
+				placement = awful.placement.centered
+			}
+		}
+
+		-- Multimedia and Text Editing, Word Processing
+		ruled.client.append_rule {
+			id = 'graphics',
+			rule_any = {
+				class = {
+					'Geany',
+					'Atom',
+					'Subl3',
+					'code-oss',
+					'Gimp-2.10',
+					'Inkscape',
+					'Flowblade'
+				},
+				name  = {
+					'LibreOffice',
+					'libreoffice'
+				}
+			},
+			properties = {
+				tag = '6'
 			}
 		}
 
@@ -206,84 +242,44 @@ ruled.client.connect_signal(
 			rule_any = {
 				class = {
 					'vlc',
-					'Spotify'
 				}
 			},
 			properties = {
-				tag = '5',
-				switch_to_tags = true,
+				tag = '7',
 				placement = awful.placement.centered
 			}
 		}
 
-		-- Gaming
+		-- Slack
 		ruled.client.append_rule {
-			id = 'gaming',
 			rule_any = {
 				class = {
-					'Wine',
-					'dolphin-emu',
-					'Steam',
-					'Citra',
-					'supertuxkart'
-				},
-				name = {'Steam'}
-			},
-			properties = {
-				tag = '6',
-				skip_decoration = true,
-				switch_to_tags = true,
-				placement = awful.placement.centered
-			}
-		}
-
-		-- Multimedia Editing
-		ruled.client.append_rule {
-			id = 'graphics',
-			rule_any = {
-				class = {
-					'Gimp-2.10',
-					'Inkscape',
-					'Flowblade'
+					'slack'
 				}
 			},
 			properties = {
-				tag = '7'
+				tag = '8',
 			}
 		}
-
-		-- Sandboxes and VMs
+		-- Discord
 		ruled.client.append_rule {
-			id = 'sandbox',
 			rule_any = {
-				class = {
-					'VirtualBox Manage',
-					'VirtualBox Machine',
-					'Gnome-boxes',
-					'Virt-manager'
-				}
-			},
-			properties = {
-				tag = '8'
-			}
-		}
-
-		-- IDEs and Tools
-		ruled.client.append_rule {
-			id = 'development',
-			rule_any = {
-				class = {
-					'Oomox',
-					'Unity',
-					'UnityHub',
-					'jetbrains-studio',
-					'Ettercap',
-					'scrcpy'
-				}
+				class = {'discord', 'TelegramDesktop' },
+				name = {'Discord Updater'}
 			},
 			properties = {
 				tag = '9',
-				skip_decoration = true
+			}
+		}
+		-- Spotify
+		ruled.client.append_rule {
+			rule_any = {
+				class = {
+					'spotify'
+				}
+			},
+			properties = {
+				tag = '10',
 			}
 		}
 
@@ -310,6 +306,7 @@ ruled.client.connect_signal(
 		ruled.client.append_rule {
 			id       = 'floating',
 			rule_any = {
+				name = { 'Volume Control', },
 				instance    = {
 					'file_progress',
 					'Popup',
@@ -318,7 +315,7 @@ ruled.client.connect_signal(
 				class = {
 					'scrcpy',
 					'Mugshot',
-					'Pulseeffects'
+					'Pulseeffects',
 				},
 				role    = {
 					'AlarmWindow',
@@ -376,7 +373,7 @@ client.connect_signal(
 				end
 			else
 				-- Move the instance to specified tag on this screen
-				local t = awful.tag.find_by_name(awful.screen.focused(), '5')
+				local t = awful.tag.find_by_name(awful.screen.focused(), '10')
 				c:move_to_tag(t)
 				t:view_only()
 

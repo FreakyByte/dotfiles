@@ -3,110 +3,123 @@ local gears = require('gears')
 local beautiful = require('beautiful')
 local icons = require('theme.icons')
 local apps = require('configuration.apps')
-
-local tags = {
-	{
-		type = 'terminal',
-		icon = icons.terminal,
-		default_app = apps.default.terminal,
-		gap = beautiful.useless_gap
-	},
-	{
-		type = 'internet',
-		icon = icons.web_browser,
-		default_app = apps.default.web_browser,
-		gap = beautiful.useless_gap
-	},
-	{
-		type = 'code',
-		icon = icons.text_editor,
-		default_app = apps.default.text_editor,
-		gap = beautiful.useless_gap
-	},
-	{
-		type = 'files',
-		icon = icons.file_manager,
-		default_app = apps.default.file_manager,
-		gap = beautiful.useless_gap,
-		layout = awful.layout.suit.tile
-	},
-	{
-		type = 'multimedia',
-		icon = icons.multimedia,
-		default_app = apps.default.multimedia,
-		gap = beautiful.useless_gap,
-		layout = awful.layout.suit.floating,
-		gap = 0
-	},
-	{
-		type = 'games',
-		icon = icons.games,
-		default_app = apps.default.game,
-		gap = beautiful.useless_gap,
-		layout = awful.layout.suit.floating
-	},
-	{
-		type = 'graphics',
-		icon = icons.graphics,
-		default_app = apps.default.graphics,
-		gap = beautiful.useless_gap
-	},
-	{
-		type = 'sandbox',
-		icon = icons.sandbox,
-		default_app = apps.default.sandbox,
-		layout = awful.layout.suit.max,
-		gap = 0
-	},
-	{
-		type = 'any',
-		icon = icons.development,
-		default_app = apps.default.development,
-		gap = beautiful.useless_gap,
-		layout = awful.layout.suit.floating
-	}
-	-- {
-	--   type = 'social',
-	--   icon = icons.social,
-	--   default_app = 'discord',
-	--   gap = beautiful.useless_gap
-	-- }
-}
+-- xmonad-style tag management (workspaces) using the Charitabe library
+local charitable = require("charitable") 	
 
 -- Set tags layout
 tag.connect_signal(
 	'request::default_layouts',
 	function()
 	    awful.layout.append_default_layouts({
-			awful.layout.suit.spiral.dwindle,
-			awful.layout.suit.tile,
-			awful.layout.suit.floating,
-			awful.layout.suit.max
+		    awful.layout.suit.tile,
+		    awful.layout.suit.tile.left,
+		    awful.layout.suit.tile.bottom,
+		    awful.layout.suit.tile.top,
+		    awful.layout.suit.fair,
+		    awful.layout.suit.fair.horizontal,
+		    awful.layout.suit.spiral,
+		    awful.layout.suit.spiral.dwindle,
+		    awful.layout.suit.max,
+		    --awful.layout.suit.max.fullscreen,
+		    awful.layout.suit.magnifier,
+		    awful.layout.suit.corner.nw,
+		    awful.layout.suit.floating,
 	    })
 	end
 )
 
--- Create tags for each screen
-screen.connect_signal(
-	'request::desktop_decoration',
-	function(s)
-		for i, tag in pairs(tags) do
-			awful.tag.add(
-				i,
-				{
-					icon = tag.icon,
-					icon_only = true,
-					layout = tag.layout or awful.layout.suit.spiral.dwindle,
-					gap_single_client = true,
-					gap = tag.gap,
-					screen = s,
-					default_app = tag.default_app,
-					selected = i == 1
-				}
-			)
-		end
-	end
+local tags = charitable.create_tags(
+   { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
+   {
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+      awful.layout.layouts[1],
+   }
 )
+
+-- giving the tags a bunch of extra information 
+tags[1].type = 'internet'
+tags[1].icon = icons.web_browser
+tags[1].default_app = apps.default.web_browser
+tags[1].gap = beautiful.useless_gap
+tags[1].screen = 1
+
+tags[2].type = 'terminal'
+tags[2].icon = icons.terminal
+tags[2].default_app = apps.default.terminal
+tags[2].gap = beautiful.useless_gap
+tags[2].screen = 1
+
+tags[3].type = 'files'
+tags[3].icon = "/usr/share/icons/Flat-Remix-Green-Dark/places/scalable/folder.svg"
+tags[3].default_app = apps.default.file_manager
+tags[3].gap = beautiful.useless_gap
+tags[3].screen = 1
+
+tags[4].type = 'daw'
+tags[4].icon = "/usr/share/icons/Papirus/64x64/apps/cockos-reaper.svg"
+tags[4].default_app = 'reaper'
+tags[4].gap = beautiful.useless_gap
+tags[4].screen = 1
+
+tags[5].type = 'games'
+tags[5].icon = icons.games
+tags[5].default_app = apps.default.game
+tags[5].gap = beautiful.useless_gap
+tags[5].screen = 1
+
+tags[6].type = 'any'
+tags[6].icon = "/usr/share/icons/Flat-Remix-Green-Dark/apps/scalable/accessories-ebook-reader.svg"
+tags[6].default_app = apps.default.graphics
+tags[6].gap = beautiful.useless_gap
+tags[6].screen = 1
+
+tags[7].type = 'multimedia'
+tags[7].icon = icons.multimedia
+tags[7].default_app = apps.default.multimedia
+tags[7].gap = beautiful.useless_gap
+tags[7].screen = 2
+
+tags[8].type = 'slack'
+tags[8].icon = "/usr/share/icons/Flat-Remix-Green-Dark/apps/scalable/slack.svg"
+tags[8].default_app = 'slack'
+tags[8].gap = beautiful.useless_gap
+tags[8].screen = 2
+
+tags[9].type = 'discord'
+tags[9].icon = "/usr/share/discord/discord.png"
+tags[9].default_app = 'discord'
+tags[9].gap = beautiful.useless_gap
+tags[9].screen = 2
+
+tags[10].type = 'music'
+tags[10].icon = "/usr/share/spotify/icons/spotify-linux-128.png"
+tags[10].default_app = 'spotify'
+tags[10].gap = beautiful.useless_gap
+tags[10].screen = 2
+
+awful.screen.connect_for_each_screen(function(s)
+    -- Show an unselected tag when a screen is connected
+    for i = 1, #tags do
+         if not tags[i].selected then
+             tags[i].screen = s
+             tags[i]:view_only()
+             break
+         end
+    end
+
+    -- create a special scratch tag for double buffering
+    s.scratch = awful.tag.add('scratch-' .. s.index, {})
+end)
+
+
 
 local update_gap_and_shape = function(t)
 	-- Get current tag layout
@@ -166,3 +179,6 @@ awful.tag.attached_connect_signal(
 		end
 	end
 )
+-- work around bugs in awesome 4.0 through 4.3+
+-- see https://github.com/awesomeWM/awesome/issues/2780
+awful.tag.history.restore = function() end

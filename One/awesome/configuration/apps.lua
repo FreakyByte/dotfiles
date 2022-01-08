@@ -12,7 +12,7 @@ return {
 		-- Default text editor
 		text_editor = 'subl3',
 		-- Default file manager
-		file_manager = 'dolphin',
+		file_manager = 'nemo',
 		-- Default media player
 		multimedia = 'vlc',
 		-- Default game, can be a launcher like steam
@@ -24,13 +24,13 @@ return {
 		-- Default IDE
 		development = '',
 		-- Default network manager
-		network_manager = 'kitty iwctl',
+		network_manager = 'nm-connection-editor',
 		-- Default bluetooth manager
 		bluetooth_manager = 'blueman-manager',
 		-- Default power manager
 		power_manager = 'xfce4-power-manager',
 		-- Default GUI package manager
-		package_manager = 'pamac-manager',
+		package_manager = 'sudo -A synaptic',
 		-- Default locker
 		lock = 'awesome-client "awesome.emit_signal(\'module::lockscreen_show\')"',
 		-- Default quake terminal
@@ -61,17 +61,22 @@ return {
 		-- Polkit and keyring
 		'/usr/bin/lxqt-policykit-agent &' ..
 		' eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg)',
-		-- Load X colors
-		'xrdb $HOME/.Xresources',
-		-- Audio equalizer
-		'pulseeffects --gapplication-service',
+--		-- Load X colors
+--		'xrdb $HOME/.Xresources',
+--		-- Audio equalizer
+--		'pulseeffects --gapplication-service',
 		-- Lockscreen timer
 		[[
 		xidlehook --not-when-fullscreen --not-when-audio --timer 600 \
 		"awesome-client 'awesome.emit_signal(\"module::lockscreen_show\")'" ""
-		]]
+		]],
 
 		-- You can add more start-up applications here
+		-- Discord
+		'discord',
+		-- Dropbox
+		'dropbox start'
+
 	},
 
 	-- List of binaries/shell scripts that will execute for a certain task

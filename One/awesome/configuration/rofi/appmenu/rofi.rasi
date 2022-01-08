@@ -1,149 +1,88 @@
 configuration {
-	font: "Inter Regular 10";
-	show-icons: true;
-	drun-display-format: "{name}";
-	fullscreen: false;
-	threads: 0;
-	matching: "fuzzy";
-	scroll-method: 0;
-	disable-history: false;
-	fullscreen: true;
-	window-thumbnail: true;
+    modi: "combi,windowcd,run";
+    lines: 10;
+    columns: 2;
+    font: "Ubuntu 13";
+    bw: 0;
+    location: 0;
+    padding: 0;
+    fixed-num-lines: true;
+    show-icons: false;
+    sidebar-mode: true;
+    combi-modi: "window,run";
+    separator-style: "none";
+    hide-scrollbar: true;
+    fullscreen: false;
+    fake-transparency: false;
+    scroll-method: 1;
+    window-format: "[{w}] ·· {c} ··   {t}";
+    click-to-exit: true;
+    show-match: false;
+    color-normal: "@xbg, @xfg, @xbg, @xfg, @xbg";
+    color-urgent: "@xbg, @x1, @xbg, @x1, @xfg";
+    color-active: "@xbg, @xfg, @xbg, @xfg, @xbg";
+    color-window: "@xbg, @x1, @xfg";
+    combi-hide-mode-prefix: false;
+    display-window: "";
+    display-windowcd: "";
+    display-run: "";
+    display-ssh: "";
+    display-drun: "";
+    display-combi: "";
+    kb-remove-word-back: "Control+BackSpace,Alt+d,Alt+BackSpace";
+    kb-accept-entry: "Control+m,Return,KP_Enter,Alt+m";
+    kb-mode-next: "Shift+Right,Control+Tab,Alt+l,Alt+Tab";
+    kb-mode-previous: "Shift+Left,Control+ISO_Left_Tab,Alt+h";
+    kb-row-left: "Control+Page_Up,Control+Alt+h";
+    kb-row-right: "Control+Page_Down,Control+Alt+l";
+    kb-row-up: "Up,Control+p,ISO_Left_Tab,Alt+k";
+    kb-row-down: "Down,Control+n,Alt+j";
+    kb-select-1: "";
+    kb-select-2: "";
+    kb-select-3: "";
+    kb-select-4: "";
+    kb-select-5: "";
+    kb-select-6: "";
+    kb-select-7: "";
+    kb-select-8: "";
+    kb-select-9: "";
+    kb-select-10: "";
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    me-accept-custom: "MouseMiddle";
 }
-
 * {
-	transparent: #00000000;
-	foreground: #F2F2F2EE;
-	background-selected: #F2F2F245;
-	background-active: #F2F2F230;
-	background-white: #F2F2F211;
-	background-black: #00000066;
-	urgent: #E91E6366;
-	urgent-selected: #E91E6377;
+    selected-normal-foreground:  rgba ( 52, 60, 72, 100 % );
+    foreground:                  rgba ( 224, 224, 224, 100 % );
+    normal-foreground:           @foreground;
+    alternate-normal-background: rgba ( 52, 60, 72, 100 % );
+    red:                         rgba ( 220, 50, 47, 100 % );
+    selected-urgent-foreground:  rgba ( 224, 224, 224, 100 % );
+    blue:                        rgba ( 38, 139, 210, 100 % );
+    urgent-foreground:           rgba ( 240, 98, 146, 100 % );
+    alternate-urgent-background: rgba ( 52, 60, 72, 100 % );
+    active-foreground:           rgba ( 224, 224, 224, 100 % );
+    lightbg:                     rgba ( 238, 232, 213, 100 % );
+    selected-active-foreground:  rgba ( 52, 60, 72, 100 % );
+    alternate-active-background: rgba ( 52, 60, 72, 100 % );
+    background:                  rgba ( 52, 60, 72, 100 % );
+    alternate-normal-foreground: @foreground;
+    normal-background:           rgba ( 52, 60, 72, 100 % );
+    lightfg:                     rgba ( 88, 104, 117, 100 % );
+    selected-normal-background:  rgba ( 224, 224, 224, 100 % );
+    border-color:                rgba ( 240, 98, 146, 100 % );
+    spacing:                     2;
+    separatorcolor:              rgba ( 224, 224, 224, 100 % );
+    urgent-background:           rgba ( 52, 60, 72, 100 % );
+    selected-urgent-background:  rgba ( 240, 98, 146, 100 % );
+    alternate-urgent-foreground: @urgent-foreground;
+    background-color:            rgba ( 0, 0, 0, 0 % );
+    alternate-active-foreground: @active-foreground;
+    active-background:           rgba ( 52, 60, 72, 100 % );
+    selected-active-background:  rgba ( 224, 224, 224, 100 % );
+
+    text-color: @foreground;
 }
 
-window {
-	transparency: "real";
-	background-color: @transparent;
-	text-color: @foreground;
-	location: northwest;
-	anchor: northwest;
-}
+@import "~/.cache/wal/colors-rofi-dark"
 
-prompt {
-	enabled: false;
-}
-
-button {
-	action: "ok";
-	str: " ";
-	font: "FantasqueSansMono Nerd Font 11";
-	expand: false;
-	text-color: @foreground;
-	background-color: @transparent;
-	vertical-align: 0.7;
-	horizontal-align: 0.5;
-}
-
-entry {
-	font: "Inter Regular 11";
-	background-color: @transparent;
-	text-color: @foreground;
-	expand: true;
-	vertical-align: 0.5;
-	horizontal-align: 0.5;
-	placeholder: "Type to search";
-	placeholder-color: @foreground;
-	blink: true;
-}
-
-case-indicator {
-	background-color: @transparent;
-	text-color: @foreground;
-	vertical-align: 0.5;
-	horizontal-align: 0.5;
-}
-
-entry-wrapper {
-	orientation: horizontal;
-	vertical-align: 0.5;
-	spacing: 4px;
-	background-color: @transparent;
-	children: [ button, entry, case-indicator ];
-}
-
-inputbar {
-	background-color: @background-white;
-	text-color: @foreground;
-	expand: false;
-	border-radius: 6px;
-	margin: 0px calc((100% - 640px) / 2) 0px calc((100% - 640px) / 2);
-	padding: 10px 10px 10px 10px;
-	position: north;
-	children: [ entry-wrapper ];
-}
-
-listview {
-	background-color: @transparent;
-	columns: 6;
-	spacing: 5px;
-	cycle: false;
-	dynamic: true;
-	layout: vertical;
-}
-
-mainbox {
-	background-color: @background-black;
-	children: [ inputbar, listview ];
-	spacing: 25px;
-	padding: 70px 15% 0 15%;
-	/*padding: 70px 135px 0 135px;*/
-}
-
-element {
-	background-color: @transparent;
-	text-color: @foreground;
-	orientation: vertical;
-	border-radius: 12px;
-	padding: 25px 0 25px 0;
-}
-
-element-icon {
-	size: 72px;
-	border: 0;
-}
-
-element-text {
-	expand: true;
-	horizontal-align: 0.5;
-	vertical-align: 0.5;
-	margin: 0 10px 0 10px;
-}
-
-element normal.urgent,
-element alternate.urgent {
-	background-color: @urgent;
-	text-color: @foreground;
-	border-radius: 9px;
-}
-
-element normal.active,
-element alternate.active {
-	background-color: @background-active;
-	text-color: @foreground;
-}
-
-element selected {
-	background-color: @background-selected;
-	text-color: @foreground;
-}
-
-element selected.urgent {
-	background-color: @urgent-selected;
-	text-color: @foreground;
-}
-
-element selected.active {
-	background-color: @background-active;
-	color: @foreground-selected;
-}

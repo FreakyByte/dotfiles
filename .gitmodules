@@ -1,0 +1,3 @@
+[submodule "One/awesome/charitable"]
+	path = One/awesome/charitable
+	url = https://github.com/frioux/charitable

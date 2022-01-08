@@ -7,14 +7,52 @@ local right_panel = require('layout.right-panel')
 screen.connect_signal(
 	'request::desktop_decoration',
 	function(s)
-		if s.index == 1 then
-			s.left_panel = left_panel(s)
-			s.top_panel = top_panel(s, true)
-		else
-			s.top_panel = top_panel(s, false)
-		end
+		--if s.index == 1 then
+		--	s.left_panel = left_panel(s)
+		--	s.top_panel = top_panel(s, true)
+		--	s.show_left_panel = false
+		--else
+		--	s.top_panel = top_panel(s, false)
+		--end
+
+		s.left_panel = left_panel(s)
+		s.show_left_panel = false
+		s.top_panel = top_panel(s, false)
 		s.right_panel = right_panel(s)
 		s.right_panel_show_again = false
+	end
+)
+
+screen.connect_signal(
+	'sidebar::show',
+	function(s)
+		if s.left_panel then
+			s.left_panel.visible = true
+			s.show_left_panel = true
+			s.top_panel.enable_offset()
+		end
+	end
+)
+screen.connect_signal(
+	'sidebar::hide',
+	function(s)
+		if s.left_panel then
+			s.left_panel.visible = false
+			s.show_left_panel = false
+			s.top_panel.disable_offset()
+		end
+	end
+)
+screen.connect_signal(
+	'sidebar::toggle',
+	function(s)
+		if s.left_panel then
+			if s.show_left_panel then
+				s:emit_signal('sidebar::hide')
+			else 
+				s:emit_signal('sidebar::show')
+			end
+		end
 	end
 )
 
@@ -27,7 +65,8 @@ function update_bars_visibility()
 			-- Order matter here for shadow
 			s.top_panel.visible = not fullscreen
 			if s.left_panel then
-				s.left_panel.visible = not fullscreen
+				s.left_panel.visible = not fullscreen and s.show_left_panel
+				-- without this "and" the left panel would become visible again when update_bars_visibility is triggered
 			end
 			if s.right_panel then
 				if fullscreen and s.right_panel.visible then

@@ -7,6 +7,9 @@
 -- @author manilarome &lt;gerome.matilla07@gmail.com&gt;
 -- @copyright 2020 manilarome
 -- @widget network
+
+-- fixed by C0D3 M4513R 
+-- https://github.com/manilarome/the-glorious-dotfiles/blob/b645b71cf5f2d487a4598d53c45d1308761075d1/config/awesome/floppy/widget/network/init.lua
 ----------------------------------------------------------------------------
 
 local awful = require('awful')
@@ -294,12 +297,12 @@ local return_button = function()
 			network_mode=""
 
 			# Check network state based on interface's operstate value
-			function check_network_state() {
+			check_network_state() {
 				# Check what interface is up
-				if [[ "${wireless_state}" == "up" ]];
+				if [ "${wireless_state}" = "up" ];
 				then
 					network_mode='wireless'
-				elif [[ "${wired_state}" == "up" ]];
+				elif [ "${wired_state}" = "up" ];
 				then
 					network_mode='wired'
 				else
@@ -308,19 +311,19 @@ local return_button = function()
 			}
 
 			# Check if network directory exist
-			function check_network_directory() {
-				if [[ -n "${wireless}" && -d "${net}${wireless}" ]];
+			check_network_directory() {
+				if [ -n "${wireless}" ] && [ -d "${net}${wireless}" ];
 				then
 					wireless_state="$(cat "${net}${wireless}/operstate")"
 				fi
-				if [[ -n "${wired}" && -d "${net}${wired}" ]]; then
+				if [ -n "${wired}" ] && [ -d "${net}${wired}" ]; then
 					wired_state="$(cat "${net}${wired}/operstate")"
 				fi
 				check_network_state
 			}
 
 			# Start script
-			function print_network_mode() {
+			print_network_mode() {
 				# Call to check network dir
 				check_network_directory
 				# Print network mode
@@ -356,3 +359,4 @@ local return_button = function()
 end
 
 return return_button
+

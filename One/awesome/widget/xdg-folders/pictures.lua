@@ -6,8 +6,9 @@ local gears = require('gears')
 local clickable_container = require('widget.clickable-container')
 local dpi = require('beautiful').xresources.apply_dpi
 
-local config_dir = gears.filesystem.get_configuration_dir()
-local widget_icon_dir = config_dir .. 'widget/xdg-folders/icons/'
+--local config_dir = gears.filesystem.get_configuration_dir()
+--local widget_icon_dir = config_dir .. 'widget/xdg-folders/icons/'
+local widget_icon_dir = "/usr/share/icons/Flat-Remix-Green-Dark/places/scalable/"
 
 local create_widget = function()
 	local pic_widget =	wibox.widget {

@@ -1,5 +1,7 @@
 local awful = require('awful')
 local beautiful = require('beautiful')
+-- xmonad-style tag management (workspaces) using the Charitable library
+local charitable = require("charitable") 	
 
 require('awful.autofocus')
 
@@ -8,6 +10,9 @@ local hotkeys_popup = require('awful.hotkeys_popup').widget
 local modkey = require('configuration.keys.mod').mod_key
 local altkey = require('configuration.keys.mod').alt_key
 local apps = require('configuration.apps')
+
+local dpi = beautiful.xresources.apply_dpi
+--local layout = require('layout')
 
 -- Key bindings
 local global_keys = awful.util.table.join(
@@ -19,19 +24,19 @@ local global_keys = awful.util.table.join(
 		hotkeys_popup.show_help, 
 		{description = 'show help', group = 'awesome'}
 	),
-	awful.key({modkey, 'Control'}, 
+	awful.key({modkey, 'Shift'}, 
 		'r', 
 		awesome.restart, 
 		{description = 'reload awesome', group = 'awesome'}
 	),
 	
 	awful.key({modkey, 'Control'}, 
-		'q', 
+		'e', 
 		awesome.quit, 
-		{description = 'quit awesome', group = 'awesome'}
+		{description = 'exit awesome', group = 'awesome'}
 	),
 	awful.key(
-		{altkey, 'Shift'},
+		{modkey},
 		'l',
 		function()
 			awful.tag.incmwfact(0.05)
@@ -39,7 +44,7 @@ local global_keys = awful.util.table.join(
 		{description = 'increase master width factor', group = 'layout'}
 	),
 	awful.key(
-		{altkey, 'Shift'},
+		{modkey},
 		'h',
 		function()
 			awful.tag.incmwfact(-0.05)
@@ -112,13 +117,13 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey}, 
-		'w', 
+		',', 
 		awful.tag.viewprev, 
 		{description = 'view previous tag', group = 'tag'}
 	),
 	awful.key(
 		{modkey}, 
-		's', 
+		'.', 
 		awful.tag.viewnext, 
 		{description = 'view next tag', group = 'tag'}
 	),
@@ -128,8 +133,8 @@ local global_keys = awful.util.table.join(
 		awful.tag.history.restore, 
 		{description = 'alternate between current and previous tag', group = 'tag'}
 	),
-	awful.key({ modkey, 'Control' }, 
-		'w',
+	awful.key({ modkey, 'Shift' }, 
+		',',
 		function ()
 			-- tag_view_nonempty(-1)
 			local focused = awful.screen.focused()
@@ -142,8 +147,8 @@ local global_keys = awful.util.table.join(
 		end, 
 		{description = 'view previous non-empty tag', group = 'tag'}
 	),
-	awful.key({ modkey, 'Control' }, 
-		's',
+	awful.key({ modkey, 'Shift' }, 
+		'.',
 		function ()
 			-- tag_view_nonempty(1)
 			local focused =  awful.screen.focused()
@@ -157,16 +162,16 @@ local global_keys = awful.util.table.join(
 		{description = 'view next non-empty tag', group = 'tag'}
 	),
 	awful.key(
-		{modkey, 'Shift'}, 
-		'F1',  
+		{modkey, 'Control'}, 
+		'k',  
 		function() 
 			awful.screen.focus_relative(-1) 
 		end,
 		{ description = 'focus the previous screen', group = 'screen'}
 	),
 	awful.key(
-		{modkey, 'Shift'}, 
-		'F2', 
+		{modkey, 'Control'}, 
+		'j', 
 		function()
 			awful.screen.focus_relative(1)
 		end,
@@ -293,15 +298,15 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey, 'Shift'},
-		'q',
+		'e',
 		function()
 			awesome.emit_signal('module::exit_screen:show')
 		end,
 		{description = 'toggle exit screen', group = 'hotkeys'}
 	),
 	awful.key(
-		{modkey},
-		'`',
+		{modkey, 'Control'},
+		'Return',
 		function()
 			awesome.emit_signal('module::quake_terminal:toggle')
 		end,
@@ -327,7 +332,7 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey, 'Shift'}, 
-		's',
+		'Print',
 		function ()
 			awful.spawn.easy_async_with_shell(apps.utils.area_screenshot,function() end)
 		end,
@@ -381,7 +386,7 @@ local global_keys = awful.util.table.join(
 		{description = 'toggle systray visibility', group = 'Utility'}
 	),
 	awful.key(
-		{modkey},
+		{modkey, "Shift", "Control"},
 		'l',
 		function()
 			awful.spawn(apps.default.lock, false)
@@ -398,15 +403,15 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey, 'Shift'}, 
-		'e',
+		'Return',
 		function()
 			awful.spawn(apps.default.file_manager)
 		end,
 		{description = 'open default file manager', group = 'launcher'}
 	),
 	awful.key(
-		{modkey, 'Shift'}, 
-		'f',
+		{modkey}, 
+		'w',
 		function()
 			awful.spawn(apps.default.web_browser)
 		end,
@@ -422,7 +427,7 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey}, 
-		'e',
+		'd',
 		function()
 			local focused = awful.screen.focused()
 
@@ -457,21 +462,30 @@ local global_keys = awful.util.table.join(
 		{description = 'open application drawer', group = 'launcher'}
 	),
 	awful.key(
+		{modkey}, 
+		's',
+		function()
+			local focused = awful.screen.focused()
+			focused:emit_signal('sidebar::toggle')
+		end,
+		{description = 'toggle left sidebar', group = 'launcher'}
+	),
+	awful.key(
 		{modkey},
-		'r',
+		'c',
 		function()
 			local focused = awful.screen.focused()
 
 			if focused.right_panel and focused.right_panel.visible then
 				focused.right_panel.visible = false
 			end
-			screen.primary.left_panel:toggle()
+			focused.left_panel:toggle()
 		end,
-		{description = 'open sidebar', group = 'launcher'}
+		{description = 'open configuration sidebar', group = 'launcher'}
 	),
 	awful.key(
 		{modkey, 'Shift'},
-		'r',
+		's',
 		function()
 			local focused = awful.screen.focused()
 
@@ -533,10 +547,10 @@ local global_keys = awful.util.table.join(
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
+for i = 1, 10 do
 	-- Hack to only show tags 1 and 9 in the shortcut window (mod+s)
 	local descr_view, descr_toggle, descr_move, descr_toggle_focus
-	if i == 1 or i == 9 then
+	if i == 1 or i == 10 then
 		descr_view = {description = 'view tag #', group = 'tag'}
 		descr_toggle = {description = 'toggle tag #', group = 'tag'}
 		descr_move = {description = 'move focused client to tag #', group = 'tag'}
@@ -551,10 +565,13 @@ for i = 1, 9 do
 			'#' .. i + 9,
 			function()
 				local focused = awful.screen.focused()
-				local tag = focused.tags[i]
+				local tag = root.tags()[i] 	-- with Charitable I have to select the tags from 
+								-- all screens and not just the focused screen
 				if tag then
-					tag:view_only()
+					charitable.select_tag(tag, focused)
 				end
+				-- keep the focus on the same screen instead of on the same window:
+				awful.screen.focus(focused) 
 			end,
 			descr_view
 		),
@@ -564,9 +581,9 @@ for i = 1, 9 do
 			'#' .. i + 9,
 			function()
 				local focused = awful.screen.focused()
-				local tag = focused.tags[i]
+				local tag = root.tags()[i]
 				if tag then
-					awful.tag.viewtoggle(tag)
+					charitable.toggle_tag(tag, focused)
 				end
 			end,
 			descr_toggle
@@ -577,7 +594,7 @@ for i = 1, 9 do
 			'#' .. i + 9,
 			function()
 				if client.focus then
-					local tag = client.focus.screen.tags[i]
+					local tag = root.tags()[i]
 					if tag then
 						client.focus:move_to_tag(tag)
 					end
@@ -591,7 +608,7 @@ for i = 1, 9 do
 			'#' .. i + 9,
 			function()
 				if client.focus then
-					local tag = client.focus.screen.tags[i]
+					local tag = root.tags()[i]
 					if tag then
 						client.focus:toggle_tag(tag)
 					end
