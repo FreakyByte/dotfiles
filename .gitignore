@@ -4,6 +4,10 @@ spicetify/Extracted/
 
 BetterDiscord/data/
 BetterDiscord/emote_data.json
+BetterDiscord/emote_data.json
+BetterDiscord/plugins/
+!BetterDiscord/plugins/*.config.json
+!BetterDiscord/plugins/*.config.js
 
 fish/fish_variables
 fish/completions/
@@ -14,5 +18,6 @@ fish/functions/*
 
 fish/fish_plugins
 fish/conf.d/
+fish/fishd.tmp.6sfRLm
 
 One/awesome/configuration/user-profile/reiti.png

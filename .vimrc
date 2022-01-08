@@ -47,6 +47,9 @@ set complete=.,w,b,u,t
 
 "colorscheme wal
 
+" make the background of folds less obnoxious
+hi Folded ctermbg=16
+
 """ lightline
 set laststatus=2
 let g:lightline = {

@@ -255,8 +255,6 @@ bindsym $mod+Shift+s exec --no-startup-id systemctl suspend
 ### AUTOSTART PROGRAMS
 # compositor
 exec --no-startup-id picom -b
-# powerline daemon for quick powerline drawing
-exec --no-startup-id powerline-daemon -q
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
