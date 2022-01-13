@@ -1,3 +1,9 @@
 [submodule "One/awesome/charitable"]
 	path = One/awesome/charitable
 	url = https://github.com/frioux/charitable
+[submodule "IdeaPad/charitable"]
+	path = IdeaPad/charitable
+	url = https://github.com/frioux/charitable
+[submodule "IdeaPad/awesome/charitable"]
+	path = IdeaPad/awesome/charitable
+	url = https://github.com/frioux/charitable
