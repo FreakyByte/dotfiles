@@ -67,7 +67,7 @@ autocmd FileType tex setlocal shiftwidth=2 tabstop=2 textwidth=100
 autocmd VimEnter * silent! iunmap <buffer> ]]
 "at VimEnter because otherwise it happens before the Plugin defines the map
 "silent! because it otherwise gives error in other filetypes
-autocmd VimEnter * imap <C-]> <Plug>(vimtex-delim-close)  
+autocmd VimEnter * imap <C-]> <Plug>(vimtex-delim-close)
 "disable indentation of &s
 let g:vimtex_indent_on_ampersands = 0
 
@@ -111,6 +111,3 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 let g:EasyClipShareYanks=1
 nmap M <Plug>MoveMotionEndOfLinePlug
 "the above binds m to cut (delete and copy to clipboard)
-
-
-

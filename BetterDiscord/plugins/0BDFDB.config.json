@@ -1,5 +1,6 @@
 {
 	"changeLogs": {
+		"BDFDB": "2.0.6",
 		"CopyRawMessage": "1.1.2",
 		"CustomQuoter": "1.2.8",
 		"ImageUtilities": "4.4.5",
@@ -19,7 +20,7 @@
 		"useChromium": false
 	},
 	"hashes": {
-		"0BDFDB.data.json": "d4b0c62bfe402228295873986d4be8c56cd92e05",
-		"0BDFDB.raw.css": "6bb82eb9f45d2d68a03ad2d3e21dcf35a5e2e3ee"
+		"0BDFDB.data.json": "a485715019970a30abc55c2a0b8f00bf3240974a",
+		"0BDFDB.raw.css": "a1036e10077b9457f3903795204f7dbd91d7646d"
 	}
 }

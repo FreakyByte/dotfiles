@@ -194,84 +194,106 @@ client.connect_signal(
 		if c.type == 'normal' then
 
 			if c.class == 'kitty' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 			elseif c.class == 'firefox' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', beautiful.background, beautiful.titlebar_size)
 
 			elseif c.class == 'XTerm' or c.class == 'UXTerm' then
+				c.titlepos = 'top'
 				create_horizontal_bar(c, 'top',
 					beautiful.xresources.get_current_theme().background, beautiful.titlebar_size)
 
 			elseif c.class == 'ark' or c.class == 'dolphin' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 			elseif c.instance == 'transmission-qt' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 			elseif c.class == 'Gimp-2.10' or c.class == 'Inkscape' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Com.github.johnfactotum.Foliate' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Arandr' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Ettercap' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().base_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Google-chrome' or c.class == 'Chromium' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().base_color, beautiful.titlebar_size)
 				
 			elseif c.class == 'TelegramDesktop' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#17212b', beautiful.titlebar_size)
 
 			elseif c.class == 'Kvantum Manager' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 			elseif c.class == 'qt5ct' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 			elseif c.class == 'Nemo' then
+				c.titlepos = 'top'
 				create_horizontal_bar(c, 'top',
 					beautiful.gtk.get_theme_variables().base_color, beautiful.titlebar_size)
 
 			else
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left', beautiful.background, beautiful.titlebar_size)
 			end
 
 		elseif c.type == 'dialog' then
 
 			if c.role == 'GtkFileChooserDialog' then
+				c.titlepos = 'left'
 				create_vertical_bar_dialog(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'firefox' then
+				c.titlepos = 'left'
 				create_vertical_bar_dialog(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Gimp-2.10' then
+				c.titlepos = 'left'
 				create_vertical_bar_dialog(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			elseif c.class == 'Arandr' then
+				c.titlepos = 'left'
 				create_vertical_bar(c, 'left',
 					beautiful.gtk.get_theme_variables().bg_color, beautiful.titlebar_size)
 
 			else
+				c.titlepos = 'left'
 				create_vertical_bar_dialog(c, 'left', '#00000099', beautiful.titlebar_size)
 			end
 
 		elseif c.type == 'modal' then
+			c.titlepos = 'left'
 			create_vertical_bar(c, 'left', '#00000099', beautiful.titlebar_size)
 
 		else
+			c.titlepos = 'left'
 			create_vertical_bar(c, 'left', beautiful.background, beautiful.titlebar_size)
 		end
 	end
