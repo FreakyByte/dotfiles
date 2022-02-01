@@ -1,6 +1,5 @@
 {
 	"changeLogs": {
-		"BDFDB": "1.7.13",
 		"CopyRawMessage": "1.1.2",
 		"CustomQuoter": "1.2.8",
 		"ImageUtilities": "4.4.5",
@@ -8,9 +7,8 @@
 		"LastMessageDate": "1.2.8",
 		"RemoveNicknames": "1.4.0",
 		"ServerCounter": "1.0.3",
-		"ShowHiddenChannels": "3.0.2",
 		"SplitLargeMessages": "1.7.0",
-		"Translator": "2.3.1"
+		"Translator": "2.3.2"
 	},
 	"choices": {
 		"toastPosition": "right"
@@ -19,5 +17,9 @@
 		"showToasts": true,
 		"showSupportBadges": true,
 		"useChromium": false
+	},
+	"hashes": {
+		"0BDFDB.data.json": "d4b0c62bfe402228295873986d4be8c56cd92e05",
+		"0BDFDB.raw.css": "6bb82eb9f45d2d68a03ad2d3e21dcf35a5e2e3ee"
 	}
 }
