@@ -6,6 +6,8 @@ local icons = require('theme.icons')
 -- xmonad-style tag management (workspaces) using the Charitabe library
 local charitable = require("charitable") 	
 
+local modkey = require('configuration.keys.mod').mod_key
+
 --- Common method to create buttons.
 -- @tab buttons
 -- @param object

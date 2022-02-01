@@ -69,15 +69,15 @@ tags[4].default_app = 'reaper'
 tags[4].gap = beautiful.useless_gap
 tags[4].screen = 1
 
-tags[5].type = 'games'
-tags[5].icon = icons.games
-tags[5].default_app = apps.default.game
+tags[5].type = 'any'
+tags[5].icon = "/usr/share/icons/Flat-Remix-Green-Dark/apps/scalable/accessories-ebook-reader.svg"
+tags[5].default_app = apps.default.graphics
 tags[5].gap = beautiful.useless_gap
 tags[5].screen = 1
 
-tags[6].type = 'any'
-tags[6].icon = "/usr/share/icons/Flat-Remix-Green-Dark/apps/scalable/accessories-ebook-reader.svg"
-tags[6].default_app = apps.default.graphics
+tags[6].type = 'games'
+tags[6].icon = icons.games
+tags[6].default_app = apps.default.game
 tags[6].gap = beautiful.useless_gap
 tags[6].screen = 1
 

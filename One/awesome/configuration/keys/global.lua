@@ -326,6 +326,14 @@ local global_keys = awful.util.table.join(
 		{ }, 
 		'Print',
 		function ()
+			awful.spawn.easy_async_with_shell('flameshot gui',function() end)
+		end,
+		{description = 'fullscreen screenshot', group = 'Utility'}
+	),
+	awful.key(
+		{modkey }, 
+		'Print',
+		function ()
 			awful.spawn.easy_async_with_shell(apps.utils.full_screenshot,function() end)
 		end,
 		{description = 'fullscreen screenshot', group = 'Utility'}
@@ -364,7 +372,7 @@ local global_keys = awful.util.table.join(
 	),
 	awful.key(
 		{modkey},
-		't',
+		'r',
 		function() 
 			awesome.emit_signal('widget::blue_light:toggle')
 		end,
@@ -416,6 +424,14 @@ local global_keys = awful.util.table.join(
 			awful.spawn(apps.default.web_browser)
 		end,
 		{description = 'open default web browser', group = 'launcher'}
+	),
+	awful.key(
+		{modkey}, 
+		'e',
+		function()
+			awful.spawn('emacsclient -c -a emacs')
+		end,
+		{description = 'open emacs', group = 'launcher'}
 	),
 	awful.key(
 		{'Control', 'Shift'}, 
@@ -538,6 +554,18 @@ local global_keys = awful.util.table.join(
 				end
 
 				_G.right_panel_mode = 'notif_mode'
+			end
+		end,
+		{description = 'open notification center', group = 'launcher'}
+	),
+	awful.key(
+		{modkey}, 
+		't',
+		function()
+			for _, c in ipairs(client.get()) do
+				if c.titlepos then
+					awful.titlebar.toggle(c,c.titlepos)
+				end
 			end
 		end,
 		{description = 'open notification center', group = 'launcher'}
