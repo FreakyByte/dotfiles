@@ -7,3 +7,6 @@
 [submodule "IdeaPad/awesome/charitable"]
 	path = IdeaPad/awesome/charitable
 	url = https://github.com/frioux/charitable
+[submodule "awesome/charitable"]
+	path = awesome/charitable
+	url = https://github.com/frioux/charitable
