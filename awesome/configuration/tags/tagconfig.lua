@@ -1,10 +1,12 @@
+local beautiful = require('beautiful')
+
 local icons = require('theme.icons')
 local apps = require('configuration.apps')
 local system = require('configuration.config').system or "One"
 
 return function(tags)
   for i = 1, #tags do
-    tags[i].gap = beatiful.useless_gap
+    tags[i].gap = beautiful.useless_gap
   end
 
   tags[1].type = 'internet'
@@ -44,7 +46,7 @@ return function(tags)
   tags[10].icon = "/usr/share/spotify/icons/spotify-linux-128.png"
   tags[10].default_app = 'spotify'
 
-  if config.system == "One" then
+  if system == "One" then
     -- default screens for tags
     tags[1].screen = 1
     tags[2].screen = 1
@@ -61,11 +63,10 @@ return function(tags)
     tags[4].icon = "/usr/share/icons/Papirus/64x64/apps/cockos-reaper.svg"
     tags[4].default_app = 'reaper'
 
-  elseif config.system == "Ideapad" then
+  elseif system == "Ideapad" then
     tags[4].type = 'notes'
     tags[4].icon = "/usr/share/icons/Mint-Y/apps/96/xournal.png"
     tags[4].default_app = 'xournalpp'
-    tags[4].gap = beautiful.useless_gap
   end
 
   return tags

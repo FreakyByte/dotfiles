@@ -43,7 +43,7 @@ local tags = charitable.create_tags(
 )
 
 -- giving the tags a bunch of extra information
-tags = require('tagconfig')(tags)
+tags = require('configuration.tags.tagconfig')(tags)
 
 
 awful.screen.connect_for_each_screen(function(s)
