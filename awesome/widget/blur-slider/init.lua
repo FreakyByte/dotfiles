@@ -39,7 +39,7 @@ local action_level = wibox.widget {
 local slider = wibox.widget {
 	nil,
 	{
-		id 					= 'blur_strength_slider',
+		id					= 'blur_strength_slider',
 		bar_shape           = gears.shape.rounded_rect,
 		bar_height          = dpi(2),
 		bar_color           = '#ffffff20',
@@ -64,7 +64,7 @@ local update_slider_value = function()
 
 	awful.spawn.easy_async_with_shell(
 		[[bash -c "
-		grep -F 'strength =' $HOME/.config/awesome/configuration/picom.conf | 
+		grep -F 'strength =' $HOME/.config/awesome/configuration/picom.conf |
 		awk 'NR==1 {print $3}' | tr -d ';'
 		"]],
 		function(stdout, stderr)
@@ -108,6 +108,10 @@ action_level:buttons(
 	)
 )
 
+-- this is necessary when system default uses , as a decimal seperator since the picom config file
+-- only accepts . as a decimal seperator
+assert(os.setlocale'C')
+
 local adjust_blur = function(power)
 
 	awful.spawn.with_shell(
@@ -131,13 +135,13 @@ blur_slider:connect_signal(
 -- Adjust slider value to change blur strength
 awesome.connect_signal(
 	'widget::blur:increase',
-	function() 
+	function()
 
 		-- On startup, the slider.value returns nil so...
 		if blur_slider:get_value() == nil then
 			return
 		end
-	 
+
 		local blur_value = blur_slider:get_value() + 10
 
 		-- No more than 100!
@@ -153,8 +157,8 @@ awesome.connect_signal(
 -- Decrease blur
 awesome.connect_signal(
 	'widget::blur:decrease',
-	function() 
-	
+	function()
+
 		-- On startup, the slider.value returns nil so...
 		if blur_slider:get_value() == nil then
 			return
