@@ -120,9 +120,9 @@ end
 
 local tag_list = function(s)
 	if system == "Ideapad" then
-		filt = awful.widget.taglist.filter.all,
+		filt = awful.widget.taglist.filter.all
 	else
-		filt = awful.widget.taglist.filter.noempty,
+		filt = awful.widget.taglist.filter.noempty
 	end
 
 	return awful.widget.taglist({
