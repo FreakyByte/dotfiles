@@ -85,6 +85,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
   (apply orig-fn beg end type ?_ args))
 (advice-add 'evil-delete :around 'bb/evil-delete)
+(advice-add 'evil-delete-char :around 'bb/evil-delete)
 ;; this way d and x and pasting over something all only delete and not cut
 
 ;; ------------------ TRANSPARENCY ----------------------------
