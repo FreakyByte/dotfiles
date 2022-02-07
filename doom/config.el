@@ -70,6 +70,17 @@
 ;; ------------------ KEYBINDINGS ----------------------------
 (setq doom-localleader-key ",")
 
+;; ----- org-d20
+(map! :localleader
+      :map org-mode-map
+      (:prefix ("D" . "org-d20")
+       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
+       :desc "add to combat" "a" #'org-d20-initiative-add
+       :desc "apply damage at point" "d" #'org-d20-damage
+       :desc "roll" "r" #'org-d20-roll
+       )
+      )
+
 ;; clone the evil delete function and rename it evil-cut
 (setq wrapped-copy (symbol-function 'evil-delete))
 (evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)

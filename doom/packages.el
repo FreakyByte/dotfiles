@@ -49,6 +49,9 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-
-(package! ewal) 		;; themeing based on pywal colors
+;; themeing based on pywal colors
+(package! ewal)
 (package! ewal-doom-themes)
+
+;; rolling dice and managing initiative in Emacs
+(package! org-d20)
