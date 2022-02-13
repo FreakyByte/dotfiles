@@ -332,6 +332,7 @@ ruled.client.connect_signal(
 					'scrcpy',
 					'Mugshot',
 					'Pulseeffects',
+					'Blueman-manager',
 				},
 				role    = {
 					'AlarmWindow',
