@@ -90,7 +90,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (interactive "<R><x><y>")
   (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
 ;; map cut to m (for move)
-(evil-global-set-key 'normal "m" 'evil-cut)
+(map! :n "m" 'evil-cut)
 
 ;; automatically redirect all deletions to the black hole register
 (defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
@@ -193,6 +193,22 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (setq fancy-splash-image "~/.config/doom/I-am-doom.png") ;; https://github.com/jeetelongname/doom-banners
 (setq +doom-dashboard-banner-padding '(0 . 0)) ;; remove whitespace after splash
 
+;; -------- LaTeX
+(setq +latex-viewers nil)
+(setq +latex-indent-item-continuation-offset 'auto)
+(setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
+;;... so I map toggle keybindings to localleader instead
+(map! :localleader
+      :map evil-tex-mode-map
+      (:prefix ("t" . "toggle") ;; TODO this is not displaying descriptions properly, probably related to https://github.com/hlissner/doom-emacs/issues/4288
+       :desc "command"          "c"     #'evil-tex-toggle-command
+       :desc "delimiter"        "d"     #'evil-tex-toggle-delim
+       :desc "environment"      "e"     #'evil-tex-toggle-env
+       :desc "math"             "m"     #'evil-tex-toggle-math
+       :desc "math align*"      "M"     #'evil-tex-toggle-math-align
+       :desc "section"          "S"     #'evil-tex-toggle-section
+       )
+      )
 
 ;; -------- CREATE CONTAINING HEADINGS WHEN ARCHIVING
 ;; stolen from https://gist.github.com/edgimar/072d99d8650abe81a9fe7c8687c0c993
