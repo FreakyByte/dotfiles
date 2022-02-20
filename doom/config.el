@@ -118,6 +118,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
         org-log-done 'time
         org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
+        org-agenda-skip-deadline-if-done t     ; do not show deadlines in agenda if they're already done
         org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
           '((sequence
              "TODO(t)"
