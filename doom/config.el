@@ -101,14 +101,29 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 ;; ------------------ TRANSPARENCY ----------------------------
 (defconst doom-frame-transparency 85)
-(set-frame-parameter (selected-frame) 'alpha doom-frame-transparency)
-(add-to-list 'default-frame-alist `(alpha . ,doom-frame-transparency))
-(defun dwc-smart-transparent-frame ()
-  (set-frame-parameter
-    (selected-frame)
-    'alpha (if (frame-parameter (selected-frame) 'fullscreen)
-              100
-             doom-frame-transparency)))
+(defun toggle-background-opacity ()
+        "toggle transparent background"
+        (interactive)
+        (if (eq doom-frame-opacity 100)
+            (setq doom-frame-opacity doom-frame-transparency)
+            (setq doom-frame-opacity 100))
+        (set-frame-parameter (selected-frame) 'alpha doom-frame-opacity)
+        (add-to-list 'default-frame-alist `(alpha . ,doom-frame-opacity))
+        (defun dwc-smart-transparent-frame ()
+        (set-frame-parameter
+        (selected-frame)
+        'alpha (if (frame-parameter (selected-frame) 'fullscreen)
+                100
+                doom-frame-opacity))))
+;; make transparent on startup
+(setq doom-frame-opacity 100)
+(toggle-background-opacity)
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "transparency"          "t"     #'toggle-background-opacity
+       )
+      )
 
 
 ;; ------------------ ORG CONFIG ----------------------------
