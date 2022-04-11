@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: surreal number form
+# key: surr
+# --
+\langle $1 \mid $2 \rangle $0

@@ -55,3 +55,7 @@
 
 ;; rolling dice and managing initiative in Emacs
 (package! org-d20)
+
+;; maximum line lenght in visual line mode
+(package! window-margin
+  :recipe (:host github :repo "aculich/window-margin.el"))

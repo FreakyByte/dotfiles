@@ -67,6 +67,14 @@
 ;; increase time until autocomplete shows up
 (setq company-idle-delay 0.4)
 
+;; disable final newline for snippet creation
+(add-hook 'snippet-mode-hook 'my-snippet-mode-hook)
+(defun my-snippet-mode-hook ()
+  "Custom behaviours for `snippet-mode'."
+  (setq-local require-final-newline nil)
+  (setq-local mode-require-final-newline nil))
+
+
 ;; ------------------ KEYBINDINGS ----------------------------
 (setq doom-localleader-key ",")
 
@@ -211,7 +219,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (setq +doom-dashboard-banner-padding '(0 . 0)) ;; remove whitespace after splash
 
 ;; -------- LaTeX
-(setq +latex-viewers nil)
+;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
 ;;... so I map toggle keybindings to localleader instead
@@ -226,6 +234,10 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        :desc "section"          "S"     #'evil-tex-toggle-section
        )
       )
+;;
+;; set maximum line length for visual-line-mode in tex-mode
+(add-hook 'TeX-mode-hook 'window-margin-mode)
+(setq-default fill-column 100)
 
 ;; -------- TODO this seems buggy
 ;; CREATE CONTAINING HEADINGS WHEN ARCHIVING
