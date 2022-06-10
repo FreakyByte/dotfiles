@@ -77,7 +77,9 @@ return {
 		-- Cloud
 		'dropbox start',
 		-- Touch gestures
-		'touchegg'
+		'touchegg',
+		-- Touch gestures
+        'keepassxc'
 
 	},
 
