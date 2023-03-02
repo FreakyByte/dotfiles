@@ -31,8 +31,7 @@ Some things I want to be configured differently on those two devices. For awesom
 
 In case you don't know whether this config is for you, here's a short bit that might help you find out. Past that, I guess you're just gonna have to try it.
 ** What this Config tries to do
- - be both efficient for work and chill to use for entertainment
- - make (mostly) everything possible with keyboard alone
+ - be both efficient for work (using almost exclusively the keyboard) and chill to use for entertainment (operated with a mouse like a more common desktop environment)
  - be clean and visually appealing while remaining functionality
  - be taylored to my specific need
 ** What this Config doesn't try to do
@@ -131,12 +130,11 @@ This config uses [[https://github.com/resloved/i3][Rounded i3-gaps]], a fork of 
 Installation instructions can be found [[https://www.reddit.com/r/unixporn/comments/benebi/i3gaps_i3_rounded_corners/eqrmews/][here]]. To build it, [[https://github.com/Airblader/i3/wiki/Building-from-source#dependencies][these additional dependencies]] must be met.
 
 Required dependencies:
-| Name            | Version                                                              | Description                    | Why/Where is it needed? |
-|-----------------+----------------------------------------------------------------------+--------------------------------+-------------------------|
-| [[https://github.com/resloved/i3][Rounded i3-gaps]] | 4.16.1-186-gf3fffbae (2020-03-01, branch "shape")                    | tiling window manager          | Main component          |
-| [[https://github.com/polybar/polybar][polybar]]         | 3.5.7, compiled with features:                                       | highly customizable status bar | status bar              |
-|                 | +alsa +curl +i3 +mpd +network(wireless-tools) +pulseaudio +xkeyboard |                                |                         |
-| [[https://github.com/yshui/picom][picom]]           | vgit-fb376                                                           | A compositor for X11           | transparency            |
+| Name            | Version                                                                                              | Description                    | Why/Where is it needed? |
+|-----------------+------------------------------------------------------------------------------------------------------+--------------------------------+-------------------------|
+| [[https://github.com/resloved/i3][Rounded i3-gaps]] | 4.16.1-186-gf3fffbae (2020-03-01, branch "shape")                                                    | tiling window manager          | Main component          |
+| [[https://github.com/polybar/polybar][polybar]]         | 3.5.7, compiled with features:  +alsa +curl +i3 +mpd +network(wireless-tools) +pulseaudio +xkeyboard | highly customizable status bar | status bar              |
+| [[https://github.com/yshui/picom][picom]]           | vgit-fb376                                                                                           | A compositor for X11           | transparency            |
 
 Optional dependencies:
 | Name        | Description          | Where is it used?      |
