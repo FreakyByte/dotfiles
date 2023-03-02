@@ -1,0 +1,502 @@
+#+title: DOOM Emacs Config
+#+PROPERTY: header-args:emacs-lisp :tangle yes :cache yes :results silent
+
+* Table of Contents :toc:
+- [[#about-this-config][About this Config]]
+- [[#basics][Basics]]
+- [[#appearance][Appearance]]
+  - [[#fonts][Fonts]]
+  - [[#theme][Theme]]
+  - [[#line-numbers-and-wrapping][Line Numbers and Wrapping]]
+  - [[#transparent-background][Transparent Background]]
+  - [[#whitespace][Whitespace]]
+- [[#global-options][Global Options]]
+  - [[#autocomplete][Autocomplete]]
+  - [[#snippets][Snippets]]
+- [[#keybindings][Keybindings]]
+  - [[#local-leader][Local Leader]]
+  - [[#movecut][Move/Cut]]
+  - [[#toggle-transparency][Toggle Transparency]]
+  - [[#org-d20][org-d20]]
+- [[#org-mode][Org Mode]]
+  - [[#org-paths][Org-Paths]]
+  - [[#org-appearance][Org-Appearance]]
+  - [[#archive-subtree-with-headings-disabled][Archive Subtree with Headings (DISABLED)]]
+- [[#latex][LaTeX]]
+- [[#tangle-this-file][Tangle this file!]]
+
+* About this Config
+Here is some help from the default config.el that I haven't found a better spot for yet.
+#+begin_quote
+Here are some additional functions/macros that could help you configure Doom:
+
+- `load!' for loading external *.el files relative to this one
+- `use-package!' for configuring packages
+- `after!' for running code after a package has loaded
+- `add-load-path!' for adding directories to the `load-path', relative to
+  this file. Emacs searches the `load-path' when you load packages with
+  `require' or `use-package'.
+- `map!' for binding new keys
+
+To get information about any of these functions/macros, move the cursor over
+the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+This will open documentation for it, including demos of how they are used.
+
+You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+they are implemented.
+#+end_quote
+
+
+* Basics
+
+#+begin_src emacs-lisp
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+(setq user-full-name "Michael Reitmeir"
+      user-mail-address "michi.reitmeir@gmail.com")
+#+end_src
+
+* Appearance
+
+** Fonts
+From the default config.el:
+#+begin_quote
+Doom exposes five (optional) variables for controlling fonts in Doom. Here
+are the three important ones:
+
++ `doom-font'
++ `doom-variable-pitch-font'
++ `doom-big-font' -- used for `doom-big-font-mode'; use this for
+  presentations or streaming.
+
+They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+font string. You generally only need these two:
+(setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 13))
+#+end_quote
+
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular))
+;;      doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
+;;      doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)
+;;      doom-big-font (font-spec :family "Fira Mono" :size 19))
+(setq-default line-spacing 0.25)
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+#+end_src
+
+** Theme
+I like DOOMs default colors
+#+begin_src emacs-lisp
+(setq doom-theme 'doom-one)
+#+end_src
+
+But I still wanna customize it a bit.
+*** Shades with ewal
+I use [[https://github.com/dylanaraps/pywal][pywal]] to have the colors in my terminal fit my wallpaper.
+While for Emacs I use the colors from the ~doom-one~ theme, I still want the (transparent) backgrounds of different parts of Emacs to synergyze with pywal.
+For this, the [[https://github.com/cyruseuros/ewal][ewal]] package is used to get the colorscheme from pywal into Emacs.
+
+#+begin_src emacs-lisp
+(use-package ewal)
+(use-package ewal-doom-themes)
+
+(after! doom-themes
+	(custom-theme-set-faces! 'doom-one
+	   `(default :background ,(ewal-load-color 'background))
+	   `(hl-line :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .1))
+
+	   ;; Tabs:
+	   `(tab-bar :background ,(ewal-load-color 'background))
+	   `(centaur-tabs-selected :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .1))
+	   `(tab-bar-tab :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .1))
+	   `(centaur-tabs-unselected :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .05))
+	   `(tab-bar-tab-inactive :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .05))
+	   `(tab-line :background ,(ewal-load-color 'background))
+
+	   ;; Mode line:
+	   `(mode-line :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .15))
+	   `(mode-line-inactive :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .05))
+	   `(mode-line-emphasis :background ,(ewal--color-chshade
+                        (ewal-load-color 'background) .20))
+
+	   ;; minibuffer (underneath mode line) and stuff
+	   `(solaire-default-face :background ,(ewal-load-color 'background))
+	   ))
+#+end_src
+
+*** Dashboard (startup page)
+I the silly banner I found at [[https://github.com/jeetelongname/doom-banners]] for my dashboard. To fit with this, font color is changed to pink.
+#+begin_src emacs-lisp
+(after! doom-themes
+	(custom-theme-set-faces! 'doom-one
+	   `(doom-dashboard-banner :foreground "pink" :weight bold)
+	   ))
+(setq fancy-splash-image "~/.config/doom/I-am-doom.png")
+(setq +doom-dashboard-banner-padding '(0 . 0))
+#+end_src
+The change in padding is to remove the whitespace after the splash image, so that everything still fits on the screen (for the most part).
+
+** Line Numbers and Wrapping
+Display relative line numbers, but do so counting lines as displayed, not actual line breaks in the buffer.
+#+begin_src emacs-lisp
+(setq display-line-numbers-type 'visual)
+#+end_src
+This works well for me, because I like overlength lines to always automatically wrap.
+#+begin_src emacs-lisp
+(global-visual-line-mode t)
+#+end_src
+
+** Transparent Background
+I like me some transparent backgrounds. This value controls the opacity if transparent background is enabled.
+#+begin_src emacs-lisp
+(defconst doom-frame-transparency 85)
+#+end_src
+In contrast, the variable ~doom-frame-opacity~ is used for the current opacity. So this variable is set to ~100~ if transparency is disabled.
+
+Now follows a function to toggle the transparent background on and off.
+#+begin_src emacs-lisp
+(defun toggle-background-opacity ()
+        "toggle transparent background"
+        (interactive)
+        (if (eq doom-frame-opacity 100)
+            (setq doom-frame-opacity doom-frame-transparency)
+            (setq doom-frame-opacity 100))
+        (set-frame-parameter (selected-frame) 'alpha doom-frame-opacity)
+        (add-to-list 'default-frame-alist `(alpha . ,doom-frame-opacity))
+        (defun dwc-smart-transparent-frame ()
+        (set-frame-parameter
+        (selected-frame)
+        'alpha (if (frame-parameter (selected-frame) 'fullscreen)
+                100
+                doom-frame-opacity))))
+#+end_src
+
+This will make the background transparent at startup.
+#+begin_src emacs-lisp
+(setq doom-frame-opacity 100)
+(toggle-background-opacity)
+#+end_src
+
+** Whitespace
+Highlight unnecessary or wrong use of whitespace (e.g. mixed tabs and spaces).
+#+begin_src emacs-lisp
+(use-package! whitespace
+  :config (setq whitespace-style '(face trailing empty indentation space-after-tab space-before-tab))
+  (global-whitespace-mode +1))
+#+end_src
+
+
+* Global Options
+** Autocomplete
+Increase time until autocomplete shows up.
+#+begin_src emacs-lisp
+(setq company-idle-delay 0.4)
+#+end_src
+** Snippets
+This disables the annoying final newline when creating a snippet, which always screws things up.
+#+begin_src emacs-lisp
+(add-hook 'snippet-mode-hook 'my-snippet-mode-hook)
+(defun my-snippet-mode-hook ()
+  "Custom behaviours for `snippet-mode'."
+  (setq-local require-final-newline nil)
+  (setq-local mode-require-final-newline nil))
+#+end_src
+
+* Keybindings
+** Local Leader
+I'm used to this from my VimTex days.
+#+begin_src emacs-lisp
+(setq doom-localleader-key ",")
+#+end_src
+** Move/Cut
+I've always liked that the delete command in vim automatically yanks the deleted text, i.e. it acts more like cutting than deleting.
+For this reason I've configured 'd' and 'x' to not yank the deleted text, and instead defined 'm' (for "move", because 'c' is already taken) to delete and yank, i.e. cut.
+
+First we clone the default ~evil-delete~ function under the name ~evil-cut~.
+#+begin_src emacs-lisp
+(setq wrapped-copy (symbol-function 'evil-delete))
+(evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)
+  "Cut text from BEG to END with TYPE.
+
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+  (interactive "<R><x><y>")
+  (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
+#+end_src
+
+Now we map ~evil-cut~ to 'm'.
+#+begin_src emacs-lisp
+(map! :n "m" 'evil-cut)
+#+end_src
+
+Finally, we automatically redirect all deletions to the black hole register, thus making 'd', 'x', and pasting over something only delete and not copy.
+We also need to do it for ~evil-org-delete-char~, since that has different input arguments and an extra ~evil-yank~ in it's definition for some reason.
+#+begin_src emacs-lisp
+(defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
+  (apply orig-fn beg end type ?_ args))
+(advice-add 'evil-delete :around 'bb/evil-delete)
+(advice-add 'evil-delete-char :around 'bb/evil-delete)
+
+(defun bb/evil-org-delete-char (orig-fn count beg end &optional type _ &rest args)
+  (apply orig-fn count beg end type ?_ args))
+(advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
+#+end_src
+
+** Toggle Transparency
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "transparency"          "t"     #'toggle-background-opacity
+       )
+      )
+#+end_src
+
+** org-d20
+Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.
+The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for rolling dice and taking care of combat initiative and hp within org.
+
+#+begin_src emacs-lisp
+(map! :localleader
+      :map org-mode-map
+      (:prefix ("D" . "org-d20")
+       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
+       :desc "add to combat" "a" #'org-d20-initiative-add
+       :desc "apply damage at point" "d" #'org-d20-damage
+       :desc "roll" "r" #'org-d20-roll
+       )
+      )
+#+end_src
+
+* Org Mode
+** Org-Paths
+#+begin_src emacs-lisp
+(setq org-directory "~/org/")
+(setq org-agenda-files (list "~/org/todo.org"))
+#+end_src
+** Org-Appearance
+#+begin_src emacs-lisp
+(after! org
+  (setq org-ellipsis " ▼ "
+        org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
+        org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
+        org-log-done 'time
+        org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
+        org-agenda-skip-deadline-if-done t     ; do not show deadlines in agenda if they're already done
+        org-deadline-warning-days 7
+        org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
+          '((sequence
+             "TODO(t)"
+             "WAIT(w)"
+             "TODELEGATE(T)"
+             "IDEA(i)"
+             "|"
+             "DONE(d)"
+             "DELEGATED(D)"
+             "CANCELLED(c)" ))
+	  org-todo-keyword-faces
+        '(("WAIT" . "#ECBE7B")
+        ("TODELEGATE" . "pink")
+        ("IDEA" . "cyan")
+        ("DONE" . "#5b8c68")
+        ("DELEGATED" . "#a9a1e1")
+        ("CANCELLED" . "#ff6c6b")
+        )
+	  ))
+
+(custom-set-faces!
+  `(org-level-1 :inherit outline-1 :height 1.4)
+  `(org-level-2 :inherit outline-2 :height 1.25)
+  `(org-level-3 :inherit outline-3 :height 1.1)
+  `(org-level-4 :inherit outline-4 :height 1.05)
+  `(org-level-5 :inherit outline-5 :height 1.0)
+  `(org-document-title :background nil :height 1.5 :weight bold)
+)
+#+end_src
+** Archive Subtree with Headings (DISABLED)
+stolen from: https://gist.github.com/edgimar/072d99d8650abe81a9fe7c8687c0c993
+small fix from Lukas Barth: https://emacs.stackexchange.com/questions/47660/org-mode-archiving-create-containing-headings
+customized variables and keybinds by me
+
+The goal of the following code is to create an org archiving function that also saves the containing headings with an item.
+However, even after the above fix, it seems buggy, so I stopped using it for now. The default archiving is honestly sufficient.
+I'm still keeping this here for at least one git commit though, in case I decide to go back to it in the future and need to read this commentary again to remind me what all this was about.
+
+#+begin_src emacs-lisp :tangle no
+;;; (require 'org-archive)
+;;;
+;;; ; Set the function to use for org-archive-default  (C-c C-x C-a)
+;;; (setq org-archive-location "archive.org::")
+;;;
+;;; ; unmap org-archive-subtree
+;;; (define-key org-mode-map (kbd "C-c C-x C-s") nil)
+;;;
+;;; ; select command to execute via org-archive-subtree-default (C-c C-x C-a)
+;;; (setq org-archive-default-command 'org-archive-subtree-hierarchical)
+;;; ;; overwrite default DOOM archive mapping
+;;; (map! :map org-mode-map
+;;;       :localleader
+;;;       :desc "archive subtree" "A" 'org-archive-subtree-hierarchical)
+;;;
+;;; (defun line-content-as-string ()
+;;;   "Returns the content of the current line as a string"
+;;;   (save-excursion
+;;;     (beginning-of-line)
+;;;     (buffer-substring-no-properties
+;;;      (line-beginning-position) (line-end-position))))
+;;;
+;;; (defun org-child-list (&optional top-level)
+;;;   "This function returns all children of a heading as a list. "
+;;;   (interactive)
+;;;   (save-excursion
+;;;     ;; this only works with org-version > 8.0, since in previous
+;;;     ;; org-mode versions the function (org-outline-level) returns
+;;;     ;; gargabe when the point is not on a heading.
+;;;     (unless top-level
+;;;         (if (= (org-outline-level) 0)
+;;;             (outline-next-visible-heading 1)
+;;;         (org-goto-first-child)))
+;;;     (let ((child-list (list (line-content-as-string))))
+;;;       (while (org-goto-sibling)
+;;;         (setq child-list (cons (line-content-as-string) child-list)))
+;;;       child-list)))
+;;;
+;;; (defun fa/org-struct-subtree ()
+;;;   "This function returns the tree structure in which a subtree belongs as a list."
+;;;   (interactive)
+;;;   (let ((archive-tree nil))
+;;;     (save-excursion
+;;;       (while (org-up-heading-safe)
+;;;         (let ((heading
+;;;                (buffer-substring-no-properties
+;;;                 (line-beginning-position) (line-end-position))))
+;;;           (if (eq archive-tree nil)
+;;;               (setq archive-tree (list heading))
+;;;             (setq archive-tree (cons heading archive-tree))))))
+;;;     archive-tree))
+;;;
+;;; (defun org-archive-subtree-hierarchical ()
+;;;   "This function archives a subtree hierarchical"
+;;;   (interactive)
+;;;   (let ((org-tree (fa/org-struct-subtree))
+;;;         (source-buffer (current-buffer))
+;;;         (file (abbreviate-file-name
+;;;                    (or (buffer-file-name (buffer-base-buffer))
+;;;                        (error "No file associated to buffer")))))
+;;;     (save-excursion
+;;;       (setq location (org-archive--compute-location
+;;;                 (or (org-entry-get nil "ARCHIVE" 'inherit)
+;;;                     org-archive-location))
+;;;             afile (car location)
+;;;             heading (cdr location)
+;;;             infile-p (equal file (abbreviate-file-name (or afile ""))))
+;;;       (unless afile
+;;;         (error "Invalid `org-archive-location'"))
+;;;       (if (not (equal heading ""))
+;;;           (progn
+;;;             (setq org-tree (cons heading
+;;;                                (mapcar (lambda (s) (concat "*" s)) org-tree)))
+;;;             (org-demote-subtree)))
+;;;       (if (> (length afile) 0)
+;;;         (progn
+;;;           (setq newfile-p (not (file-exists-p afile))
+;;;                 visiting (find-buffer-visiting afile)
+;;;                 target-buffer (or visiting (find-file-noselect afile))))
+;;;         (progn
+;;;           (setq target-buffer (current-buffer))))
+;;;       (unless target-buffer
+;;;         (error "Cannot access file \"%s\"" afile))
+;;;       (org-cut-subtree)
+;;;       (set-buffer target-buffer)
+;;;       (setq ind-target-buffer (clone-indirect-buffer nil nil))
+;;;       (set-buffer ind-target-buffer)
+;;;       (org-mode)
+;;;       (goto-char (point-min))
+;;;
+;;;       ; simplified version of org-complex-heading-regexp-format
+;;;      (setq my-org-complex-heading-regexp-format
+;;;          (concat "^"
+;;;               "\\(%s\\)"
+;;;               "\\(?: *\\[[0-9%%/]+\\]\\)*"
+;;;               "\\(?:[ \t]+\\(:[[:alnum:]_@#%%:]+:\\)\\)?"
+;;;               "[ \t]*$"))
+;;;       (setq top-level-p t)
+;;;       (while (not (equal org-tree nil))
+;;;         (let ((child-list (org-child-list top-level-p))
+;;;               (re (format my-org-complex-heading-regexp-format (regexp-quote (car org-tree))))
+;;;              )
+;;;           (if (member "______FOUND_MATCH" (mapcar (lambda (s) (replace-regexp-in-string re "______FOUND_MATCH" s)) child-list))
+;;;               (progn
+;;;                 (re-search-forward re nil t)
+;;;                 (setq org-tree (cdr org-tree)))
+;;;             (progn
+;;;               (if (not top-level-p) (newline))
+;;;               (org-insert-struct org-tree)
+;;;               (setq org-tree nil))))
+;;;         (setq top-level-p nil))
+;;;       (newline)
+;;;       (org-yank)
+;;;       ;; Kill the indirect buffer, returning the current buffer to the direct target buffer
+;;;       (kill-buffer ind-target-buffer)
+;;;       ;; Save and kill the target buffer, if it is not the source buffer.
+;;;       (when (not (eq source-buffer target-buffer))
+;;;         (when (not (eq source-buffer target-buffer)) (with-current-buffer target-buffer (save-buffer) ) ) ;; this is Lukas' fix
+;;;         (kill-buffer target-buffer))
+;;;       ;; ensure font-lock and indentation are normal
+;;;       (set-buffer source-buffer)
+;;;       (org-restart-font-lock)
+;;;       (org-indent-mode t)
+;;;       (message "Subtree archived %s"
+;;;                (concat "in file: " (abbreviate-file-name afile))))))
+;;;
+;;; (defun org-insert-struct (struct)
+;;;   "TODO"
+;;;   (interactive)
+;;;   (when struct
+;;;     (insert (car struct))
+;;;     (if  (not (equal (length struct) 1))
+;;;         (newline))
+;;;     (org-insert-struct (cdr struct))))
+
+#+end_src
+
+* LaTeX
+#+begin_src emacs-lisp
+;;(setq +latex-viewers nil)
+(setq +latex-indent-item-continuation-offset 'auto)
+(setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
+;;... so I map toggle keybindings to localleader instead
+(map! :localleader
+      :map evil-tex-mode-map
+      (:prefix ("t" . "toggle") ;; TODO this is not displaying descriptions properly, probably related to https://github.com/hlissner/doom-emacs/issues/4288
+       :desc "command"          "c"     #'evil-tex-toggle-command
+       :desc "delimiter"        "d"     #'evil-tex-toggle-delim
+       :desc "environment"      "e"     #'evil-tex-toggle-env
+       :desc "math"             "m"     #'evil-tex-toggle-math
+       :desc "math align*"      "M"     #'evil-tex-toggle-math-align
+       :desc "section"          "S"     #'evil-tex-toggle-section
+       )
+      )
+;;
+;; set maximum line length for visual-line-mode in tex-mode
+(add-hook 'TeX-mode-hook 'window-margin-mode)
+(setq-default fill-column 100)
+#+end_src
+
+* Tangle this file!
+
+Tangle on save? Reload after tangle? These hooks will ask you after every save.
+(Taken from https://github.com/joseph8th/literatemacs and modified for DOOM)
+
+;; Local Variables:
+;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(doom/reload))) nil t)
+;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
+;; End:
