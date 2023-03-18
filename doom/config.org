@@ -280,7 +280,7 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
 ** Org-Paths
 #+begin_src emacs-lisp
 (setq org-directory "~/org/")
-(setq org-agenda-files (list "~/org/todo.org"))
+(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 #+end_src
 ** Org-Appearance
 #+begin_src emacs-lisp

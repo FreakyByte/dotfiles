@@ -129,7 +129,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       )
 
 (setq org-directory "~/org/")
-(setq org-agenda-files (list "~/org/todo.org"))
+(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 
 (after! org
   (setq org-ellipsis " ▼ "
