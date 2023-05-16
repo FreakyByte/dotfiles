@@ -3,6 +3,24 @@
 (setq user-full-name "Michael Reitmeir"
       user-mail-address "michi.reitmeir@gmail.com")
 
+(setq-default
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ window-combination-resize t                      ; take new window space from all other windows (not just current)
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+
+(setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
+      auto-save-default t                         ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…")
+
+;; first, enter the new window
+(setq evil-vsplit-window-right t
+      evil-split-window-below t)
+;; then, pull up buffer prompt
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (consult-buffer))
+
 (setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular))
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
 ;;      doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)
@@ -48,6 +66,8 @@
 	   `(solaire-default-face :background ,(ewal-load-color 'background))
 	   ))
 
+(setq doom-modeline-height 35)
+
 (after! doom-themes
 	(custom-theme-set-faces! 'doom-one
 	   `(doom-dashboard-banner :foreground "pink" :weight bold)
@@ -80,16 +100,20 @@
 (toggle-background-opacity)
 
 (use-package! whitespace
-  :config (setq whitespace-style '(face trailing empty indentation space-after-tab space-before-tab))
+  :config (setq whitespace-style '(face empty indentation space-after-tab space-before-tab))
   (global-whitespace-mode +1))
 
 (setq company-idle-delay 0.4)
+
+(setq langtool-java-classpath "/usr/share/languagetool/*")
 
 (add-hook 'snippet-mode-hook 'my-snippet-mode-hook)
 (defun my-snippet-mode-hook ()
   "Custom behaviours for `snippet-mode'."
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
+
+(map! :map 'yas-minor-mode-map [pause] #'toggle-background-opacity)
 
 (setq doom-localleader-key ",")
 

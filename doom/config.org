@@ -4,14 +4,18 @@
 * Table of Contents :toc:
 - [[#about-this-config][About this Config]]
 - [[#basics][Basics]]
+  - [[#sensible-defaults][Sensible Defaults]]
 - [[#appearance][Appearance]]
   - [[#fonts][Fonts]]
   - [[#theme][Theme]]
+  - [[#modeline][Modeline]]
+  - [[#dashboard-startup-page][Dashboard (startup page)]]
   - [[#line-numbers-and-wrapping][Line Numbers and Wrapping]]
   - [[#transparent-background][Transparent Background]]
   - [[#whitespace][Whitespace]]
 - [[#global-options][Global Options]]
   - [[#autocomplete][Autocomplete]]
+  - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
 - [[#keybindings][Keybindings]]
   - [[#local-leader][Local Leader]]
@@ -54,6 +58,31 @@ they are implemented.
 
 (setq user-full-name "Michael Reitmeir"
       user-mail-address "michi.reitmeir@gmail.com")
+#+end_src
+
+** Sensible Defaults
+Inspired by [[https://tecosaur.github.io/emacs-config/config.html#better-defaults][tecosaur]], who was in turn inspired by others. Funny how that works.
+#+begin_src emacs-lisp
+(setq-default
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ window-combination-resize t                      ; take new window space from all other windows (not just current)
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+
+(setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
+      evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
+      auto-save-default t                         ; Nobody likes to loose work, I certainly don't
+      truncate-string-ellipsis "…")
+#+end_src
+
+Tecosaur finds it handy to be asked which buffer to see after splitting a window. So do I.
+#+begin_src emacs-lisp
+;; first, enter the new window
+(setq evil-vsplit-window-right t
+      evil-split-window-below t)
+;; then, pull up buffer prompt
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (consult-buffer))
 #+end_src
 
 * Appearance
@@ -134,7 +163,13 @@ For this, the [[https://github.com/cyruseuros/ewal][ewal]] package is used to ge
 	   ))
 #+end_src
 
-*** Dashboard (startup page)
+** Modeline
+Making the modeline a bit taller than the default height (25) seems nice.
+#+begin_src emacs-lisp
+(setq doom-modeline-height 35)
+#+end_src
+
+** Dashboard (startup page)
 I the silly banner I found at [[https://github.com/jeetelongname/doom-banners]] for my dashboard. To fit with this, font color is changed to pink.
 #+begin_src emacs-lisp
 (after! doom-themes
@@ -191,9 +226,10 @@ This will make the background transparent at startup.
 Highlight unnecessary or wrong use of whitespace (e.g. mixed tabs and spaces).
 #+begin_src emacs-lisp
 (use-package! whitespace
-  :config (setq whitespace-style '(face trailing empty indentation space-after-tab space-before-tab))
+  :config (setq whitespace-style '(face empty indentation space-after-tab space-before-tab))
   (global-whitespace-mode +1))
 #+end_src
+Trailing whitespace doesn't need to be visualized, since it's removed on save anyway.
 
 
 * Global Options
@@ -201,6 +237,11 @@ Highlight unnecessary or wrong use of whitespace (e.g. mixed tabs and spaces).
 Increase time until autocomplete shows up.
 #+begin_src emacs-lisp
 (setq company-idle-delay 0.4)
+#+end_src
+** Spell- and grammar checker
+Set path to languagetool.
+#+begin_src emacs-lisp
+(setq langtool-java-classpath "/usr/share/languagetool/*")
 #+end_src
 ** Snippets
 This disables the annoying final newline when creating a snippet, which always screws things up.
@@ -210,6 +251,10 @@ This disables the annoying final newline when creating a snippet, which always s
   "Custom behaviours for `snippet-mode'."
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
+#+end_src
+Also I want to use the Hyper key to expand snippets (my caps lock key), since I find using tab for both snippets and autocompletion confusing.
+#+begin_src emacs-lisp
+(map! :map 'yas-minor-mode-map [pause] #'toggle-background-opacity)
 #+end_src
 
 * Keybindings
