@@ -103,6 +103,10 @@
   :config (setq whitespace-style '(face empty indentation space-after-tab space-before-tab))
   (global-whitespace-mode +1))
 
+(setq treemacs-width 30)
+(setq treemacs--width-is-locked nil)
+(setq treemacs-width-is-initially-locked nil)
+
 (setq company-idle-delay 0.4)
 
 (add-hook 'spell-fu-mode-hook

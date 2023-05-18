@@ -13,6 +13,7 @@
   - [[#line-numbers-and-wrapping][Line Numbers and Wrapping]]
   - [[#transparent-background][Transparent Background]]
   - [[#whitespace][Whitespace]]
+  - [[#treemacs][Treemacs]]
 - [[#global-options][Global Options]]
   - [[#auto-complete][Auto-complete]]
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
@@ -229,6 +230,14 @@ Highlight unnecessary or wrong use of whitespace (e.g. mixed tabs and spaces).
   (global-whitespace-mode +1))
 #+end_src
 Trailing whitespace doesn't need to be visualized, since it's removed on save anyway.
+
+** Treemacs
+By default, the treemacs window is not re-sizable. I don't see why.
+#+begin_src emacs-lisp
+(setq treemacs-width 30)
+(setq treemacs--width-is-locked nil)
+(setq treemacs-width-is-initially-locked nil)
+#+end_src
 
 
 * Global Options
