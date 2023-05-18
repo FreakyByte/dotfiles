@@ -113,7 +113,22 @@
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 
-(map! :map 'yas-minor-mode-map [pause] #'toggle-background-opacity)
+; first unmap tab for snippets
+(map! :map yas-minor-mode-map ; key for snippet expansion
+      [tab] nil
+      "TAB" nil)
+(map! :map yas-keymap ; keys for navigation
+      [tab] nil
+      "TAB" nil
+      [(shift tab)] nil
+      [backtab] nil)
+
+; then map pause for snippets instead
+(map! :map 'yas-minor-mode-map ; key for snippet expansion
+      [pause] #'yas-expand)
+(map! :map yas-keymap ; keys for navigation
+      [pause] 'yas-next-field-or-maybe-expand
+      [(shift pause)] 'yas-prev)
 
 (setq doom-localleader-key ",")
 

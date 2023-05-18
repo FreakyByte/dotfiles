@@ -252,10 +252,26 @@ This disables the annoying final newline when creating a snippet, which always s
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 #+end_src
-Also I want to use the Hyper key to expand snippets (my caps lock key), since I find using tab for both snippets and autocompletion confusing.
+Also I want to use the Pause key (which I remapped onto my caps lock key) to expand snippets, since I find using tab for both snippets and autocompletion confusing.
 #+begin_src emacs-lisp
-(map! :map 'yas-minor-mode-map [pause] #'toggle-background-opacity)
+; first unmap tab for snippets
+(map! :map yas-minor-mode-map ; key for snippet expansion
+      [tab] nil
+      "TAB" nil)
+(map! :map yas-keymap ; keys for navigation
+      [tab] nil
+      "TAB" nil
+      [(shift tab)] nil
+      [backtab] nil)
+
+; then map pause for snippets instead
+(map! :map 'yas-minor-mode-map ; key for snippet expansion
+      [pause] #'yas-expand)
+(map! :map yas-keymap ; keys for navigation
+      [pause] 'yas-next-field-or-maybe-expand
+      [(shift pause)] 'yas-prev)
 #+end_src
+TODO: Snippet expansion is somehow not unmapped from tab yet by this.
 
 * Keybindings
 ** Local Leader
