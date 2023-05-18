@@ -246,7 +246,7 @@ These are the dictionaries I want to use for spell checking.
     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "de"))
     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "en"))
     ))
-(setq ispell-personal-dictionary "~/Dropbox/personal_dictionary.pws")
+(setq ispell-personal-dictionary "~/Dropbox/.aspell.en.pws")
 #+end_src
 Set path to languagetool.
 #+begin_src emacs-lisp

@@ -110,7 +110,7 @@
     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "de"))
     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "en"))
     ))
-(setq ispell-personal-dictionary "~/Dropbox/personal_dictionary.pws")
+(setq ispell-personal-dictionary "~/Dropbox/.aspell.en.pws")
 
 (setq langtool-java-classpath "/usr/share/languagetool/*")
 
