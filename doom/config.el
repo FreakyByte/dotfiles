@@ -233,3 +233,15 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 ;; set maximum line length for visual-line-mode in tex-mode
 (add-hook 'TeX-mode-hook 'window-margin-mode)
 (setq-default fill-column 100)
+
+(setq flycheck-global-modes '(not LaTeX-mode latex-mode))
+
+(add-hook 'TeX-mode-hook 'rainbow-delimiters-mode-disable
+          'LaTeX-mode-hook 'rainbow-delimiters-mode-disable)
+(after! latex
+  (remove-hook 'TeX-update-style-hook #'rainbow-delimiters-mode))
+
+(map! :localleader
+      :map evil-tex-mode-map
+      :desc "TeX-next-error"
+      "e" #'TeX-next-error)

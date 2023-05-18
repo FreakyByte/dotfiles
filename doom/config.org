@@ -414,6 +414,27 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
 (setq-default fill-column 100)
 #+end_src
 
+The following turns of all flycheck-warnings in AUCTex, since for the most part I just find them annoying.
+#+begin_src emacs-lisp
+(setq flycheck-global-modes '(not LaTeX-mode latex-mode))
+#+end_src
+
+Unfortunately rainbow delimiters break frequently in LaTeX (because of "mismatched" delimiters in open intervals like $]a,b[$, but also randomly at other times). Best to disable them.
+#+begin_src emacs-lisp
+(add-hook 'TeX-mode-hook 'rainbow-delimiters-mode-disable
+          'LaTeX-mode-hook 'rainbow-delimiters-mode-disable)
+(after! latex
+  (remove-hook 'TeX-update-style-hook #'rainbow-delimiters-mode))
+#+end_src
+
+Better shortcut for showing TeX-errors (backtick is very annoying on a German keyboard).
+#+begin_src emacs-lisp
+(map! :localleader
+      :map evil-tex-mode-map
+      :desc "TeX-next-error"
+      "e" #'TeX-next-error)
+#+end_src
+
 * Tangle this file!
 
 Tangle on save? Reload after tangle? These hooks will ask you after every save.
