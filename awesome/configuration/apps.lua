@@ -79,8 +79,9 @@ return {
 		-- Touch gestures
 		'touchegg',
 		-- Touch gestures
-        'keepassxc'
-
+        'keepassxc',
+        -- Modify keyboard layout
+        'xmodmap $HOME/.Xmodmap'
 	},
 
 	-- List of binaries/shell scripts that will execute for a certain task
