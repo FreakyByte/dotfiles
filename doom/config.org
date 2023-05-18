@@ -14,7 +14,7 @@
   - [[#transparent-background][Transparent Background]]
   - [[#whitespace][Whitespace]]
 - [[#global-options][Global Options]]
-  - [[#autocomplete][Autocomplete]]
+  - [[#auto-complete][Auto-complete]]
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
 - [[#keybindings][Keybindings]]
@@ -233,12 +233,21 @@ Trailing whitespace doesn't need to be visualized, since it's removed on save an
 
 
 * Global Options
-** Autocomplete
-Increase time until autocomplete shows up.
+** Auto-complete
+Increase time until auto-complete shows up.
 #+begin_src emacs-lisp
 (setq company-idle-delay 0.4)
 #+end_src
 ** Spell- and grammar checker
+These are the dictionaries I want to use for spell checking.
+#+begin_src emacs-lisp
+(add-hook 'spell-fu-mode-hook
+  (lambda ()
+    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "de"))
+    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "en"))
+    ))
+(setq ispell-personal-dictionary "~/Dropbox/personal_dictionary.pws")
+#+end_src
 Set path to languagetool.
 #+begin_src emacs-lisp
 (setq langtool-java-classpath "/usr/share/languagetool/*")

@@ -105,6 +105,13 @@
 
 (setq company-idle-delay 0.4)
 
+(add-hook 'spell-fu-mode-hook
+  (lambda ()
+    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "de"))
+    (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "en"))
+    ))
+(setq ispell-personal-dictionary "~/Dropbox/personal_dictionary.pws")
+
 (setq langtool-java-classpath "/usr/share/languagetool/*")
 
 (add-hook 'snippet-mode-hook 'my-snippet-mode-hook)
