@@ -290,6 +290,19 @@ Also I want to use the Pause key (which I remapped onto my caps lock key) to exp
 #+end_src
 TODO: Snippet expansion is somehow not unmapped from tab yet by this.
 
+Some nicer shortcuts for creating snippets and etc. would also be nice.
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix ("y" . "YASnippet")
+       :desc "edit snippet" "e" #'yas-visit-snippet-file
+       :desc "insert snippet" "i" #'yas-insert-snippet
+       :desc "new snippet" "n" #'+snippets/new
+       :desc "find private snippet" "p" #'+snippets/find-private
+       )
+      )
+#+end_src
+
+
 * Keybindings
 ** Local Leader
 I'm used to this from my VimTex days.
@@ -442,6 +455,25 @@ Better shortcut for showing TeX-errors (backtick is very annoying on a German ke
       :map evil-tex-mode-map
       :desc "TeX-next-error"
       "e" #'TeX-next-error)
+#+end_src
+
+Another annoyance: I don't like it when AUCTex interferes with my quotation marks.
+Removing this AUCTex-feature is reasonably simple and can either be done through the ~TeX-quote-after-quote~-variable, or by just un-mapping ~TeX-insert-quote~ from the quotation mark key.
+However, for whatever reason this same feature was also implemented in ~smartparens~, specifically ~smartparens-latex.el~. And removing this is /really/ a nightmare. None of the solutions I found online worked for me (see [[https://github.com/doomemacs/doomemacs/issues/1688][here]], [[https://github.com/doomemacs/doomemacs/issues/485][here]], [[https://github.com/Fuco1/smartparens/issues/1100][here]], [[https://emacs.stackexchange.com/questions/34035/how-to-make-smartparens-insert-and-instead-of-in-latex-modes][here]], [[https://emacs.stackexchange.com/questions/31166/smartparens-not-insert-pair-of-latex-quotes?rq=1][here]], [[https://github.com/Fuco1/smartparens/issues/983][here]], and [[https://emacs.stackexchange.com/questions/52233/disable-tex-modes-auto-tex-insert-quote-functionaliy][here]]...).
+So instead, after like 3 hours of trial and error, I'm settling for this hack.
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-quote-after-quote t) ; how this is supposed to work, for good measure
+
+(defun insert-standard-quote ()
+        "insert a completely normal quotation mark, bypassing weird AUCTex-defaults"
+        (interactive)
+        (insert "\""))
+(map! :after tex
+      :map tex-mode-map
+      "\"" 'insert-standard-quote)
+(map! :after tex
+      :map LaTeX-mode-map
+      "\"" 'insert-standard-quote)
 #+end_src
 
 * Tangle this file!

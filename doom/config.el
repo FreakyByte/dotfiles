@@ -141,6 +141,15 @@
       [pause] 'yas-next-field-or-maybe-expand
       [(shift pause)] 'yas-prev)
 
+(map! :leader
+      (:prefix ("y" . "YASnippet")
+       :desc "edit snippet" "e" #'yas-visit-snippet-file
+       :desc "insert snippet" "i" #'yas-insert-snippet
+       :desc "new snippet" "n" #'+snippets/new
+       :desc "find private snippet" "p" #'+snippets/find-private
+       )
+      )
+
 (setq doom-localleader-key ",")
 
 (setq wrapped-copy (symbol-function 'evil-delete))
@@ -249,3 +258,16 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       :map evil-tex-mode-map
       :desc "TeX-next-error"
       "e" #'TeX-next-error)
+
+(setq TeX-quote-after-quote t) ; how this is supposed to work, for good measure
+
+(defun insert-standard-quote ()
+        "insert a completely normal quotation mark, bypassing weird AUCTex-defaults"
+        (interactive)
+        (insert "\""))
+(map! :after tex
+      :map tex-mode-map
+      "\"" 'insert-standard-quote)
+(map! :after tex
+      :map LaTeX-mode-map
+      "\"" 'insert-standard-quote)
