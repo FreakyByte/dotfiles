@@ -187,13 +187,15 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        )
       )
 
-(setq org-directory "~/org/")
+(setq org-directory "~/org/"
+      org-roam-directory "~/Dropbox/roam")
 (setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 
 (after! org
   (setq org-ellipsis " ▼ "
         org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
+        org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
         org-log-done 'time
         org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
         org-agenda-skip-deadline-if-done t     ; do not show deadlines in agenda if they're already done
@@ -226,6 +228,59 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-level-5 :inherit outline-5 :height 1.0)
   `(org-document-title :background nil :height 1.5 :weight bold)
 )
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+(map! :leader
+      (:prefix ("r" . "roam")
+         :desc "Open random node"           "a" #'org-roam-node-random
+         :desc "Find node"                  "f" #'org-roam-node-find
+         :desc "Find ref"                   "F" #'org-roam-ref-find
+         :desc "Show UI"                    "g" #'org-roam-ui-open
+         :desc "Insert node"                "i" #'org-roam-node-insert
+         :desc "Capture to node"            "n" #'org-roam-capture
+         :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
+         :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
+         :desc "Sync database"              "s" #'org-roam-db-sync
+         (:prefix ("d" . "by date")
+          :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
+          :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
+          :desc "Capture date"              "D" #'org-roam-dailies-capture-date
+          :desc "Goto next note"            "f" #'org-roam-dailies-goto-next-note
+          :desc "Goto tomorrow"             "m" #'org-roam-dailies-goto-tomorrow
+          :desc "Capture tomorrow"          "M" #'org-roam-dailies-capture-tomorrow
+          :desc "Capture today"             "n" #'org-roam-dailies-capture-today
+          :desc "Goto today"                "t" #'org-roam-dailies-goto-today
+          :desc "Capture today"             "T" #'org-roam-dailies-capture-today
+          :desc "Goto yesterday"            "y" #'org-roam-dailies-goto-yesterday
+          :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
+          :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
+
+(map! :after org
+    :map org-mode-map
+    :localleader
+    :prefix ("u" . "org-roam-ui")
+    "o" #'org-roam-ui-open
+    "z" #'org-roam-ui-node-zoom
+    "l" #'org-roam-ui-node-local
+    "T" #'org-roam-ui-sync-theme
+    "f" #'org-roam-ui-follow-mode
+    "a" #'org-roam-ui-add-to-local-graph
+    "c" #'org-roam-ui-change-local-graph
+    "r" #'org-roam-ui-remove-from-local-graph)
 
 ;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)

@@ -59,3 +59,7 @@
 ;; maximum line lenght in visual line mode
 (package! window-margin
   :recipe (:host github :repo "aculich/window-margin.el"))
+
+;; fancy org roam graph
+(unpin! org-roam)       ;; necessary since org-roam-ui tries to keep up with the newest version of org-roam, whereas doom doesn't
+(package! org-roam-ui)
