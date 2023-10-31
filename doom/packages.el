@@ -63,3 +63,6 @@
 ;; fancy org roam graph
 (unpin! org-roam)       ;; necessary since org-roam-ui tries to keep up with the newest version of org-roam, whereas doom doesn't
 (package! org-roam-ui)
+
+;; automatically switch between LaTeX-preview and its source code
+(package! org-fragtog)

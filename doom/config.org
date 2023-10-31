@@ -27,6 +27,7 @@
   - [[#org-paths][Org-Paths]]
   - [[#org-appearance][Org-Appearance]]
   - [[#org-roam][Org Roam]]
+  - [[#latex--org][LaTeX & Org]]
 - [[#latex][LaTeX]]
 - [[#tangle-this-file][Tangle this file!]]
 
@@ -479,6 +480,17 @@ Then additionally, I want quick control over the UI from the local leader.
     "a" #'org-roam-ui-add-to-local-graph
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
+#+end_src
+** LaTeX & Org
+As long as it doesn't cause me performance issues, I will enable automatic rendering of LaTeX-previews.
+The ~org-fragtog~ package then enables automatically switching between LaTeX-preview and its underlying code.
+#+begin_src emacs-lisp :tangle yes
+(after! org (setq org-startup-with-latex-preview t))
+(use-package! org-fragtog
+    :after org
+    :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer
+    :config
+)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp

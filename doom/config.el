@@ -282,6 +282,13 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
 
+(after! org (setq org-startup-with-latex-preview t))
+(use-package! org-fragtog
+    :after org
+    :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer
+    :config
+)
+
 ;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
