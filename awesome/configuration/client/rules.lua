@@ -352,6 +352,28 @@ ruled.client.connect_signal(
 				placement = awful.placement.centered
 			}
 		}
+
+        -- emacs-everwhere
+		ruled.client.append_rule {
+			rule_any = {
+				name = { 'emacs-everywhere', },
+			},
+			properties = {
+				titlebars_enabled = true,
+				skip_decoration = true,
+				ontop = true,
+				floating = true,
+				focus = awful.client.focus.filter,
+				raise = true,
+				keys = client_keys,
+				buttons = client_buttons,
+                width = awful.screen.focused().workarea.width * 0.7,
+                height = awful.screen.focused().workarea.height * 0.7,
+                -- somehow, this roundabout way of calling awful.placement.centered makes sure the window gets resized first and then moved
+                -- source: https://github.com/awesomeWM/awesome/issues/2497#issuecomment-1458899649
+                placement = function(...) return awful.placement.centered(...)end,
+			}
+		}
 	end
 )
 

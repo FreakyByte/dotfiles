@@ -21,6 +21,12 @@
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
 
+(setq emacs-everywhere-frame-name-format "emacs-everywhere")
+
+(remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
+
+(setq emacs-everywhere-major-mode-function #'org-mode)
+
 (setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular))
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
 ;;      doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)

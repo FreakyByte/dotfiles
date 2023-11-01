@@ -434,6 +434,14 @@ local global_keys = awful.util.table.join(
 		{description = 'open emacs', group = 'launcher'}
 	),
 	awful.key(
+		{modkey},
+		'a',
+		function()
+			awful.spawn('emacsclient --eval "(emacs-everywhere)"')
+		end,
+		{description = 'open emacs EVERYWHERE', group = 'launcher'}
+	),
+	awful.key(
 		{'Control', 'Shift'}, 
 		'Escape',
 		function()

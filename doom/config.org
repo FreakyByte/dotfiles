@@ -5,6 +5,7 @@
 - [[#about-this-config][About this Config]]
 - [[#basics][Basics]]
   - [[#sensible-defaults][Sensible Defaults]]
+  - [[#emacs-everywhere][Emacs EVERYWHERE]]
 - [[#appearance][Appearance]]
   - [[#fonts][Fonts]]
   - [[#theme][Theme]]
@@ -85,6 +86,19 @@ Tecosaur finds it handy to be asked which buffer to see after splitting a window
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
+#+end_src
+** Emacs EVERYWHERE
+This changes the name of windows created with ~emacs-everwhere~, so that I can more easily customize their behaviour in my window manager.
+#+begin_src emacs-lisp :tangle yes
+(setq emacs-everywhere-frame-name-format "emacs-everywhere")
+#+end_src
+Specifically, I want my window manager to handle it's position rather than emacs.
+#+begin_src emacs-lisp :tangle yes
+(remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
+#+end_src
+Org mode is nice.
+#+begin_src emacs-lisp :tangle yes
+(setq emacs-everywhere-major-mode-function #'org-mode)
 #+end_src
 
 * Appearance
