@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: enumerate_alphanumeric
+# uuid: enum_alph
+# key: enalph
+# condition: t
+# --
+\begin{enumerate}[label=(\alph*)]
+    $0
+\end{enumerate}
