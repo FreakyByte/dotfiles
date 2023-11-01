@@ -205,8 +205,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
         org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
         org-appear-autoemphasis t
-        org-appear-autosubmarkers nil
-        org-appear-autolinks t
+        org-appear-autosubmarkers t
+        org-appear-autolinks nil
         org-hidden-keywords '(title)  ; hide #+TITLE:
         org-log-done 'time
         org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
@@ -243,7 +243,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq org-roam-capture-templates
       '(("d" "default" plain "%?" :target
-            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: %^{:some:tags:}\n#+title: ${title}\n")
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: %^{:some:tags:}\n#+title: ${title}\n\n")
         :unnarrowed t)))
 
 (defun jethro/tag-new-node-as-draft ()
@@ -314,6 +314,9 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer
     :config
 )
+
+(require 'org-src)
+(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 
 ;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)
