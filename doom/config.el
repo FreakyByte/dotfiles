@@ -85,6 +85,8 @@
 
 (global-visual-line-mode t)
 
+(setq-default fill-column 100)
+
 (defconst doom-frame-transparency 85)
 
 (defun toggle-background-opacity ()
@@ -202,6 +204,10 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
         org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
         org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
+        org-appear-autoemphasis t
+        org-appear-autosubmarkers nil
+        org-appear-autolinks t
+        org-hidden-keywords '(title)  ; hide #+TITLE:
         org-log-done 'time
         org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
         org-agenda-skip-deadline-if-done t     ; do not show deadlines in agenda if they're already done
@@ -232,7 +238,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-level-3 :inherit outline-3 :height 1.1)
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
-  `(org-document-title :background nil :height 1.5 :weight bold)
+  `(org-document-title :background nil :height 1.7 :weight bold)
 )
 
 (setq org-roam-capture-templates
@@ -297,6 +303,11 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
 
+(defun turn-on-margin-in-roam ()
+  (cond ((string-prefix-p org-roam-directory (buffer-file-name))
+         (window-margin-mode 1))))
+(add-hook 'org-mode-hook 'turn-on-margin-in-roam)
+
 (after! org (setq org-startup-with-latex-preview t))
 (use-package! org-fragtog
     :after org
@@ -322,7 +333,6 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 ;;
 ;; set maximum line length for visual-line-mode in tex-mode
 (add-hook 'TeX-mode-hook 'window-margin-mode)
-(setq-default fill-column 100)
 
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
 
