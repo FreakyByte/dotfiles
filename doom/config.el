@@ -235,6 +235,15 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-document-title :background nil :height 1.5 :weight bold)
 )
 
+(setq org-roam-capture-templates
+      '(("d" "default" plain "%?" :target
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: %^{:some:tags:}\n#+title: ${title}\n")
+        :unnarrowed t)))
+
+(defun jethro/tag-new-node-as-draft ()
+  (org-roam-tag-add '("draft")))
+(add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+
 (use-package! websocket
     :after org-roam)
 

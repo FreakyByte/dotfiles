@@ -1,4 +1,5 @@
 #+title: DOOM Emacs Config
+#+STARTUP: overview
 #+PROPERTY: header-args:emacs-lisp :tangle yes :cache yes :results silent
 
 * Table of Contents :toc:
@@ -432,6 +433,19 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
 #+end_src
 
 ** Org Roam
+*** Capture
+#+begin_src emacs-lisp :tangle yes
+(setq org-roam-capture-templates
+      '(("d" "default" plain "%?" :target
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: %^{:some:tags:}\n#+title: ${title}\n")
+        :unnarrowed t)))
+#+end_src
+Every node should be marked as a draft, until I revisit and refine it (stolen form [[https://jethrokuan.github.io/org-roam-guide/][here]])
+#+begin_src emacs-lisp :tangle yes
+(defun jethro/tag-new-node-as-draft ()
+  (org-roam-tag-add '("draft")))
+(add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+#+end_src
 *** org-roam-ui
 One of the killer features associated with org roam are fancy graphs, as e.g. provided by ~org-roam-ui~.
 #+begin_src emacs-lisp :tangle yes
