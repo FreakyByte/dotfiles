@@ -81,7 +81,9 @@ return {
 		-- Touch gestures
         'keepassxc',
         -- Modify keyboard layout
-        'xmodmap $HOME/.Xmodmap'
+        'xmodmap $HOME/.Xmodmap',
+        -- Network Manager
+        'nm-applet && disown'
 	},
 
 	-- List of binaries/shell scripts that will execute for a certain task
