@@ -43,7 +43,7 @@
 (use-package ewal-doom-themes)
 
 (after! doom-themes
-	(custom-theme-set-faces! 'doom-one
+	(custom-theme-set-faces! doom-theme
 	   `(default :background ,(ewal-load-color 'background))
 	   `(hl-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
