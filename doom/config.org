@@ -150,34 +150,36 @@ For this, the [[https://github.com/cyruseuros/ewal][ewal]] package is used to ge
 (use-package ewal-doom-themes)
 
 (after! doom-themes
-	(custom-theme-set-faces! doom-theme
-	   `(default :background ,(ewal-load-color 'background))
-	   `(hl-line :background ,(ewal--color-chshade
+        (custom-theme-set-faces! doom-theme
+          `(default :background ,(ewal-load-color 'background))
+          `(hl-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
+          `(org-block :background ,(ewal--color-chshade
+                      (ewal-load-color 'background) -0.3))
 
-	   ;; Tabs:
-	   `(tab-bar :background ,(ewal-load-color 'background))
-	   `(centaur-tabs-selected :background ,(ewal--color-chshade
+        ;; Tabs:
+        `(tab-bar :background ,(ewal-load-color 'background))
+        `(centaur-tabs-selected :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
-	   `(tab-bar-tab :background ,(ewal--color-chshade
+        `(tab-bar-tab :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
-	   `(centaur-tabs-unselected :background ,(ewal--color-chshade
+        `(centaur-tabs-unselected :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(tab-bar-tab-inactive :background ,(ewal--color-chshade
+        `(tab-bar-tab-inactive :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(tab-line :background ,(ewal-load-color 'background))
+        `(tab-line :background ,(ewal-load-color 'background))
 
-	   ;; Mode line:
-	   `(mode-line :background ,(ewal--color-chshade
+        ;; Mode line:
+        `(mode-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .15))
-	   `(mode-line-inactive :background ,(ewal--color-chshade
+        `(mode-line-inactive :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(mode-line-emphasis :background ,(ewal--color-chshade
+        `(mode-line-emphasis :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .20))
 
-	   ;; minibuffer (underneath mode line) and stuff
-	   `(solaire-default-face :background ,(ewal-load-color 'background))
-	   ))
+        ;; minibuffer (underneath mode line) and stuff
+        `(solaire-default-face :background ,(ewal-load-color 'background))
+        ))
 #+end_src
 
 ** Modeline
@@ -190,9 +192,9 @@ Making the modeline a bit taller than the default height (25) seems nice.
 I the silly banner I found at [[https://github.com/jeetelongname/doom-banners]] for my dashboard. To fit with this, font color is changed to pink.
 #+begin_src emacs-lisp
 (after! doom-themes
-	(custom-theme-set-faces! 'doom-one
-	   `(doom-dashboard-banner :foreground "pink" :weight bold)
-	   ))
+    (custom-theme-set-faces! 'doom-one
+        `(doom-dashboard-banner :foreground "pink" :weight bold)
+        ))
 (setq fancy-splash-image "~/.config/doom/I-am-doom.png")
 (setq +doom-dashboard-banner-padding '(0 . 0))
 #+end_src
@@ -398,7 +400,8 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
 #+begin_src emacs-lisp
 (after! org
   (setq org-ellipsis " ▼ "
-        org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
+        ;;org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
+        org-superstar-headline-bullets-list '("❭")
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
         org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
         org-appear-autoemphasis t
@@ -419,7 +422,7 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
              "DONE(d)"
              "DELEGATED(D)"
              "CANCELLED(c)" ))
-	  org-todo-keyword-faces
+        org-todo-keyword-faces
         '(("WAIT" . "#ECBE7B")
         ("TODELEGATE" . "pink")
         ("IDEA" . "cyan")
@@ -427,7 +430,7 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
         ("DELEGATED" . "#a9a1e1")
         ("CANCELLED" . "#ff6c6b")
         )
-	  ))
+        ))
 
 (custom-set-faces!
   `(org-level-1 :inherit outline-1 :height 1.4)
@@ -435,7 +438,7 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
   `(org-level-3 :inherit outline-3 :height 1.1)
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
-  `(org-document-title :background nil :height 1.7 :weight bold)
+  `(org-document-title :background nil :height 2.0 :weight bold)
 )
 #+end_src
 

@@ -43,41 +43,43 @@
 (use-package ewal-doom-themes)
 
 (after! doom-themes
-	(custom-theme-set-faces! doom-theme
-	   `(default :background ,(ewal-load-color 'background))
-	   `(hl-line :background ,(ewal--color-chshade
+        (custom-theme-set-faces! doom-theme
+          `(default :background ,(ewal-load-color 'background))
+          `(hl-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
+          `(org-block :background ,(ewal--color-chshade
+                      (ewal-load-color 'background) -0.3))
 
-	   ;; Tabs:
-	   `(tab-bar :background ,(ewal-load-color 'background))
-	   `(centaur-tabs-selected :background ,(ewal--color-chshade
+        ;; Tabs:
+        `(tab-bar :background ,(ewal-load-color 'background))
+        `(centaur-tabs-selected :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
-	   `(tab-bar-tab :background ,(ewal--color-chshade
+        `(tab-bar-tab :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
-	   `(centaur-tabs-unselected :background ,(ewal--color-chshade
+        `(centaur-tabs-unselected :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(tab-bar-tab-inactive :background ,(ewal--color-chshade
+        `(tab-bar-tab-inactive :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(tab-line :background ,(ewal-load-color 'background))
+        `(tab-line :background ,(ewal-load-color 'background))
 
-	   ;; Mode line:
-	   `(mode-line :background ,(ewal--color-chshade
+        ;; Mode line:
+        `(mode-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .15))
-	   `(mode-line-inactive :background ,(ewal--color-chshade
+        `(mode-line-inactive :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .05))
-	   `(mode-line-emphasis :background ,(ewal--color-chshade
+        `(mode-line-emphasis :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .20))
 
-	   ;; minibuffer (underneath mode line) and stuff
-	   `(solaire-default-face :background ,(ewal-load-color 'background))
-	   ))
+        ;; minibuffer (underneath mode line) and stuff
+        `(solaire-default-face :background ,(ewal-load-color 'background))
+        ))
 
 (setq doom-modeline-height 35)
 
 (after! doom-themes
-	(custom-theme-set-faces! 'doom-one
-	   `(doom-dashboard-banner :foreground "pink" :weight bold)
-	   ))
+    (custom-theme-set-faces! 'doom-one
+        `(doom-dashboard-banner :foreground "pink" :weight bold)
+        ))
 (setq fancy-splash-image "~/.config/doom/I-am-doom.png")
 (setq +doom-dashboard-banner-padding '(0 . 0))
 
@@ -201,7 +203,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (after! org
   (setq org-ellipsis " ▼ "
-        org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
+        ;;org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
+        org-superstar-headline-bullets-list '("❭")
         org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
         org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
         org-appear-autoemphasis t
@@ -222,7 +225,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
              "DONE(d)"
              "DELEGATED(D)"
              "CANCELLED(c)" ))
-	  org-todo-keyword-faces
+        org-todo-keyword-faces
         '(("WAIT" . "#ECBE7B")
         ("TODELEGATE" . "pink")
         ("IDEA" . "cyan")
@@ -230,7 +233,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
         ("DELEGATED" . "#a9a1e1")
         ("CANCELLED" . "#ff6c6b")
         )
-	  ))
+        ))
 
 (custom-set-faces!
   `(org-level-1 :inherit outline-1 :height 1.4)
@@ -238,7 +241,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-level-3 :inherit outline-3 :height 1.1)
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
-  `(org-document-title :background nil :height 1.7 :weight bold)
+  `(org-document-title :background nil :height 2.0 :weight bold)
 )
 
 (setq org-roam-capture-templates
