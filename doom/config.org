@@ -264,7 +264,6 @@ By default, the treemacs window is not re-sizable. I don't see why.
 (setq treemacs-width-is-initially-locked nil)
 #+end_src
 
-
 * Global Options
 ** Auto-complete
 Increase time until auto-complete shows up.
@@ -523,12 +522,14 @@ Then additionally, I want quick control over the UI from the local leader.
     "r" #'org-roam-ui-remove-from-local-graph)
 #+end_src
 *** Appearance
-I want org roam notes to have a maximum line length. This function only turns on the maximum line length if the current file is in ~org-roam-directory~.
+I want org roam notes to have special appearance. This function only turns on specific settings for org-files in ~org-roam-directory~.
 #+begin_src emacs-lisp :tangle yes
-(defun turn-on-margin-in-roam ()
+(defun roam-pseudohook ()
   (cond ((string-prefix-p org-roam-directory (buffer-file-name))
-         (window-margin-mode 1))))
-(add-hook 'org-mode-hook 'turn-on-margin-in-roam)
+         (window-margin-mode 1)
+         (mixed-pitch-mode 1)
+         )))
+(add-hook 'org-mode-hook 'roam-pseudohook)
 #+end_src
 ** LaTeX & Org
 As long as it doesn't cause me performance issues, I will enable automatic rendering of LaTeX-previews.
@@ -545,6 +546,34 @@ The following makes sure the backgrounds of LaTeX fragments (or their surroundin
 #+begin_src emacs-lisp :tangle yes
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+#+end_src
+
+The size of LaTeX fragments does not automatically update when the font size is changed. This fixes that.
+It turned out to not be so easy though for an elisp noob like me, so here are some notes:
+ - Annoyingly, disabling LaTeX previews is achieved by running ~org-latex-preview~ with /prefix argument/, i.e. by pressing ~C-u~ before running the function. Calling this from a script is a bit of a hassle. This is what happens in ~org-latex-preview-clear~.
+ - I want to check whether writeroom-mode is active. This is done by checking the ~writeroom-mode~ variable. However, this variable is at the same time the function that toggles the mode. So ~bound-and-true-p~ is used to only check the variable and not call the function. (analogously for big-font-mode)
+#+begin_src emacs-lisp :tangle yes
+(setq org-latex-default-scale 1.5)
+(setq org-latex-writeroom-scale 2.5)
+(setq org-latex-big-font-scale 2.5)
+
+(defun org-latex-preview-clear ()
+  "Disable org-latex-preview (which is the same as running org-latex-preview with prefix argument)"
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively 'org-latex-preview)))
+
+(defun latex-preview-rescale ()
+  (cond ((bound-and-true-p writeroom-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-writeroom-scale)))
+        ((bound-and-true-p doom-big-font-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-big-font-scale)))
+        (t (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-default-scale)))
+    )
+  ;; re-render LaTeX fragments
+  (org-latex-preview-clear)
+  (org-latex-preview)
+  )
+(add-hook 'writeroom-mode-hook 'latex-preview-rescale)
+(add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp

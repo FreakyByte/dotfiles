@@ -306,10 +306,12 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
 
-(defun turn-on-margin-in-roam ()
+(defun roam-pseudohook ()
   (cond ((string-prefix-p org-roam-directory (buffer-file-name))
-         (window-margin-mode 1))))
-(add-hook 'org-mode-hook 'turn-on-margin-in-roam)
+         (window-margin-mode 1)
+         (mixed-pitch-mode 1)
+         )))
+(add-hook 'org-mode-hook 'roam-pseudohook)
 
 (after! org (setq org-startup-with-latex-preview t))
 (use-package! org-fragtog
@@ -320,6 +322,28 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+
+(setq org-latex-default-scale 1.5)
+(setq org-latex-writeroom-scale 2.5)
+(setq org-latex-big-font-scale 2.5)
+
+(defun org-latex-preview-clear ()
+  "Disable org-latex-preview (which is the same as running org-latex-preview with prefix argument)"
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively 'org-latex-preview)))
+
+(defun latex-preview-rescale ()
+  (cond ((bound-and-true-p writeroom-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-writeroom-scale)))
+        ((bound-and-true-p doom-big-font-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-big-font-scale)))
+        (t (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-default-scale)))
+    )
+  ;; re-render LaTeX fragments
+  (org-latex-preview-clear)
+  (org-latex-preview)
+  )
+(add-hook 'writeroom-mode-hook 'latex-preview-rescale)
+(add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
 
 ;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)
