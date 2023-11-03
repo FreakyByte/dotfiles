@@ -27,15 +27,15 @@
 
 (setq emacs-everywhere-major-mode-function #'org-mode)
 
-(setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular)
+      doom-variable-pitch-font (font-spec :family "Libertinus Sans" :size 19))
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
 ;;      doom-unicode-font (font-spec :family "Input Mono Narrow" :size 12)
 ;;      doom-big-font (font-spec :family "Fira Mono" :size 19))
+
 (setq-default line-spacing 0.25)
 
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
+(setq mixed-pitch-set-height t)
 
 (setq doom-theme 'doom-one)
 
@@ -241,7 +241,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-level-3 :inherit outline-3 :height 1.1)
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
-  `(org-document-title :background nil :height 2.0 :weight bold)
+  `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0)
 )
 
 (setq org-roam-capture-templates
