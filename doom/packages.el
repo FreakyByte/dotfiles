@@ -66,3 +66,8 @@
 
 ;; automatically switch between LaTeX-preview and its source code
 (package! org-fragtog)
+
+;; I'm getting really weird cache errors when using org-latex-preview right now, and it seems fixed in a newer version of org
+;; cf.: https://www.mail-archive.com/emacs-orgmode@gnu.org/msg156512.html
+;; let's see if something else breaks...
+(unpin! org)
