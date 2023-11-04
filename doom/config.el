@@ -37,6 +37,19 @@
 
 (setq mixed-pitch-set-height t)
 
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
+       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
+       )
+      )
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Visible mode"           "V"     #'visible-mode
+       )
+      )
+
 (setq doom-theme 'doom-one)
 
 (use-package ewal)
@@ -106,6 +119,12 @@
                 100
                 doom-frame-opacity))))
 
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "transparency"          "t"     #'toggle-background-opacity
+       )
+      )
+
 (setq doom-frame-opacity 100)
 (toggle-background-opacity)
 
@@ -116,6 +135,27 @@
 (setq treemacs-width 30)
 (setq treemacs--width-is-locked nil)
 (setq treemacs-width-is-initially-locked nil)
+
+(setq doom-localleader-key ",")
+
+(setq wrapped-copy (symbol-function 'evil-delete))
+(evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)
+  "Cut text from BEG to END with TYPE.
+
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+  (interactive "<R><x><y>")
+  (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
+
+(map! :n "m" 'evil-cut)
+
+(defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
+  (apply orig-fn beg end type ?_ args))
+(advice-add 'evil-delete :around 'bb/evil-delete)
+(advice-add 'evil-delete-char :around 'bb/evil-delete)
+
+(defun bb/evil-org-delete-char (orig-fn count beg end &optional type _ &rest args)
+  (apply orig-fn count beg end type ?_ args))
+(advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
 
 (setq company-idle-delay 0.4)
 
@@ -160,59 +200,9 @@
        )
       )
 
-(setq doom-localleader-key ",")
-
-(setq wrapped-copy (symbol-function 'evil-delete))
-(evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)
-  "Cut text from BEG to END with TYPE.
-
-Save in REGISTER or in the kill-ring with YANK-HANDLER."
-  (interactive "<R><x><y>")
-  (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
-
-(map! :n "m" 'evil-cut)
-
-(defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
-  (apply orig-fn beg end type ?_ args))
-(advice-add 'evil-delete :around 'bb/evil-delete)
-(advice-add 'evil-delete-char :around 'bb/evil-delete)
-
-(defun bb/evil-org-delete-char (orig-fn count beg end &optional type _ &rest args)
-  (apply orig-fn count beg end type ?_ args))
-(advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
-
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity
-       )
-      )
-
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
-       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
-       )
-      )
-
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Visible mode"           "V"     #'visible-mode
-       )
-      )
-
 (map! :leader
  (:prefix ("t" . "toggle")
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
-       )
-      )
-
-(map! :localleader
-      :map org-mode-map
-      (:prefix ("D" . "org-d20")
-       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
-       :desc "add to combat" "a" #'org-d20-initiative-add
-       :desc "apply damage at point" "d" #'org-d20-damage
-       :desc "roll" "r" #'org-d20-roll
        )
       )
 
@@ -372,6 +362,16 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   )
 (add-hook 'writeroom-mode-hook 'latex-preview-rescale)
 (add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
+
+(map! :localleader
+      :map org-mode-map
+      (:prefix ("D" . "org-d20")
+       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
+       :desc "add to combat" "a" #'org-d20-initiative-add
+       :desc "apply damage at point" "d" #'org-d20-damage
+       :desc "roll" "r" #'org-d20-roll
+       )
+      )
 
 ;;(setq +latex-viewers nil)
 (setq +latex-indent-item-continuation-offset 'auto)

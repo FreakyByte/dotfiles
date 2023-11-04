@@ -16,22 +16,19 @@
   - [[#transparent-background][Transparent Background]]
   - [[#whitespace][Whitespace]]
   - [[#treemacs][Treemacs]]
-- [[#global-options][Global Options]]
+- [[#global-functionality][Global Functionality]]
+  - [[#local-leader][Local Leader]]
+  - [[#movecut][Move/Cut]]
   - [[#auto-complete][Auto-complete]]
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
-- [[#keybindings][Keybindings]]
-  - [[#local-leader][Local Leader]]
-  - [[#movecut][Move/Cut]]
-  - [[#toggle-transparency][Toggle Transparency]]
-  - [[#toggle-fonts][Toggle Fonts]]
-  - [[#global-writeroom][Global Writeroom]]
-  - [[#org-d20][org-d20]]
+  - [[#zenwriteroom][Zen/Writeroom]]
 - [[#org-mode][Org Mode]]
   - [[#org-paths][Org-Paths]]
   - [[#org-appearance][Org Appearance]]
   - [[#org-roam][Org Roam]]
   - [[#latex--org][LaTeX & Org]]
+  - [[#org-d20][org-d20]]
 - [[#latex][LaTeX]]
 - [[#tangle-this-file][Tangle this file!]]
 
@@ -138,6 +135,24 @@ I also gotta activate ~mixed-pitch-set-height~, so that ~mixed-pitch-mode~ actua
 (setq mixed-pitch-set-height t)
 #+end_src
 
+Let's bind some keys for quick toggling between the different font modes.
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
+       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
+       )
+      )
+#+end_src
+By this, ~visible-mode~ has been unmapped from ~SPC t v~. Let's remap it to ~SPC t V~.
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Visible mode"           "V"     #'visible-mode
+       )
+      )
+#+end_src
+
 ** Theme
 I like DOOMs default colors
 #+begin_src emacs-lisp
@@ -241,6 +256,12 @@ Now follows a function to toggle the transparent background on and off.
         'alpha (if (frame-parameter (selected-frame) 'fullscreen)
                 100
                 doom-frame-opacity))))
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "transparency"          "t"     #'toggle-background-opacity
+       )
+      )
 #+end_src
 
 This will make the background transparent at startup.
@@ -266,7 +287,45 @@ By default, the treemacs window is not re-sizable. I don't see why.
 (setq treemacs-width-is-initially-locked nil)
 #+end_src
 
-* Global Options
+* Global Functionality
+** Local Leader
+I'm used to this from my VimTex days.
+#+begin_src emacs-lisp
+(setq doom-localleader-key ",")
+#+end_src
+** Move/Cut
+I've always liked that the delete command in vim automatically yanks the deleted text, i.e. it acts more like cutting than deleting.
+For this reason I've configured 'd' and 'x' to not yank the deleted text, and instead defined 'm' (for "move", because 'c' is already taken) to delete and yank, i.e. cut.
+
+First we clone the default ~evil-delete~ function under the name ~evil-cut~.
+#+begin_src emacs-lisp
+(setq wrapped-copy (symbol-function 'evil-delete))
+(evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)
+  "Cut text from BEG to END with TYPE.
+
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+  (interactive "<R><x><y>")
+  (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
+#+end_src
+
+Now we map ~evil-cut~ to 'm'.
+#+begin_src emacs-lisp
+(map! :n "m" 'evil-cut)
+#+end_src
+
+Finally, we automatically redirect all deletions to the black hole register, thus making 'd', 'x', and pasting over something only delete and not copy.
+We also need to do it for ~evil-org-delete-char~, since that has different input arguments and an extra ~evil-yank~ in it's definition for some reason.
+#+begin_src emacs-lisp
+(defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
+  (apply orig-fn beg end type ?_ args))
+(advice-add 'evil-delete :around 'bb/evil-delete)
+(advice-add 'evil-delete-char :around 'bb/evil-delete)
+
+(defun bb/evil-org-delete-char (orig-fn count beg end &optional type _ &rest args)
+  (apply orig-fn count beg end type ?_ args))
+(advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
+#+end_src
+
 ** Auto-complete
 Increase time until auto-complete shows up.
 #+begin_src emacs-lisp
@@ -327,92 +386,11 @@ Some nicer shortcuts for creating snippets and etc. would also be nice.
        )
       )
 #+end_src
-
-
-* Keybindings
-** Local Leader
-I'm used to this from my VimTex days.
-#+begin_src emacs-lisp
-(setq doom-localleader-key ",")
-#+end_src
-** Move/Cut
-I've always liked that the delete command in vim automatically yanks the deleted text, i.e. it acts more like cutting than deleting.
-For this reason I've configured 'd' and 'x' to not yank the deleted text, and instead defined 'm' (for "move", because 'c' is already taken) to delete and yank, i.e. cut.
-
-First we clone the default ~evil-delete~ function under the name ~evil-cut~.
-#+begin_src emacs-lisp
-(setq wrapped-copy (symbol-function 'evil-delete))
-(evil-define-operator evil-cut (BEG END TYPE REGISTER YANK-HANDLER)
-  "Cut text from BEG to END with TYPE.
-
-Save in REGISTER or in the kill-ring with YANK-HANDLER."
-  (interactive "<R><x><y>")
-  (funcall wrapped-copy BEG END TYPE REGISTER YANK-HANDLER))
-#+end_src
-
-Now we map ~evil-cut~ to 'm'.
-#+begin_src emacs-lisp
-(map! :n "m" 'evil-cut)
-#+end_src
-
-Finally, we automatically redirect all deletions to the black hole register, thus making 'd', 'x', and pasting over something only delete and not copy.
-We also need to do it for ~evil-org-delete-char~, since that has different input arguments and an extra ~evil-yank~ in it's definition for some reason.
-#+begin_src emacs-lisp
-(defun bb/evil-delete (orig-fn beg end &optional type _ &rest args)
-  (apply orig-fn beg end type ?_ args))
-(advice-add 'evil-delete :around 'bb/evil-delete)
-(advice-add 'evil-delete-char :around 'bb/evil-delete)
-
-(defun bb/evil-org-delete-char (orig-fn count beg end &optional type _ &rest args)
-  (apply orig-fn count beg end type ?_ args))
-(advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
-#+end_src
-
-** Toggle Transparency
-#+begin_src emacs-lisp
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity
-       )
-      )
-#+end_src
-** Toggle Fonts
-#+begin_src emacs-lisp
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
-       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
-       )
-      )
-#+end_src
-By this, ~visible-mode~ has been unmapped from ~SPC t v~. Let's remap it to ~SPC t V~.
-#+begin_src emacs-lisp
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Visible mode"           "V"     #'visible-mode
-       )
-      )
-#+end_src
-** Global Writeroom
+** Zen/Writeroom
 #+begin_src emacs-lisp
 (map! :leader
  (:prefix ("t" . "toggle")
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
-       )
-      )
-#+end_src
-** org-d20
-Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.
-The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for rolling dice and taking care of combat initiative and hp within org.
-
-#+begin_src emacs-lisp
-(map! :localleader
-      :map org-mode-map
-      (:prefix ("D" . "org-d20")
-       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
-       :desc "add to combat" "a" #'org-d20-initiative-add
-       :desc "apply damage at point" "d" #'org-d20-damage
-       :desc "roll" "r" #'org-d20-roll
        )
       )
 #+end_src
@@ -613,6 +591,21 @@ It turned out to not be so easy though for an elisp noob like me, so here are so
   )
 (add-hook 'writeroom-mode-hook 'latex-preview-rescale)
 (add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
+#+end_src
+** org-d20
+Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.
+The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for rolling dice and taking care of combat initiative and hp within org.
+
+#+begin_src emacs-lisp
+(map! :localleader
+      :map org-mode-map
+      (:prefix ("D" . "org-d20")
+       :desc "start/advance combat" "i" #'org-d20-initiative-dwim
+       :desc "add to combat" "a" #'org-d20-initiative-add
+       :desc "apply damage at point" "d" #'org-d20-damage
+       :desc "roll" "r" #'org-d20-roll
+       )
+      )
 #+end_src
 * LaTeX
 #+begin_src emacs-lisp
