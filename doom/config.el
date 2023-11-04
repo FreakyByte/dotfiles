@@ -447,8 +447,6 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        )
       )
 ;;
-;; set maximum line length for visual-line-mode in tex-mode
-(add-hook 'TeX-mode-hook 'window-margin-mode)
 
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
 
@@ -474,3 +472,22 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (map! :after tex
       :map LaTeX-mode-map
       "\"" 'insert-standard-quote)
+
+(add-hook 'TeX-mode-hook 'window-margin-mode)
+
+(map! :after latex :map cdlatex-mode-map
+      ; my keyboard has these weird Umlauts that no one should ever use in math mode
+      "\'"      nil
+      ; my keyboard has these weird Umlauts that no one should ever use in math mode - pretty good opportunity to find a new use for them!
+      "ä"       #'cdlatex-math-modify   ; mnemonic: "Ändern"
+      ; they can also stay on this key for now, but I doubt I'm gonna use that much
+      "\´"       #'cdlatex-math-modify
+      "\`"       #'cdlatex-math-symbol
+      )
+(map! :map org-cdlatex-mode-map     ; same thing for within org mode
+      "\'"      nil
+      "ä"       #'cdlatex-math-modify
+      "ö"       #'cdlatex-math-symbol
+      "\´"       #'cdlatex-math-modify
+      "\`"       #'cdlatex-math-symbol
+      )
