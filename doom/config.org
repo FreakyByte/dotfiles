@@ -25,6 +25,7 @@
   - [[#movecut][Move/Cut]]
   - [[#toggle-transparency][Toggle Transparency]]
   - [[#toggle-fonts][Toggle Fonts]]
+  - [[#global-writeroom][Global Writeroom]]
   - [[#org-d20][org-d20]]
 - [[#org-mode][Org Mode]]
   - [[#org-paths][Org-Paths]]
@@ -388,7 +389,15 @@ By this, ~visible-mode~ has been unmapped from ~SPC t v~. Let's remap it to ~SPC
 #+begin_src emacs-lisp
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "Visible mode"       "V"     #'visible-mode
+       :desc "Visible mode"           "V"     #'visible-mode
+       )
+      )
+#+end_src
+** Global Writeroom
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
        )
       )
 #+end_src

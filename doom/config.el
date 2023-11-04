@@ -196,7 +196,13 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "Visible mode"       "V"     #'visible-mode
+       :desc "Visible mode"           "V"     #'visible-mode
+       )
+      )
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
        )
       )
 
