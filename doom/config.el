@@ -421,6 +421,16 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (add-hook 'writeroom-mode-hook 'latex-preview-rescale)
 (add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
 
+(require 'smartparens-config)
+  (sp-local-pair 'org-mode "\\[" "\\]")
+  (sp-local-pair 'org-mode "$" "$")
+  (sp-local-pair 'org-mode "'" "'" :actions '(rem))
+  (sp-local-pair 'org-mode "=" "=" :actions '(rem))
+  (sp-local-pair 'org-mode "\\left(" "\\right)" :trigger "\\l(" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left[" "\\right]" :trigger "\\l[" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left\\{" "\\right\\}" :trigger "\\l{" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left|" "\\right|" :trigger "\\l|" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+
 (map! :localleader
       :map org-mode-map
       (:prefix ("D" . "org-d20")

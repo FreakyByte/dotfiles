@@ -654,6 +654,19 @@ It turned out to not be so easy though for an elisp noob like me, so here are so
 (add-hook 'writeroom-mode-hook 'latex-preview-rescale)
 (add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
 #+end_src
+*** Smartparens
+I want Smartparens to also recognize typical LaTeX-patterns in org-mode (cf. [[https://emacs.stackexchange.com/a/56094][stackexchange]]).
+#+begin_src emacs-lisp :tangle yes
+(require 'smartparens-config)
+  (sp-local-pair 'org-mode "\\[" "\\]")
+  (sp-local-pair 'org-mode "$" "$")
+  (sp-local-pair 'org-mode "'" "'" :actions '(rem))
+  (sp-local-pair 'org-mode "=" "=" :actions '(rem))
+  (sp-local-pair 'org-mode "\\left(" "\\right)" :trigger "\\l(" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left[" "\\right]" :trigger "\\l[" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left\\{" "\\right\\}" :trigger "\\l{" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+  (sp-local-pair 'org-mode "\\left|" "\\right|" :trigger "\\l|" :post-handlers '(sp-latex-insert-spaces-inside-pair))
+#+end_src
 ** org-d20
 Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.
 The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for rolling dice and taking care of combat initiative and hp within org.
