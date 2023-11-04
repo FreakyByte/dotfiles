@@ -187,6 +187,19 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        )
       )
 
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
+       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
+       )
+      )
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Visible mode"       "V"     #'visible-mode
+       )
+      )
+
 (map! :localleader
       :map org-mode-map
       (:prefix ("D" . "org-d20")

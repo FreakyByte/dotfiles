@@ -24,6 +24,7 @@
   - [[#local-leader][Local Leader]]
   - [[#movecut][Move/Cut]]
   - [[#toggle-transparency][Toggle Transparency]]
+  - [[#toggle-fonts][Toggle Fonts]]
   - [[#org-d20][org-d20]]
 - [[#org-mode][Org Mode]]
   - [[#org-paths][Org-Paths]]
@@ -374,7 +375,23 @@ We also need to do it for ~evil-org-delete-char~, since that has different input
        )
       )
 #+end_src
-
+** Toggle Fonts
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Mixed pitch mode"       "m"     #'mixed-pitch-mode
+       :desc "Variable pitch mode"    "v"     #'variable-pitch-mode
+       )
+      )
+#+end_src
+By this, ~visible-mode~ has been unmapped from ~SPC t v~. Let's remap it to ~SPC t V~.
+#+begin_src emacs-lisp
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Visible mode"       "V"     #'visible-mode
+       )
+      )
+#+end_src
 ** org-d20
 Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.
 The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for rolling dice and taking care of combat initiative and hp within org.
