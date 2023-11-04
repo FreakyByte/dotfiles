@@ -753,22 +753,25 @@ Long lines are hard to read. This activates a maximum line length in TeX-buffers
 This mode provides pretty useful shortcuts for writing math. I ignored this package for too long, probably cause the default keybindings really don't work with me.
 #+begin_src emacs-lisp :tangle yes
 (map! :after latex :map cdlatex-mode-map
-      ; my keyboard has these weird Umlauts that no one should ever use in math mode
+      ; I'm too used to using the ' key to type stuff like "f prime"
       "\'"      nil
-      ; my keyboard has these weird Umlauts that no one should ever use in math mode - pretty good opportunity to find a new use for them!
-      "ä"       #'cdlatex-math-modify   ; mnemonic: "Ändern"
-      ; they can also stay on this key for now, but I doubt I'm gonna use that much
+      ; so this key is better imo
       "\´"       #'cdlatex-math-modify
       "\`"       #'cdlatex-math-symbol
       )
 (map! :map org-cdlatex-mode-map     ; same thing for within org mode
       "\'"      nil
-      "ä"       #'cdlatex-math-modify
-      "ö"       #'cdlatex-math-symbol
       "\´"       #'cdlatex-math-modify
       "\`"       #'cdlatex-math-symbol
       )
 #+end_src
+The internal variables also need to be changed, or otherwise the old keys will still be active in the CDLaTeX menu.
+#+begin_src emacs-lisp :tangle yes
+(require 'cdlatex)
+(setq cdlatex-math-modify-prefix 180)
+(setq cdlatex-math-symbol-prefix 96)
+#+end_src
+
 
 * Tangle this file!
 

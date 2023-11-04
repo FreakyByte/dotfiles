@@ -486,18 +486,18 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (add-hook 'TeX-mode-hook 'window-margin-mode)
 
 (map! :after latex :map cdlatex-mode-map
-      ; my keyboard has these weird Umlauts that no one should ever use in math mode
+      ; I'm too used to using the ' key to type stuff like "f prime"
       "\'"      nil
-      ; my keyboard has these weird Umlauts that no one should ever use in math mode - pretty good opportunity to find a new use for them!
-      "ä"       #'cdlatex-math-modify   ; mnemonic: "Ändern"
-      ; they can also stay on this key for now, but I doubt I'm gonna use that much
+      ; so this key is better imo
       "\´"       #'cdlatex-math-modify
       "\`"       #'cdlatex-math-symbol
       )
 (map! :map org-cdlatex-mode-map     ; same thing for within org mode
       "\'"      nil
-      "ä"       #'cdlatex-math-modify
-      "ö"       #'cdlatex-math-symbol
       "\´"       #'cdlatex-math-modify
       "\`"       #'cdlatex-math-symbol
       )
+
+(require 'cdlatex)
+(setq cdlatex-math-modify-prefix 180)
+(setq cdlatex-math-symbol-prefix 96)
