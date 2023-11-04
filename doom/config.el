@@ -253,6 +253,14 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (org-roam-tag-add '("draft")))
 (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
 
+(defun org-roam-node-insert-immediate (arg &rest args)
+  (interactive "P")
+  (let ((args (cons arg args))
+        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                  '(:immediate-finish t) ; this is the essential bit
+                                                  ))))
+    (apply #'org-roam-node-insert args)))
+
 (use-package! websocket
     :after org-roam)
 
@@ -275,6 +283,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
          :desc "Find ref"                   "F" #'org-roam-ref-find
          :desc "Show UI"                    "g" #'org-roam-ui-open
          :desc "Insert node"                "i" #'org-roam-node-insert
+         :desc "Insert node immediately"    "I" #'org-roam-node-insert-immediate
          :desc "Capture to node"            "n" #'org-roam-capture
          :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
          :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
