@@ -624,6 +624,20 @@ I want to see my tags when searching for notes.
               (propertize "${tags:30}" 'face 'org-tag))) ; 30 is the max. number of characters allocated for tags
 #+end_src
 ** LaTeX & Org
+*** Preamble
+Preamble used for LaTeX fragments in org:
+#+begin_src emacs-lisp :tangle yes
+(after! org (setq org-format-latex-header (concat org-format-latex-header
+    "\\usepackage{tikz, pgfplots}\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}")))
+#+end_src
+*** Settings necessary for TikZ
+There is two ways of rendering inline LaTeX previews: ~dvipng~ and ~imagemagick~.
+TikZ (and in particular ~tikzcd~) don't like ~dvipng~ somehow. So let's switch over to the magicks:
+#+begin_src emacs-lisp :tangle yes
+(after! org (setq org-latex-create-formula-image-program 'imagemagick))
+#+end_src
+For this to work however, ~imagemagick~ needs some further customization outside of Emacs (see [[https://stackoverflow.com/a/59193253][here]]).
+*** Automatic Rendering
 As long as it doesn't cause me performance issues, I will enable automatic rendering of LaTeX-previews.
 The ~org-fragtog~ package then enables automatically switching between LaTeX-preview and its underlying code.
 #+begin_src emacs-lisp :tangle yes
@@ -634,12 +648,13 @@ The ~org-fragtog~ package then enables automatically switching between LaTeX-pre
     :config
 )
 #+end_src
+*** Correct Backgrounds
 The following makes sure the backgrounds of LaTeX fragments (or their surroundings) don't look bad (cf. [[https://tecosaur.github.io/emacs-config/config.html#prettier-highlighting][tecosaur]])
 #+begin_src emacs-lisp :tangle yes
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 #+end_src
-
+*** Automatically Update Size
 The size of LaTeX fragments does not automatically update when the font size is changed. This fixes that.
 It turned out to not be so easy though for an elisp noob like me, so here are some notes:
  - Annoyingly, disabling LaTeX previews is achieved by running ~org-latex-preview~ with /prefix argument/, i.e. by pressing ~C-u~ before running the function. Calling this from a script is a bit of a hassle. This is what happens in ~org-latex-preview-clear~.

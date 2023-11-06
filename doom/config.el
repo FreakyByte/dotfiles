@@ -398,6 +398,11 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       (concat "${title:*} "
               (propertize "${tags:30}" 'face 'org-tag))) ; 30 is the max. number of characters allocated for tags
 
+(after! org (setq org-format-latex-header (concat org-format-latex-header
+    "\\usepackage{tikz, pgfplots}\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}")))
+
+(after! org (setq org-latex-create-formula-image-program 'imagemagick))
+
 (after! org (setq org-startup-with-latex-preview t))
 (use-package! org-fragtog
     :after org
