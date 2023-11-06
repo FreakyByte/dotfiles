@@ -313,7 +313,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq org-roam-capture-templates
       '(("d" "default" plain "%?" :target
-            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: %^{:some:tags:}\n#+title: ${title}\n\n")
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: \n#+title: ${title}\n\n")
         :unnarrowed t)))
 
 (defun jethro/tag-new-node-as-draft ()
@@ -355,6 +355,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
          :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
          :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
          :desc "Sync database"              "s" #'org-roam-db-sync
+         :desc "Add tag"                    "t" #'org-roam-tag-add
+         :desc "Remove tag"                 "T" #'org-roam-tag-remove
          (:prefix ("d" . "by date")
           :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
           :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
@@ -387,7 +389,14 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
          (window-margin-mode 1)
          (mixed-pitch-mode 1)
          )))
-(add-hook 'org-mode-hook 'roam-pseudohook)
+
+(defun writeroom-mode-deactivate () (writeroom-mode -1))
+(add-hook 'org-roam-capture-new-node-hook 'writeroom-mode-deactivate)
+(add-hook 'org-capture-mode-hook 'writeroom-mode-deactivate)
+
+(setq org-roam-node-display-template
+      (concat "${title:*} "
+              (propertize "${tags:30}" 'face 'org-tag))) ; 30 is the max. number of characters allocated for tags
 
 (after! org (setq org-startup-with-latex-preview t))
 (use-package! org-fragtog
