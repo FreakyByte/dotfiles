@@ -610,6 +610,7 @@ I want org roam notes to have special appearance. This function only turns on sp
          (window-margin-mode 1)
          (mixed-pitch-mode 1)
          )))
+(after! org (add-hook 'org-mode-hook 'roam-pseudohook))
 #+end_src
 Writeroom mode isn't a great idea during capture buffers. Let's add a hook to ~org-capture-mode~ to disable it.
 #+begin_src emacs-lisp :tangle yes

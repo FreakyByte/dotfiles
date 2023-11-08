@@ -389,6 +389,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
          (window-margin-mode 1)
          (mixed-pitch-mode 1)
          )))
+(after! org (add-hook 'org-mode-hook 'roam-pseudohook))
 
 (defun writeroom-mode-deactivate () (writeroom-mode -1))
 (add-hook 'org-roam-capture-new-node-hook 'writeroom-mode-deactivate)
