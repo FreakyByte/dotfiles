@@ -462,7 +462,8 @@ Some nicer shortcuts for creating snippets and etc. would also be nice.
 ** Org-Paths
 #+begin_src emacs-lisp
 (setq org-directory "~/org/"
-      org-roam-directory "~/Dropbox/roam")
+      org-roam-directory "~/Dropbox/roam"
+      org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
 (setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 #+end_src
 ** Org Appearance
@@ -555,6 +556,31 @@ One of the killer features associated with org roam are fancy graphs, as e.g. pr
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 #+end_src
+*** Commutative Diagrams
+I want to use commutative diagrams in some of my roam notes, using the LaTeX-package ~tikz-cd~. However, doing that in LaTeX fragments doesn't work with ~org-roam-ui~ (since that just uses KaTeX, which doesn't support everything in LaTeX). On the other hand, doing it using src-blocks is also not great, cause then the distracting source code is gonna appear both in org and in the UI.
+
+My solution to that is creating a capture template for commutative diagrams (inspired by [[https://github.com/darknmt/org-tikzcd-snippet][this]]). This is done using regular ~org-capture~, since I don't want those files to have IDs and show up in my roam database.
+The workflow is then as follows:
+ - Create a org file containing a ~tikz-cd~ block, using ~org-capture-commutative-diagram~.
+ - Type the commutative diagram of your dreams.
+ - Execute the code with =C-c C-c=. This results in a rendered image of the diagram below the source code.
+ - Copy the org-link from this file to the note where I actually want my commutative diagram.
+For the actual capture template: The code is passed both through ~format~ and through ~org-capture~, which necessitates double escaping quotations and backspaces. This makes it super hard to read, so I suggest you just try it out if you wanna see what it does. ^^
+#+begin_src emacs-lisp :tangle yes
+(defun commutative-diagram-filename ()
+  (setq commutative-diagram-filename--name (read-string "Name: "))
+  (setq commutative-diagram-filename--time (format-time-string "%Y%m%d%H%M%S"))
+  (expand-file-name (format "%s-%s.org" commutative-diagram-filename--time commutative-diagram-filename--name) org-cd-directory))
+
+(after! org-capture (add-to-list 'org-capture-templates
+  '("c" "Commutative Diagram" plain
+     (file commutative-diagram-filename)
+     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n A \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
+
+(defun org-capture-commutative-diagram ()
+  (interactive)
+  (org-capture nil "c"))
+#+end_src
 *** Keybindings
 Basically taking the default keybindings and moving them to ~SPC r~, which was still free.
 Only change is that I'm using ~org-roam-ui~ for the graph.
@@ -573,6 +599,7 @@ Only change is that I'm using ~org-roam-ui~ for the graph.
          :desc "Sync database"              "s" #'org-roam-db-sync
          :desc "Add tag"                    "t" #'org-roam-tag-add
          :desc "Remove tag"                 "T" #'org-roam-tag-remove
+         :desc "Commutative diagram"        "c" #'org-capture-commutative-diagram
          (:prefix ("d" . "by date")
           :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
           :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
@@ -814,7 +841,6 @@ I modified the snippet slightly to also work in files without headings, work wit
     "x" #'org-notebook-create-xournal
     "g" #'org-notebook-generate-xournal-image
     "e" #'org-notebook-edit-xournal)
-#+end_src
 #+end_src
 ** org-d20
 Org mode is really nice for tabletop RPGs, both taking notes as a player, as well as for writing your campaign as a game master.

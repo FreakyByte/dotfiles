@@ -265,7 +265,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       )
 
 (setq org-directory "~/org/"
-      org-roam-directory "~/Dropbox/roam")
+      org-roam-directory "~/Dropbox/roam"
+      org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
 (setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 
 (after! org
@@ -343,6 +344,20 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
+(defun commutative-diagram-filename ()
+  (setq commutative-diagram-filename--name (read-string "Name: "))
+  (setq commutative-diagram-filename--time (format-time-string "%Y%m%d%H%M%S"))
+  (expand-file-name (format "%s-%s.org" commutative-diagram-filename--time commutative-diagram-filename--name) org-cd-directory))
+
+(after! org-capture (add-to-list 'org-capture-templates
+  '("c" "Commutative Diagram" plain
+     (file commutative-diagram-filename)
+     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n A \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
+
+(defun org-capture-commutative-diagram ()
+  (interactive)
+  (org-capture nil "c"))
+
 (map! :leader
       (:prefix ("r" . "roam")
          :desc "Open random node"           "a" #'org-roam-node-random
@@ -357,6 +372,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
          :desc "Sync database"              "s" #'org-roam-db-sync
          :desc "Add tag"                    "t" #'org-roam-tag-add
          :desc "Remove tag"                 "T" #'org-roam-tag-remove
+         :desc "Commutative diagram"        "c" #'org-capture-commutative-diagram
          (:prefix ("d" . "by date")
           :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
           :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
