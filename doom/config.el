@@ -352,7 +352,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (after! org-capture (add-to-list 'org-capture-templates
   '("c" "Commutative Diagram" plain
      (file commutative-diagram-filename)
-     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n A \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
+     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n %%? \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
 
 (defun org-capture-commutative-diagram ()
   (interactive)

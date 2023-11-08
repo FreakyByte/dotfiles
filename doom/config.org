@@ -565,7 +565,7 @@ The workflow is then as follows:
  - Type the commutative diagram of your dreams.
  - Execute the code with =C-c C-c=. This results in a rendered image of the diagram below the source code.
  - Copy the org-link from this file to the note where I actually want my commutative diagram.
-For the actual capture template: The code is passed both through ~format~ and through ~org-capture~, which necessitates double escaping quotations and backspaces. This makes it super hard to read, so I suggest you just try it out if you wanna see what it does. ^^
+For the actual capture template: The code is passed both through ~format~ and through ~org-capture~, which necessitates double escaping quotations and backspaces. This makes it super hard to read, so I suggest you just try it out if you wanna see what it does. ^^ The ~%%~ is a masked percentage sign btw.
 #+begin_src emacs-lisp :tangle yes
 (defun commutative-diagram-filename ()
   (setq commutative-diagram-filename--name (read-string "Name: "))
@@ -575,7 +575,7 @@ For the actual capture template: The code is passed both through ~format~ and th
 (after! org-capture (add-to-list 'org-capture-templates
   '("c" "Commutative Diagram" plain
      (file commutative-diagram-filename)
-     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n A \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
+     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n %%? \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
 
 (defun org-capture-commutative-diagram ()
   (interactive)
