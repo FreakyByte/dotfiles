@@ -200,6 +200,8 @@ ruled.client.connect_signal(
 				class = {
 					'Xournal',
 					'Xournalpp',
+                    'com.github.xournalpp.xournalpp',
+                    'Com.github.xournalpp.xournalpp',
 				}
 			},
 			properties = {

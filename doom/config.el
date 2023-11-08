@@ -446,6 +446,119 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (sp-local-pair 'org-mode "\\left\\{" "\\right\\}" :trigger "\\l{" :post-handlers '(sp-latex-insert-spaces-inside-pair))
   (sp-local-pair 'org-mode "\\left|" "\\right|" :trigger "\\l|" :post-handlers '(sp-latex-insert-spaces-inside-pair))
 
+;; Org Notebook
+(setq org-notebook-result-dir "./handwritten/")
+(setq org-notebook-template-path "~/Dropbox/template.xopp")
+
+(defun org-notebook-get-png-link-at-point (shouldThrowError)
+    "Returns filepath of org link at cursor"
+    (setq linestr (thing-at-point 'line))
+    (setq start (string-match "\\[\\[" linestr))
+    (setq end (string-match "\\]\\]" linestr))
+    (if shouldThrowError (if start nil (error "No link found")) nil)
+    (if shouldThrowError (if end nil   (error "No link found")) nil)
+    (if shouldThrowError (if (string-match ".png" linestr) nil   (error "Link is not an image")) nil)
+
+    (if (and linestr start end) (substring linestr (+ start 2) end) nil)
+)
+
+(defun org-notebook-gen-filename-at-point ()
+    "Returns a list of valid file paths corresponding to current context(Header & Date)."
+
+    (unless (file-directory-p org-notebook-result-dir) (make-directory org-notebook-result-dir))
+
+    (setq date-string (format-time-string "%Y-%m-%d_%H%M%S"))
+
+    ; return current heading if available
+    ; otherwise return title of org document
+    ; if that's also not available, return nil
+    (setq heading (condition-case nil
+            (nth 4 (org-heading-components))
+            (error (if (org-collect-keywords '("TITLE"))
+                (nth 1 (nth 0 (org-collect-keywords '("TITLE"))))
+                ""
+            ))))
+
+
+    (setq heading (replace-regexp-in-string "\\[.*\\]" "" heading))
+
+    ;; First filter out weird symbols
+    (setq heading (replace-regexp-in-string "[/;:'\"\(\)]+" "" heading))
+    (setq heading (string-trim heading))
+    ;; filter out swedish characters åäö -> aao
+    (setq heading(replace-regexp-in-string "[åÅäÄ]+" "a" heading))
+    (setq heading(replace-regexp-in-string "[öÓ]+" "o" heading))
+    ;; whitespace and . to underscores
+    (setq heading (replace-regexp-in-string "[ .]+" "_" heading))
+
+    (setq filename (format "%s-%s" heading date-string))
+    (setq filename (read-minibuffer "Filename: " filename))
+
+    (setq image-path (format "%s%s.png" org-notebook-result-dir filename))
+    (setq xournal-path (format "%s%s.xopp" org-notebook-result-dir filename))
+
+    (list image-path xournal-path)
+)
+
+
+(defun org-notebook-create-xournal ()
+    "Insert an image and open the drawing program"
+    (interactive)
+
+    (setq notebookfile (org-notebook-gen-filename-at-point))
+    (setq image-path (car notebookfile))
+    (setq xournal-path (nth 1 notebookfile))
+
+    (evil-open-below 1)
+    (insert "[[" image-path "]]\n")
+    (evil-normal-state)
+
+    (start-process-shell-command "org-notebook-copy-template" nil (concat "cp " org-notebook-template-path " " xournal-path))
+    (start-process "org-notebook-drawing" nil "xournalpp" xournal-path)
+)
+
+(defun org-notebook-edit-xournal ()
+    (interactive)
+    (setq image-path (org-notebook-get-png-link-at-point nil))
+    (if (not image-path)
+        (if (y-or-n-p "No matching xournal file, create one?")
+            (org-notebook-create-xournal)
+            (error "Nothing more to do...")
+            )
+            nil
+        )
+
+    (setq xournal-path (replace-regexp-in-string "\.png" ".xopp" image-path))
+    (if (file-readable-p xournal-path) (start-process "org-notebook-drawing" nil "xournalpp" xournal-path) (error "No matching xournal file found"))
+)
+
+(defun org-notebook-generate-xournal-image ()
+    (interactive)
+    (setq image-path (org-notebook-get-png-link-at-point t))
+    (setq xournal-path (replace-regexp-in-string "\.png" ".xopp" image-path))
+    (if (file-readable-p xournal-path) nil (error "No matching xournal file found"))
+
+    (setq xournal_cmd (format "xournalpp --export-no-background %s %s %s" xournal-path "-i" image-path))
+    (print (format "Generating image file: %s" xournal_cmd))
+    (shell-command xournal_cmd)
+
+
+    (setq convert_cmd (format "convert %s -trim -bordercolor none -border 20 +repage %s" image-path image-path))
+    (print (format "Auto cropping image: %s" convert_cmd))
+    (shell-command convert_cmd)
+
+    (org-redisplay-inline-images)
+)
+
+
+(map! :after org
+    :map org-mode-map
+    :localleader
+    :prefix ("x" . "Xournal")
+    "x" #'org-notebook-create-xournal
+    "g" #'org-notebook-generate-xournal-image
+    "e" #'org-notebook-edit-xournal)
+
 (map! :localleader
       :map org-mode-map
       (:prefix ("D" . "org-d20")
