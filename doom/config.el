@@ -258,6 +258,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        )
       )
 
+(setq yas-triggers-in-field t)
+
 (map! :leader
  (:prefix ("t" . "toggle")
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
@@ -660,3 +662,25 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (require 'cdlatex)
 (setq cdlatex-math-modify-prefix 180)
 (setq cdlatex-math-symbol-prefix 96)
+
+(after! cdlatex
+  (setq cdlatex-math-symbol-alist
+   '( ;; adding missing functions to 3rd level symbols
+     (?_    ("\\downarrow" "" "\\inf"))
+     (?2    ("^2" "\\sqrt{?}" ""))
+     (?3    ("^3" "\\sqrt[3]{?}" ""))
+     (?^    ("\\uparrow" "" "\\sup"))
+     (?k    ("\\kappa" "" "\\ker"))
+     (?m    ("\\mu" "" "\\lim"))
+     (?c    (""   "\\circ" "\\cos"))
+     (?d    ("\\delta" "\\partial" ""))
+     (?D    ("\\Delta" "\\nabla" "\\deg"))
+     ;; no idea why \Phi isnt on 'F' in first place, \phi is on 'f'.
+     (?F    ("\\Phi"))
+     ;; now just convenience
+     (?.    ("\\cdot" "\\dots"))
+     (?:    ("\\vdots" "\\ddots"))
+     (?*    ("\\times" "\\star" "\\ast")))
+   cdlatex-math-modify-alist
+   '((?B    "\\mathbb"        nil          t    nil  nil)
+     (?a    "\\abs"           nil          t    nil  nil))))
