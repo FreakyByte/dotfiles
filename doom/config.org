@@ -554,7 +554,7 @@ One of the killer features associated with org roam are fancy graphs, as e.g. pr
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+          org-roam-ui-open-on-start nil))
 #+end_src
 *** Commutative Diagrams
 I want to use commutative diagrams in some of my roam notes, using the LaTeX-package ~tikz-cd~. However, doing that in LaTeX fragments doesn't work with ~org-roam-ui~ (since that just uses KaTeX, which doesn't support everything in LaTeX). On the other hand, doing it using src-blocks is also not great, cause then the distracting source code is gonna appear both in org and in the UI.

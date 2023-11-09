@@ -342,7 +342,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+          org-roam-ui-open-on-start nil))
 
 (defun commutative-diagram-filename-generate ()
   (setq commutative-diagram-filename--name (read-string "Name: "))
