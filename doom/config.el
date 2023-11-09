@@ -344,19 +344,34 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-(defun commutative-diagram-filename ()
+(defun commutative-diagram-filename-generate ()
   (setq commutative-diagram-filename--name (read-string "Name: "))
   (setq commutative-diagram-filename--time (format-time-string "%Y%m%d%H%M%S"))
-  (expand-file-name (format "%s-%s.org" commutative-diagram-filename--time commutative-diagram-filename--name) org-cd-directory))
+  (setq commutative-diagram-filename--image (expand-file-name (format "%s-%s.png" commutative-diagram-filename--time commutative-diagram-filename--name) org-cd-directory))
+  (setq commutative-diagram-filename--org (expand-file-name (format "%s-%s.org" commutative-diagram-filename--time commutative-diagram-filename--name) org-cd-directory)))
 
 (after! org-capture (add-to-list 'org-capture-templates
   '("c" "Commutative Diagram" plain
-     (file commutative-diagram-filename)
-     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 300 -resize 1000 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n %%? \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
+     (file commutative-diagram-filename-generate)
+     "%(format \"#+TITLE: %s\n#+STAMP: %s\n#+HEADER: :imagemagick yes :iminoptions -density 600 -geometry 1500 :buffer no :fit yes \n#+HEADER: :results raw  :file %s-%s.png \n#+HEADER: :packages '((\\\"\\\" \\\"tikz-cd\\\")) \n#+HEADER: :exports results :results output graphics file \n#+BEGIN_SRC latex \n\\\\begin{tikzcd}[white]\n %%? \n\\\\end{tikzcd}\n#+END_SRC\" commutative-diagram-filename--name commutative-diagram-filename--time commutative-diagram-filename--time commutative-diagram-filename--name)")))
 
-(defun org-capture-commutative-diagram ()
-  (interactive)
-  (org-capture nil "c"))
+(defun org-capture-commutative-diagram--render ()
+    (when (and (not org-note-abort) (equal (plist-get org-capture-plist :key) "c")) ; execute only for the commutative diagram capture template
+    (org-babel-execute-buffer)))
+(after! org-capture (add-hook 'org-capture-before-finalize-hook 'org-capture-commutative-diagram--render))
+
+(defun org-capture-commutative-diagram--insert-link () (interactive)
+  (when (and (not org-note-abort) (equal (plist-get org-capture-plist :key) "c")) ; execute only for the commutative diagram capture template
+    (evil-open-below 1)
+    (insert "[[" commutative-diagram-filename--image "]]\n")
+    (evil-normal-state)
+    (org-redisplay-inline-images)
+))
+(after! org-capture (add-hook 'org-capture-after-finalize-hook 'org-capture-commutative-diagram--insert-link))
+
+(defun org-capture-commutative-diagram () (interactive)
+    (org-capture nil "c")
+)
 
 (map! :leader
       (:prefix ("r" . "roam")
