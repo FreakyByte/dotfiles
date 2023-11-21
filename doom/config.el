@@ -331,6 +331,19 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
                                                   ))))
     (apply #'org-roam-node-insert args)))
 
+(defadvice org-roam-node-insert (around append-if-in-evil-normal-mode activate compile)
+  "If in evil normal mode and cursor is on a whitespace character, then go into
+append mode first before inserting the link. This is to put the link after the
+space rather than before."
+  (let ((is-in-evil-normal-mode (and (bound-and-true-p evil-mode)
+                                     (not (bound-and-true-p evil-insert-state-minor-mode))
+                                     (looking-at "[[:blank:]]"))))
+    (if (not is-in-evil-normal-mode)
+        ad-do-it
+      (evil-append 0)
+      ad-do-it
+      (evil-normal-state))))
+
 (use-package! websocket
     :after org-roam)
 

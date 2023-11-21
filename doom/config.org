@@ -543,6 +543,22 @@ This function (taken from [[https://systemcrafters.net/build-a-second-brain-in-e
                                                   ))))
     (apply #'org-roam-node-insert args)))
 #+end_src
+
+Additionally, I'm getting quite annoyed that links are inserted at the cursor position, not after the cursor position. Even though I guess this is consistent with usual vim functionality, having to press space twice feels weird to me, and binding a new key to have it work similar to "append" ('a' in vim) rather than "insert" ('i' in vim) is a bit unnecessary. So this workaround suits me best. (cf. [[https://github.com/syl20bnr/spacemacs/issues/14137][this issue]])
+#+begin_src emacs-lisp :tangle yes
+(defadvice org-roam-node-insert (around append-if-in-evil-normal-mode activate compile)
+  "If in evil normal mode and cursor is on a whitespace character, then go into
+append mode first before inserting the link. This is to put the link after the
+space rather than before."
+  (let ((is-in-evil-normal-mode (and (bound-and-true-p evil-mode)
+                                     (not (bound-and-true-p evil-insert-state-minor-mode))
+                                     (looking-at "[[:blank:]]"))))
+    (if (not is-in-evil-normal-mode)
+        ad-do-it
+      (evil-append 0)
+      ad-do-it
+      (evil-normal-state))))
+#+end_src
 *** org-roam-ui
 One of the killer features associated with org roam are fancy graphs, as e.g. provided by ~org-roam-ui~.
 #+begin_src emacs-lisp :tangle yes
