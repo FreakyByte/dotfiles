@@ -434,6 +434,60 @@ space rather than before."
 
 ;;; org-roam-link-properties.el ends here
 
+(defun org-link-set-tags (&optional tags link)
+  "Set the tags of the link at point."
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (let* ((tags (or tags (read-string "Tags: ")))
+             (link (or link (org-element-context)))
+             (raw-link (org-element-property :raw-link link))
+             (path (org-element-property :path link))
+             (desc (and (org-element-property :contents-begin link)
+                        (org-element-property :contents-end link)
+                        (buffer-substring-no-properties
+                         (org-element-property :contents-begin link)
+                         (org-element-property :contents-end link))))
+             node)
+        (goto-char (org-element-property :begin link))
+        (when (org-in-regexp org-link-any-re 1)
+          (replace-match (org-link-make-string
+                          (concat raw-link "|:tag " tags)
+                          (or desc path))))))))
+
+(defun org-link-remove-tags (&optional link)
+  "Remove the tags of the link at point."
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (let* ((link (or link (org-element-context)))
+             (raw-link (org-element-property :raw-link link))
+             (path (org-element-property :path link))
+             (desc (and (org-element-property :contents-begin link)
+                        (org-element-property :contents-end link)
+                        (buffer-substring-no-properties
+                         (org-element-property :contents-begin link)
+                         (org-element-property :contents-end link))))
+             node)
+        (goto-char (org-element-property :begin link))
+        (when (org-in-regexp org-link-any-re 1)
+          (replace-match (org-link-make-string
+                          raw-link
+                          (or desc path))))))))
+
+(defun org-roam-implication-insert ()
+  "org-roam-node-insert, but the link is tagged with \"implication\""
+  (interactive)
+  (org-roam-node-insert)
+  (org-link-set-tags "implication")
+  )
+(defun org-roam-implication-insert-immediate ()
+  "org-roam-node-insert-immediately, but the link is tagged with \"implication\""
+  (interactive)
+  (org-roam-node-insert)
+  (org-link-set-tags "implication")
+  )
+
 (defun commutative-diagram-filename-generate ()
   (setq commutative-diagram-filename--name (read-string "Name: "))
   (setq commutative-diagram-filename--time (format-time-string "%Y%m%d%H%M%S"))
@@ -465,18 +519,24 @@ space rather than before."
 
 (map! :leader
       (:prefix ("r" . "roam")
-         :desc "Open random node"           "a" #'org-roam-node-random
+         :desc "Open random node"           "0" #'org-roam-node-random
          :desc "Find node"                  "f" #'org-roam-node-find
          :desc "Find ref"                   "F" #'org-roam-ref-find
          :desc "Show UI"                    "g" #'org-roam-ui-open
          :desc "Insert node"                "i" #'org-roam-node-insert
          :desc "Insert node immediately"    "I" #'org-roam-node-insert-immediate
+         :desc "Insert implication"         "j" #'org-roam-implication-insert
+         :desc "Insert imp. immediately"    "j" #'org-roam-implication-insert-immediate
          :desc "Capture to node"            "n" #'org-roam-capture
          :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
          :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
          :desc "Sync database"              "s" #'org-roam-db-sync
          :desc "Add tag"                    "t" #'org-roam-tag-add
          :desc "Remove tag"                 "T" #'org-roam-tag-remove
+         :desc "Set link tags"              "l" #'org-link-set-tags
+         :desc "Remove link tags"           "L" #'org-link-remove-tags
+         :desc "Add alias"                  "a" #'org-roam-alias-add
+         :desc "Remove alias"               "A" #'org-roam-alias-remove
          :desc "Commutative diagram"        "c" #'org-capture-commutative-diagram
          (:prefix ("d" . "by date")
           :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
