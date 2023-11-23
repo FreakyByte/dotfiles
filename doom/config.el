@@ -359,6 +359,81 @@ space rather than before."
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start nil))
 
+;;; org-roam-link-properties.el --- Frobnicate and bifurcate flanges
+
+;; Author: Oleg Domanov <odomanov@yandex.ru>
+;; Version: 1.0
+;; Keywords: org-roam org-roam-ui
+
+;;; Commentary:
+
+;;;  Org-Roam link properties (for 'id' links only).
+;;;  Adapted from https://linevi.ch/en/org-link-extra-attrs.html
+
+;;; Code:
+
+(defun odm/org-link-extra-attrs (orig-fun &rest args)
+  "Post processor for parsing links"
+  (setq parser-result orig-fun)
+
+  ;;; Retrieving inital values that should be replaced
+  (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
+
+  ;; Checking if link match the regular expression
+  (if (string-match-p "^id:.*|\s*:" raw-path)
+      (progn
+	;; Retrieving parameters after the vertical bar
+	(setq results (s-split "|" raw-path))
+	(setq raw-path (car results))
+	(setq path (s-chop-prefix "id:" raw-path))
+
+        ;; Cleaning, splitting and making symbols
+        (setq results (s-split "\s" (s-trim (s-collapse-whitespace
+                                             (car (-slice results 1))))))
+        (setq results (--map (intern it) results))
+
+	;; Updating the ouput with the new values
+	(setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
+	(setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
+
+        ;; Check that the number is even
+        (if (= 2 (length (-last-item (-partition-all 2 results))))
+            (list 'link (-snoc orig-fun-cleaned :extra-attrs results))
+          (progn
+            (message "Links properties are incorrect.")
+            (list 'link orig-fun-cleaned))))
+
+    ;; Or returning original value of the function
+    orig-fun))
+
+(advice-add 'org-element-link-parser :filter-return #'odm/org-link-extra-attrs)
+
+(defun odm/org-roam-db-extra-properties (link)
+  "Append extra-attrs to the LINK's properties."
+  (save-excursion
+    (goto-char (org-element-property :begin link))
+    (let ((path (org-element-property :path link))
+          (source (org-roam-id-at-point))
+          (extra-attrs (org-element-property :extra-attrs link)))
+      (when extra-attrs
+        (setq properties (caar (org-roam-db-query
+                               [:select properties :from links
+                                        :where (= source $s1) :and (= dest $s2)
+                                        :limit 1]
+                               source path)))
+        (setq properties (append properties extra-attrs))
+        (when (and source path)
+          (org-roam-db-query
+           [:update links :set (= properties $s3)
+                    :where (= source $s1) :and (= dest $s2)]
+           source path properties))))))
+
+(advice-add 'org-roam-db-insert-link :after #'odm/org-roam-db-extra-properties)
+
+(provide 'org-roam-link-properties)
+
+;;; org-roam-link-properties.el ends here
+
 (defun commutative-diagram-filename-generate ()
   (setq commutative-diagram-filename--name (read-string "Name: "))
   (setq commutative-diagram-filename--time (format-time-string "%Y%m%d%H%M%S"))

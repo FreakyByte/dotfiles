@@ -577,6 +577,89 @@ One of the killer features associated with org roam are fancy graphs, as e.g. pr
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start nil))
 #+end_src
+*** Tagging links
+While org-roam allows for files to be tagged, the links between files cannot. The following adds this functionality. Furthermore, I'm using a [[https://github.com/odomanov/org-roam-ui][fork of org-roam-ui]] which allows filtering these link tags and assigning colors to them (see ~packages.el~). This whole issue is talked about at length in the org-roam discourse (e.g. [[https://org-roam.discourse.group/t/link-categorization/2486/3][here]] and [[https://org-roam.discourse.group/t/add-link-tags-feature/171/34][here]]), but the discussion that this code comes from is [[https://github.com/org-roam/org-roam-ui/discussions/25][here]] (specifically this [[https://gist.github.com/odomanov/ed070a7faf3df1377fccf5d7c5000bf8][gist here]]).
+
+The syntax for these tagged links is
+=[[<link id>|:tag <tag> :context <short description>][<link title>]]=.
+Beware that this is different from what the author explains in the discussion linked above! It seems to be =:tag=, not =:tags=!
+
+#+begin_src emacs-lisp :tangle yes
+;;; org-roam-link-properties.el --- Frobnicate and bifurcate flanges
+
+;; Author: Oleg Domanov <odomanov@yandex.ru>
+;; Version: 1.0
+;; Keywords: org-roam org-roam-ui
+
+;;; Commentary:
+
+;;;  Org-Roam link properties (for 'id' links only).
+;;;  Adapted from https://linevi.ch/en/org-link-extra-attrs.html
+
+;;; Code:
+
+(defun odm/org-link-extra-attrs (orig-fun &rest args)
+  "Post processor for parsing links"
+  (setq parser-result orig-fun)
+
+  ;;; Retrieving inital values that should be replaced
+  (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
+
+  ;; Checking if link match the regular expression
+  (if (string-match-p "^id:.*|\s*:" raw-path)
+      (progn
+	;; Retrieving parameters after the vertical bar
+	(setq results (s-split "|" raw-path))
+	(setq raw-path (car results))
+	(setq path (s-chop-prefix "id:" raw-path))
+
+        ;; Cleaning, splitting and making symbols
+        (setq results (s-split "\s" (s-trim (s-collapse-whitespace
+                                             (car (-slice results 1))))))
+        (setq results (--map (intern it) results))
+
+	;; Updating the ouput with the new values
+	(setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
+	(setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
+
+        ;; Check that the number is even
+        (if (= 2 (length (-last-item (-partition-all 2 results))))
+            (list 'link (-snoc orig-fun-cleaned :extra-attrs results))
+          (progn
+            (message "Links properties are incorrect.")
+            (list 'link orig-fun-cleaned))))
+
+    ;; Or returning original value of the function
+    orig-fun))
+
+(advice-add 'org-element-link-parser :filter-return #'odm/org-link-extra-attrs)
+
+(defun odm/org-roam-db-extra-properties (link)
+  "Append extra-attrs to the LINK's properties."
+  (save-excursion
+    (goto-char (org-element-property :begin link))
+    (let ((path (org-element-property :path link))
+          (source (org-roam-id-at-point))
+          (extra-attrs (org-element-property :extra-attrs link)))
+      (when extra-attrs
+        (setq properties (caar (org-roam-db-query
+                               [:select properties :from links
+                                        :where (= source $s1) :and (= dest $s2)
+                                        :limit 1]
+                               source path)))
+        (setq properties (append properties extra-attrs))
+        (when (and source path)
+          (org-roam-db-query
+           [:update links :set (= properties $s3)
+                    :where (= source $s1) :and (= dest $s2)]
+           source path properties))))))
+
+(advice-add 'org-roam-db-insert-link :after #'odm/org-roam-db-extra-properties)
+
+(provide 'org-roam-link-properties)
+
+;;; org-roam-link-properties.el ends here
+#+end_src
 *** Commutative Diagrams
 I want to use commutative diagrams in some of my roam notes, using the LaTeX-package ~tikz-cd~. However, doing that in LaTeX fragments doesn't work with ~org-roam-ui~ (since that just uses KaTeX, which doesn't support everything in LaTeX). On the other hand, doing it using src-blocks is also not great, cause then the distracting source code is gonna appear both in org and in the UI.
 

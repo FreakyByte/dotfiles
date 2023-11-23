@@ -62,7 +62,10 @@
 
 ;; fancy org roam graph
 (unpin! org-roam)       ;; necessary since org-roam-ui tries to keep up with the newest version of org-roam, whereas doom doesn't
-(package! org-roam-ui)
+;(package! org-roam-ui)
+;; using this fork to incorporate different link types in the ui (cf. https://github.com/org-roam/org-roam-ui/discussions/25)
+(package! org-roam-ui
+  :recipe (:host github :repo "odomanov/org-roam-ui"))
 
 ;; automatically switch between LaTeX-preview and its source code
 (package! org-fragtog)
