@@ -58,6 +58,7 @@
 (after! doom-themes
         (custom-theme-set-faces! doom-theme
           `(default :background ,(ewal-load-color 'background))
+          `(seperator-line :background ,(ewal-load-color 'background))
           `(hl-line :background ,(ewal--color-chshade
                         (ewal-load-color 'background) .1))
           `(org-block :background ,(ewal--color-chshade
