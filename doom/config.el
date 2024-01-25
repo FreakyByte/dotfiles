@@ -832,4 +832,5 @@ space rather than before."
      (?*    ("\\times" "\\star" "\\ast")))
    cdlatex-math-modify-alist
    '((?B    "\\mathbb"        nil          t    nil  nil)
+     (?o    "\\operatorname"  nil          t    nil  nil)
      (?a    "\\abs"           nil          t    nil  nil))))
