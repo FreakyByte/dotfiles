@@ -476,8 +476,13 @@ space rather than before."
                           raw-link
                           (or desc path))))))))
 
+(defun org-roam-implication-tag ()
+  "Tag link at point as implication"
+  (interactive)
+  (org-link-set-tags "implication")
+  )
 (defun org-roam-implication-insert ()
-  "org-roam-node-insert, but the link is tagged with \"implication\""
+  "org-roam-node-insert, but the link is tagged with \"implication\"\n TODO: Does not currently work when a new node is created!"
   (interactive)
   (org-roam-node-insert)
   (org-link-set-tags "implication")
@@ -485,7 +490,7 @@ space rather than before."
 (defun org-roam-implication-insert-immediate ()
   "org-roam-node-insert-immediately, but the link is tagged with \"implication\""
   (interactive)
-  (org-roam-node-insert)
+  (org-roam-node-insert-immediate nil)
   (org-link-set-tags "implication")
   )
 
@@ -526,8 +531,8 @@ space rather than before."
          :desc "Show UI"                    "g" #'org-roam-ui-open
          :desc "Insert node"                "i" #'org-roam-node-insert
          :desc "Insert node immediately"    "I" #'org-roam-node-insert-immediate
-         :desc "Insert implication"         "j" #'org-roam-implication-insert
          :desc "Insert imp. immediately"    "j" #'org-roam-implication-insert-immediate
+         :desc "Tag link as implication"    "J" #'org-roam-implication-tag
          :desc "Capture to node"            "n" #'org-roam-capture
          :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
          :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
