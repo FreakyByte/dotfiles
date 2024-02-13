@@ -49,28 +49,52 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-;; themeing based on pywal colors
+;; the new fancy org-latex-preview system
+;; for more info, see config.org
+(package! org :recipe
+  (:host nil :repo "https://git.tecosaur.net/mirrors/org-mode.git" :remote "mirror" :fork
+         (:host nil :repo "https://git.tecosaur.net/tec/org-mode.git" :branch "dev" :remote "tecosaur")
+         :files
+         (:defaults "etc")
+         :build t :pre-build
+         (with-temp-file "org-version.el"
+           (require 'lisp-mnt)
+           (let
+               ((version
+                 (with-temp-buffer
+                   (insert-file-contents "lisp/org.el")
+                   (lm-header "version")))
+                (git-version
+                 (string-trim
+                  (with-temp-buffer
+                    (call-process "git" nil t nil "rev-parse" "--short" "HEAD")
+                    (buffer-string)))))
+             (insert
+              (format "(defun org-release () \"The release version of Org.\" %S)\n" version)
+              (format "(defun org-git-version () \"The truncate git commit hash of Org mode.\" %S)\n" git-version)
+              "(provide 'org-version)\n"))))
+  :pin nil)
+
+(unpin! org)
+
+
+; themeing based on pywal colors
 (package! ewal)
 (package! ewal-doom-themes)
 
-;; rolling dice and managing initiative in Emacs
+; rolling dice and managing initiative in Emacs
 (package! org-d20)
 
-;; maximum line lenght in visual line mode
+; maximum line lenght in visual line mode
 (package! window-margin
-  :recipe (:host github :repo "aculich/window-margin.el"))
+ :recipe (:host github :repo "aculich/window-margin.el"))
 
-;; fancy org roam graph
+; fancy org roam graph
 (unpin! org-roam)       ;; necessary since org-roam-ui tries to keep up with the newest version of org-roam, whereas doom doesn't
-;(package! org-roam-ui)
-;; using this fork to incorporate different link types in the ui (cf. https://github.com/org-roam/org-roam-ui/discussions/25)
+(package! org-roam-ui)
+; using this fork to incorporate different link types in the ui (cf. https://github.com/org-roam/org-roam-ui/discussions/25)
 (package! org-roam-ui
-  :recipe (:host github :repo "odomanov/org-roam-ui"))
+ :recipe (:host github :repo "odomanov/org-roam-ui"))
 
-;; automatically switch between LaTeX-preview and its source code
-(package! org-fragtog)
-
-;; I'm getting really weird cache errors when using org-latex-preview right now, and it seems fixed in a newer version of org
-;; cf.: https://www.mail-archive.com/emacs-orgmode@gnu.org/msg156512.html
-;; let's see if something else breaks...
-(unpin! org)
+; automatically switch between LaTeX-preview and its source code - not necessary with the above fancy org-latex-preview
+;;(package! org-fragtog)

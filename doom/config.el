@@ -21,6 +21,8 @@
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
 
+(setq shell-file-name (executable-find "bash"))
+
 (setq emacs-everywhere-frame-name-format "emacs-everywhere")
 
 (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
@@ -571,12 +573,16 @@ space rather than before."
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
 
-(defun roam-pseudohook ()
+(defvar roam-pseudohook nil
+ "A hook run only on org files in org-roam-directory.")
+(defun roam-pseudohook-function ()
   (cond ((string-prefix-p org-roam-directory (buffer-file-name))
-         (window-margin-mode 1)
-         (mixed-pitch-mode 1)
+         (run-hooks 'roam-pseudohook)
          )))
-(after! org (add-hook 'org-mode-hook 'roam-pseudohook))
+(after! org (add-hook 'org-mode-hook 'roam-pseudohook-function))
+
+(add-hook 'roam-pseudohook (lambda () (window-margin-mode 1)))
+(add-hook 'roam-pseudohook (lambda () (mixed-pitch-mode 1)))
 
 (defun writeroom-mode-deactivate () (writeroom-mode -1))
 (add-hook 'org-roam-capture-new-node-hook 'writeroom-mode-deactivate)
@@ -586,42 +592,260 @@ space rather than before."
       (concat "${title:*} "
               (propertize "${tags:30}" 'face 'org-tag))) ; 30 is the max. number of characters allocated for tags
 
-(after! org (setq org-format-latex-header (concat org-format-latex-header
-    "\\usepackage{tikz, pgfplots}\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}")))
+(defun org-latex-preview-check-health (&optional inter)
+  "Inspect the relevent system state and setup.
+INTER signals whether the function has been called interactively."
+  (interactive (list t))
+  ;; Collect information
+  (let* ((diag `(:interactive ,inter)))
+    (plist-put diag :org-version org-version)
+    ;; modified variables
+    (plist-put diag :modified
+               (let ((list))
+                 (mapatoms
+                  (lambda (v)
+                    (and (boundp v)
+                         (string-match "\\`\\(org-latex-\\|org-persist-\\)" (symbol-name v))
+                         (or (and (symbol-value v)
+                                  (string-match "\\(-hook\\|-function\\)\\'" (symbol-name v)))
+                             (and
+                              (get v 'custom-type) (get v 'standard-value)
+                              (not (equal (symbol-value v)
+                                          (eval (car (get v 'standard-value)) t)))))
+                         (push (cons v (symbol-value v)) list))))
+                 list))
+    ;; Executables
+    ;; latex processors
+    (dolist (processor org-latex-compilers)
+      (when-let ((path (executable-find processor)))
+        (let ((version (with-temp-buffer
+                         (thread-last
+                           (concat processor " --version")
+                           (shell-command-to-string)
+                           (insert))
+                         (goto-char (point-min))
+                         (buffer-substring (point) (line-end-position)))))
+          (push (list processor version path) (plist-get diag :latex-processors)))))
+    ;; Image converters
+    (dolist (converter '("dvipng" "dvisvgm" "convert"))
+      (when-let ((path (executable-find converter)))
+        (let ((version (with-temp-buffer
+                         (thread-last
+                           (concat converter " --version")
+                           (shell-command-to-string)
+                           (insert))
+                         (goto-char (point-min))
+                         (buffer-substring (point) (line-end-position)))))
+          (push (list converter version path) (plist-get diag :image-converters)))))
+    (when inter
+      (with-current-buffer (get-buffer-create "*Org LaTeX Preview Report*")
+        (let ((inhibit-read-only t))
+          (erase-buffer)
 
-(after! org (setq org-latex-create-formula-image-program 'imagemagick))
+          (insert (propertize "Your LaTeX preview process" 'face 'outline-1))
+          (insert "\n\n")
 
-(after! org (setq org-startup-with-latex-preview t))
-(use-package! org-fragtog
-    :after org
-    :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer
-    :config
-)
+          (let* ((latex-available (cl-member org-latex-compiler
+                                             (plist-get diag :latex-processors)
+                                             :key #'car :test #'string=))
+                 (precompile-available
+                  (and latex-available
+                       (not (member org-latex-compiler '("lualatex" "xelatex")))))
+                 (proc-info (alist-get
+                             org-latex-preview-process-default
+                             org-latex-preview-process-alist))
+                 (image-converter (cadr (plist-get proc-info :programs)))
+                 (image-converter
+                  (cl-find-if
+                   (lambda (c)
+                     (string= image-converter c))
+                   (plist-get diag :image-converters)
+                   :key #'car))
+                 (image-output-type (plist-get proc-info :image-output-type)))
+            (if org-latex-preview-process-precompiled
+                (insert "Precompile with "
+                        (propertize (map-elt org-latex-precompile-compiler-map
+                                             org-latex-compiler)
+                                    'face
+                                    (list
+                                     (if precompile-available
+                                         '(:inherit success :box t)
+                                       '(:inherit error :box t))
+                                     'org-block))
+                        " → "))
+            (insert "LaTeX Compile with "
+                    (propertize org-latex-compiler 'face
+                                (list
+                                 (if latex-available
+                                     '(:inherit success :box t)
+                                   '(:inherit error :box t))
+                                 'org-block))
+                    " → ")
+            (insert "Convert to "
+                    (propertize (upcase image-output-type) 'face '(:weight bold))
+                    " with "
+                    (propertize (car image-converter) 'face
+                                (list
+                                 (if image-converter
+                                     '(:inherit success :box t)
+                                   '(:inherit error :box t))
+                                 'org-block))
+                    "\n\n")
+            (insert (propertize org-latex-compiler 'face 'outline-3)
+                    "\n"
+                    (if latex-available
+                        (concat
+                          (propertize
+                           (mapconcat #'identity (map-nested-elt diag `(:latex-processors ,org-latex-compiler))
+                                      "\n")
+                           'face 'org-block)
+                          "\n"
+                          (when (and latex-available (not precompile-available))
+                            (propertize
+                             (format "\nWarning: Precompilation not available with %S!\n" org-latex-compiler)
+                             'face 'warning)))
+                      (propertize "Not found in path!\n" 'face 'error))
+                    "\n")
 
-(require 'org-src)
-(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+            (insert (propertize (cadr (plist-get proc-info :programs)) 'face 'outline-3)
+                    "\n"
+                    (if image-converter
+                        (propertize
+                         (concat
+                          (mapconcat #'identity (cdr image-converter) "\n")
+                          "\n")
+                         'face 'org-block)
+                      (propertize "Not found in path!\n" 'face 'error))
+                    "\n")
+            ;; dvisvgm version check
+            (when (equal (car-safe image-converter)
+                         "dvisvgm")
+              (let* ((version-string (cadr image-converter))
+                     (dvisvgm-ver (progn
+                                    (string-match "\\([0-9.]+\\)" version-string)
+                                    (match-string 1 version-string))))
 
-(setq org-latex-default-scale 1.5)
-(setq org-latex-writeroom-scale 2.5)
-(setq org-latex-big-font-scale 2.5)
+                (when (version< dvisvgm-ver "3.0")
+                  (insert (propertize
+                           (format "Warning: dvisvgm version %s < 3.0, displaymath will not be centered."
+                                   dvisvgm-ver)
+                           'face 'warning)
+                          "\n\n"))))
+            (when (not (and latex-available image-converter))
+              (insert "path: " (getenv "PATH") "\n\n")))
+          ;; Settings
+          (insert (propertize "LaTeX preview options" 'face 'outline-2)
+                  "\n")
+
+          (pcase-dolist (`(,var . ,msg)
+                         `((,org-latex-preview-process-precompiled . "Precompilation           ")
+                           (,org-latex-preview-numbered . "Equation renumbering     ")
+                           (,org-latex-preview-cache  . "Caching with org-persist ")))
+            (insert (propertize "• " 'face 'org-list-dt)
+                    msg
+                    (if var
+                        (propertize "ON" 'face '(success bold org-block))
+                      (propertize "OFF" 'face '(error bold org-block)))
+                    "\n"))
+          (insert "\n"
+                  (propertize "LaTeX preview sizing" 'face 'outline-2) "\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Page width  "
+                  (propertize
+                   (format "%S" (plist-get org-latex-preview-appearance-options :page-width))
+                   'face '(org-code org-block))
+                  "   (display equation width in LaTeX)\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Scale       "
+                  (propertize
+                   (format "%.2f" (plist-get org-latex-preview-appearance-options :scale))
+                   'face '(org-code org-block))
+                  "  (PNG pixel density multiplier)\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Zoom        "
+                  (propertize
+                   (format "%.2f" (plist-get org-latex-preview-appearance-options :zoom))
+                   'face '(org-code org-block))
+                  "  (display scaling factor)\n\n")
+          (insert (propertize "LaTeX preview preamble" 'face 'outline-2) "\n")
+          (let ((major-mode 'org-mode))
+            (let ((point-1 (point)))
+              (insert org-latex-preview-preamble "\n")
+              (org-src-font-lock-fontify-block 'latex point-1 (point))
+              (add-face-text-property point-1 (point) '(:inherit org-block :height 0.9)))
+            (insert "\n")
+            ;; Diagnostic output
+            (insert (propertize "Diagnostic info (copied)" 'face 'outline-2)
+                    "\n\n")
+            (let ((point-1 (point)))
+              (pp diag (current-buffer))
+              (org-src-font-lock-fontify-block 'emacs-lisp point-1 (point))
+              (add-face-text-property point-1 (point) '(:height 0.9))))
+          (gui-select-text (prin1-to-string diag))
+          (special-mode))
+        (setq-local
+         revert-buffer-function
+         (lambda (&rest _)
+           (call-interactively #'org-latex-preview-check-health)
+           (message "Refreshed LaTeX preview diagnostic")))
+        (let ((message-log-max nil))
+          (toggle-truncate-lines 1))
+        (goto-char (point-min))
+        (display-buffer (current-buffer))))
+    diag))
+
+(use-package! org-latex-preview
+  :config
+  ;; Increase preview width & zoom
+  (plist-put org-latex-preview-appearance-options
+             :page-width 0.8)
+  (plist-put org-latex-preview-appearance-options
+             :zoom 1.2)
+
+  (setq org-latex-packages-alist '(
+        ("" "amsmath" t ("pdflatex"))
+        ("" "amssymb" t ("pdflatex"))
+        ("" "tikz" t ("pdflatex" "lualatex" "xetex"))
+        ("" "pgfplots" t ("pdflatex" "lualatex" "xetex"))))
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}"))
+
+  (setq org-latex-compiler "pdflatex")
+
+  ;; Use dvisvgm to generate previews
+  ;; You don't need this, it's the default:
+  (setq org-latex-preview-process-default 'dvisvgm)
+
+  ;; Turn on auto-mode, it's built into Org and much faster/more featured than
+  ;; org-fragtog. (Remember to turn off/uninstall org-fragtog.)
+  (add-hook 'org-mode-hook 'org-latex-preview-auto-mode)
+
+  ;; Block C-n and C-p from opening up previews when using auto-mode
+  (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
+  (add-hook 'org-latex-preview-auto-ignored-commands 'previous-line)
+
+  ;; Bonus: Turn on live previews.  This shows you a live preview of a LaTeX
+  ;; fragment and updates the preview in real-time as you edit it.
+  ;; To preview only environments, set it to '(block edit-special) instead
+  (setq org-latex-preview-live t)
+
+  ;; More immediate live-previews -- the default delay is 1 second
+  (setq org-latex-preview-live-debounce 0.25))
 
 (defun org-latex-preview-clear ()
   "Disable org-latex-preview (which is the same as running org-latex-preview with prefix argument)"
   (interactive)
   (let ((current-prefix-arg '(4)))
     (call-interactively 'org-latex-preview)))
+(defun org-latex-preview-whole-buffer ()
+  "Render all previews in buffer (which is the same as running org-latex-preview with a double prefix argument)"
+  (interactive)
+  (let ((current-prefix-arg '(16)))
+    (call-interactively 'org-latex-preview)))
 
-(defun latex-preview-rescale ()
-  (cond ((bound-and-true-p writeroom-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-writeroom-scale)))
-        ((bound-and-true-p doom-big-font-mode) (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-big-font-scale)))
-        (t (setq org-format-latex-options (plist-put org-format-latex-options :scale org-latex-default-scale)))
-    )
-  ;; re-render LaTeX fragments
-  (org-latex-preview-clear)
-  (org-latex-preview)
-  )
-(add-hook 'writeroom-mode-hook 'latex-preview-rescale)
-(add-hook 'doom-big-font-mode-hook 'latex-preview-rescale)
+(add-hook 'roam-pseudohook 'org-latex-preview-whole-buffer)
+
+(require 'org-src)
+(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 
 (require 'smartparens-config)
   (sp-local-pair 'org-mode "\\[" "\\]")

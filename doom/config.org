@@ -27,7 +27,7 @@
   - [[#org-paths][Org-Paths]]
   - [[#org-appearance][Org Appearance]]
   - [[#org-roam][Org Roam]]
-  - [[#latex--org][LaTeX & Org]]
+  - [[#org-latex-previews][Org LaTeX previews]]
   - [[#xournal-integration-org-notebook][Xournal++ integration ("Org Notebook")]]
   - [[#org-d20][org-d20]]
 - [[#latex][LaTeX]]
@@ -90,6 +90,11 @@ Tecosaur finds it handy to be asked which buffer to see after splitting a window
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
+#+end_src
+
+The [[https://fishshell.com/][fish]] shell is not [[https://stackoverflow.com/questions/48732986/why-how-fish-does-not-support-posix][POSIX compatible]], which among other things causes a bunch of garbage characters to appear whenever it is used in emacs (at least with my fish config). So it's better to have emacs use bash instead, especially in the interest of packages that rely on shell outputs
+#+begin_src emacs-lisp :tangle yes
+(setq shell-file-name (executable-find "bash"))
 #+end_src
 ** Emacs EVERYWHERE
 This changes the name of windows created with ~emacs-everwhere~, so that I can more easily customize their behaviour in my window manager.
@@ -821,15 +826,22 @@ Then additionally, I want quick control over the UI from the local leader.
     "c" #'org-roam-ui-change-local-graph
     "r" #'org-roam-ui-remove-from-local-graph)
 #+end_src
-*** Appearance
-I want org roam notes to have special appearance. This function only turns on specific settings for org-files in ~org-roam-directory~.
+*** Roam Pseudohook
+It'd be nice to be able to toggle some settings only for roam notes. Usually this would be done via the hook of a mode. But roam notes are just org files, and I don't want those settings on all org files. So let's create something I'll call a "pseudohook". The function will run the hook if the current buffer file name is in ~org-roam-directory~. By adding this function to ~org-mode-hook~, the ~roam-pseudohook~ will apply exactly to the org files in ~org-roam-directory~.
 #+begin_src emacs-lisp :tangle yes
-(defun roam-pseudohook ()
+(defvar roam-pseudohook nil
+ "A hook run only on org files in org-roam-directory.")
+(defun roam-pseudohook-function ()
   (cond ((string-prefix-p org-roam-directory (buffer-file-name))
-         (window-margin-mode 1)
-         (mixed-pitch-mode 1)
+         (run-hooks 'roam-pseudohook)
          )))
-(after! org (add-hook 'org-mode-hook 'roam-pseudohook))
+(after! org (add-hook 'org-mode-hook 'roam-pseudohook-function))
+#+end_src
+*** Appearance
+I want org roam notes to have special appearance.
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'roam-pseudohook (lambda () (window-margin-mode 1)))
+(add-hook 'roam-pseudohook (lambda () (mixed-pitch-mode 1)))
 #+end_src
 Writeroom mode isn't a great idea during capture buffers. Let's add a hook to ~org-capture-mode~ to disable it.
 #+begin_src emacs-lisp :tangle yes
@@ -843,24 +855,291 @@ I want to see my tags when searching for notes.
       (concat "${title:*} "
               (propertize "${tags:30}" 'face 'org-tag))) ; 30 is the max. number of characters allocated for tags
 #+end_src
-** LaTeX & Org
-*** Preamble
-Preamble used for LaTeX fragments in org:
+** Org LaTeX previews
+*** The fancy new system™
+There is a fancy new LaTeX preview system underway. It is being developed by [[https://karthinks.com/][Karthink]] and [[https://tecosaur.github.io/emacs-config/config.html][Tecosaur]]. It makes rendering previews asynchronous (meaning emacs doesn't need to wait until they're done) and really fast. It also makes some improvements on appearance, such as previews scaling with font size and being properly aligned with the surrounding text. More info [[https://abode.karthinks.com/org-latex-preview/][here]].
+
+Currently, the patch of org mode that contains this fancy system has to be installed manually. It is kinda tedious, more info on the page linked above. The big issue is that often there will still be some remains of the old org version loaded, resulting in a mixed installation that makes nothing work. For me it was necessary to
+- completely reinstall doom without anything org related (so all modules that load org in ~init.el~ commented out) to really get rid of the old version of org,
+- then install the new patch
+- and only then install all other org related packages.
+- I also needed a new full TeXLive installation (to have packages like [[https://ctan.org/pkg/mylatexformat?lang=de][mylatexformat]]) and rebuild emacs with svg support enabled.
+Thankfully, it is planned to have the new system merged into org mode itself, which will get rid of all of this messy installation.
+
+To check whether everything is correctly installed, there's this neat function:
 #+begin_src emacs-lisp :tangle yes
-(after! org (setq org-format-latex-header (concat org-format-latex-header
-    "\\usepackage{tikz, pgfplots}\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}")))
+(defun org-latex-preview-check-health (&optional inter)
+  "Inspect the relevent system state and setup.
+INTER signals whether the function has been called interactively."
+  (interactive (list t))
+  ;; Collect information
+  (let* ((diag `(:interactive ,inter)))
+    (plist-put diag :org-version org-version)
+    ;; modified variables
+    (plist-put diag :modified
+               (let ((list))
+                 (mapatoms
+                  (lambda (v)
+                    (and (boundp v)
+                         (string-match "\\`\\(org-latex-\\|org-persist-\\)" (symbol-name v))
+                         (or (and (symbol-value v)
+                                  (string-match "\\(-hook\\|-function\\)\\'" (symbol-name v)))
+                             (and
+                              (get v 'custom-type) (get v 'standard-value)
+                              (not (equal (symbol-value v)
+                                          (eval (car (get v 'standard-value)) t)))))
+                         (push (cons v (symbol-value v)) list))))
+                 list))
+    ;; Executables
+    ;; latex processors
+    (dolist (processor org-latex-compilers)
+      (when-let ((path (executable-find processor)))
+        (let ((version (with-temp-buffer
+                         (thread-last
+                           (concat processor " --version")
+                           (shell-command-to-string)
+                           (insert))
+                         (goto-char (point-min))
+                         (buffer-substring (point) (line-end-position)))))
+          (push (list processor version path) (plist-get diag :latex-processors)))))
+    ;; Image converters
+    (dolist (converter '("dvipng" "dvisvgm" "convert"))
+      (when-let ((path (executable-find converter)))
+        (let ((version (with-temp-buffer
+                         (thread-last
+                           (concat converter " --version")
+                           (shell-command-to-string)
+                           (insert))
+                         (goto-char (point-min))
+                         (buffer-substring (point) (line-end-position)))))
+          (push (list converter version path) (plist-get diag :image-converters)))))
+    (when inter
+      (with-current-buffer (get-buffer-create "*Org LaTeX Preview Report*")
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+
+          (insert (propertize "Your LaTeX preview process" 'face 'outline-1))
+          (insert "\n\n")
+
+          (let* ((latex-available (cl-member org-latex-compiler
+                                             (plist-get diag :latex-processors)
+                                             :key #'car :test #'string=))
+                 (precompile-available
+                  (and latex-available
+                       (not (member org-latex-compiler '("lualatex" "xelatex")))))
+                 (proc-info (alist-get
+                             org-latex-preview-process-default
+                             org-latex-preview-process-alist))
+                 (image-converter (cadr (plist-get proc-info :programs)))
+                 (image-converter
+                  (cl-find-if
+                   (lambda (c)
+                     (string= image-converter c))
+                   (plist-get diag :image-converters)
+                   :key #'car))
+                 (image-output-type (plist-get proc-info :image-output-type)))
+            (if org-latex-preview-process-precompiled
+                (insert "Precompile with "
+                        (propertize (map-elt org-latex-precompile-compiler-map
+                                             org-latex-compiler)
+                                    'face
+                                    (list
+                                     (if precompile-available
+                                         '(:inherit success :box t)
+                                       '(:inherit error :box t))
+                                     'org-block))
+                        " → "))
+            (insert "LaTeX Compile with "
+                    (propertize org-latex-compiler 'face
+                                (list
+                                 (if latex-available
+                                     '(:inherit success :box t)
+                                   '(:inherit error :box t))
+                                 'org-block))
+                    " → ")
+            (insert "Convert to "
+                    (propertize (upcase image-output-type) 'face '(:weight bold))
+                    " with "
+                    (propertize (car image-converter) 'face
+                                (list
+                                 (if image-converter
+                                     '(:inherit success :box t)
+                                   '(:inherit error :box t))
+                                 'org-block))
+                    "\n\n")
+            (insert (propertize org-latex-compiler 'face 'outline-3)
+                    "\n"
+                    (if latex-available
+                        (concat
+                          (propertize
+                           (mapconcat #'identity (map-nested-elt diag `(:latex-processors ,org-latex-compiler))
+                                      "\n")
+                           'face 'org-block)
+                          "\n"
+                          (when (and latex-available (not precompile-available))
+                            (propertize
+                             (format "\nWarning: Precompilation not available with %S!\n" org-latex-compiler)
+                             'face 'warning)))
+                      (propertize "Not found in path!\n" 'face 'error))
+                    "\n")
+
+            (insert (propertize (cadr (plist-get proc-info :programs)) 'face 'outline-3)
+                    "\n"
+                    (if image-converter
+                        (propertize
+                         (concat
+                          (mapconcat #'identity (cdr image-converter) "\n")
+                          "\n")
+                         'face 'org-block)
+                      (propertize "Not found in path!\n" 'face 'error))
+                    "\n")
+            ;; dvisvgm version check
+            (when (equal (car-safe image-converter)
+                         "dvisvgm")
+              (let* ((version-string (cadr image-converter))
+                     (dvisvgm-ver (progn
+                                    (string-match "\\([0-9.]+\\)" version-string)
+                                    (match-string 1 version-string))))
+
+                (when (version< dvisvgm-ver "3.0")
+                  (insert (propertize
+                           (format "Warning: dvisvgm version %s < 3.0, displaymath will not be centered."
+                                   dvisvgm-ver)
+                           'face 'warning)
+                          "\n\n"))))
+            (when (not (and latex-available image-converter))
+              (insert "path: " (getenv "PATH") "\n\n")))
+          ;; Settings
+          (insert (propertize "LaTeX preview options" 'face 'outline-2)
+                  "\n")
+
+          (pcase-dolist (`(,var . ,msg)
+                         `((,org-latex-preview-process-precompiled . "Precompilation           ")
+                           (,org-latex-preview-numbered . "Equation renumbering     ")
+                           (,org-latex-preview-cache  . "Caching with org-persist ")))
+            (insert (propertize "• " 'face 'org-list-dt)
+                    msg
+                    (if var
+                        (propertize "ON" 'face '(success bold org-block))
+                      (propertize "OFF" 'face '(error bold org-block)))
+                    "\n"))
+          (insert "\n"
+                  (propertize "LaTeX preview sizing" 'face 'outline-2) "\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Page width  "
+                  (propertize
+                   (format "%S" (plist-get org-latex-preview-appearance-options :page-width))
+                   'face '(org-code org-block))
+                  "   (display equation width in LaTeX)\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Scale       "
+                  (propertize
+                   (format "%.2f" (plist-get org-latex-preview-appearance-options :scale))
+                   'face '(org-code org-block))
+                  "  (PNG pixel density multiplier)\n"
+                  (propertize "•" 'face 'org-list-dt)
+                  " Zoom        "
+                  (propertize
+                   (format "%.2f" (plist-get org-latex-preview-appearance-options :zoom))
+                   'face '(org-code org-block))
+                  "  (display scaling factor)\n\n")
+          (insert (propertize "LaTeX preview preamble" 'face 'outline-2) "\n")
+          (let ((major-mode 'org-mode))
+            (let ((point-1 (point)))
+              (insert org-latex-preview-preamble "\n")
+              (org-src-font-lock-fontify-block 'latex point-1 (point))
+              (add-face-text-property point-1 (point) '(:inherit org-block :height 0.9)))
+            (insert "\n")
+            ;; Diagnostic output
+            (insert (propertize "Diagnostic info (copied)" 'face 'outline-2)
+                    "\n\n")
+            (let ((point-1 (point)))
+              (pp diag (current-buffer))
+              (org-src-font-lock-fontify-block 'emacs-lisp point-1 (point))
+              (add-face-text-property point-1 (point) '(:height 0.9))))
+          (gui-select-text (prin1-to-string diag))
+          (special-mode))
+        (setq-local
+         revert-buffer-function
+         (lambda (&rest _)
+           (call-interactively #'org-latex-preview-check-health)
+           (message "Refreshed LaTeX preview diagnostic")))
+        (let ((message-log-max nil))
+          (toggle-truncate-lines 1))
+        (goto-char (point-min))
+        (display-buffer (current-buffer))))
+    diag))
 #+end_src
-*** Settings necessary for TikZ
+
+*** Basic settings & preamble
+The following are some basic settings for this system, including the latex packages that are supposed to be loaded. Keep in mind that most of this will not work if you don't use the new system mentioned above!
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-latex-preview
+  :config
+  ;; Increase preview width & zoom
+  (plist-put org-latex-preview-appearance-options
+             :page-width 0.8)
+  (plist-put org-latex-preview-appearance-options
+             :zoom 1.2)
+
+  (setq org-latex-packages-alist '(
+        ("" "amsmath" t ("pdflatex"))
+        ("" "amssymb" t ("pdflatex"))
+        ("" "tikz" t ("pdflatex" "lualatex" "xetex"))
+        ("" "pgfplots" t ("pdflatex" "lualatex" "xetex"))))
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}"))
+
+  (setq org-latex-compiler "pdflatex")
+
+  ;; Use dvisvgm to generate previews
+  ;; You don't need this, it's the default:
+  (setq org-latex-preview-process-default 'dvisvgm)
+
+  ;; Turn on auto-mode, it's built into Org and much faster/more featured than
+  ;; org-fragtog. (Remember to turn off/uninstall org-fragtog.)
+  (add-hook 'org-mode-hook 'org-latex-preview-auto-mode)
+
+  ;; Block C-n and C-p from opening up previews when using auto-mode
+  (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
+  (add-hook 'org-latex-preview-auto-ignored-commands 'previous-line)
+
+  ;; Bonus: Turn on live previews.  This shows you a live preview of a LaTeX
+  ;; fragment and updates the preview in real-time as you edit it.
+  ;; To preview only environments, set it to '(block edit-special) instead
+  (setq org-latex-preview-live t)
+
+  ;; More immediate live-previews -- the default delay is 1 second
+  (setq org-latex-preview-live-debounce 0.25))
+#+end_src
+
+While ~org-latex-preview-auto-mode~ works pretty great, it doesn't automatically render fragments when I open a new buffer. I want that at least for my roam notes.
+Annoyingly, the default method of rendering all previews in a buffer is by running ~org-latex-preview~ with a prefix argument (i.e. by pressing ~C-u~ before running the function). Let's make explicit functions for it instead.
+#+begin_src emacs-lisp :tangle yes
+(defun org-latex-preview-clear ()
+  "Disable org-latex-preview (which is the same as running org-latex-preview with prefix argument)"
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively 'org-latex-preview)))
+(defun org-latex-preview-whole-buffer ()
+  "Render all previews in buffer (which is the same as running org-latex-preview with a double prefix argument)"
+  (interactive)
+  (let ((current-prefix-arg '(16)))
+    (call-interactively 'org-latex-preview)))
+
+(add-hook 'roam-pseudohook 'org-latex-preview-whole-buffer)
+#+end_src
+*** Settings necessary for TikZ (DISABLED)
+Not necessary since I now use svg rendering
+
 There is two ways of rendering inline LaTeX previews: ~dvipng~ and ~imagemagick~.
 TikZ (and in particular ~tikzcd~) don't like ~dvipng~ somehow. So let's switch over to the magicks:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (after! org (setq org-latex-create-formula-image-program 'imagemagick))
 #+end_src
 For this to work however, ~imagemagick~ needs some further customization outside of Emacs (see [[https://stackoverflow.com/a/59193253][here]]).
-*** Automatic Rendering
-As long as it doesn't cause me performance issues, I will enable automatic rendering of LaTeX-previews.
-The ~org-fragtog~ package then enables automatically switching between LaTeX-preview and its underlying code.
-#+begin_src emacs-lisp :tangle yes
+*** org-fragtog (DISABLED)
+The ~org-fragtog~ package then enables automatically switching between LaTeX-preview and its underlying code. It is not necessary with the new fancy preview system, but I'll keep the code here for now.
+#+begin_src emacs-lisp :tangle no
 (after! org (setq org-startup-with-latex-preview t))
 (use-package! org-fragtog
     :after org
@@ -874,12 +1153,14 @@ The following makes sure the backgrounds of LaTeX fragments (or their surroundin
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 #+end_src
-*** Automatically Update Size
+*** Automatically Update Size (DISABLED)
+I made my own primitive system for this before getting the new fancy preview system, which does this much better. I'll still keep the code and text here for now though.
+
 The size of LaTeX fragments does not automatically update when the font size is changed. This fixes that.
 It turned out to not be so easy though for an elisp noob like me, so here are some notes:
  - Annoyingly, disabling LaTeX previews is achieved by running ~org-latex-preview~ with /prefix argument/, i.e. by pressing ~C-u~ before running the function. Calling this from a script is a bit of a hassle. This is what happens in ~org-latex-preview-clear~.
  - I want to check whether writeroom-mode is active. This is done by checking the ~writeroom-mode~ variable. However, this variable is at the same time the function that toggles the mode. So ~bound-and-true-p~ is used to only check the variable and not call the function. (analogously for big-font-mode)
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (setq org-latex-default-scale 1.5)
 (setq org-latex-writeroom-scale 2.5)
 (setq org-latex-big-font-scale 2.5)
