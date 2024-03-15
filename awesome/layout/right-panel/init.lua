@@ -4,6 +4,13 @@ local beautiful = require('beautiful')
 local dpi = beautiful.xresources.apply_dpi
 panel_visible = false
 
+local info_center_switch = require('widget.info-center-switch')
+local user_profile = require('widget.user-profile')
+local weather = require('widget.weather')
+local email = require('widget.email')
+local social_media = require('widget.social-media')
+local calculator = require('widget.calculator')
+
 local right_panel = function(s)
 
 	-- Set right panel geometry
@@ -114,6 +121,7 @@ local right_panel = function(s)
 		widget = wibox.widget.separator
 	}
 
+	notif_center = require('widget.notif-center')(s)
 	panel : setup {
 		{
 			expand = 'none',
@@ -122,7 +130,7 @@ local right_panel = function(s)
 				layout = wibox.layout.align.horizontal,
 				expand = 'none',
 				nil,
-				require('widget.info-center-switch'),
+				info_center_switch,
 				nil
 			},
 			separator,
@@ -138,11 +146,11 @@ local right_panel = function(s)
 					{
 						layout = wibox.layout.fixed.vertical,
 						spacing = dpi(7),
-						require('widget.user-profile'),
-						require('widget.weather'),
-						require('widget.email'),
-						require('widget.social-media'),
-						require('widget.calculator')
+						user_profile,
+						weather,
+						email,
+						social_media,
+						calculator
 					},
 
 				},
@@ -150,7 +158,7 @@ local right_panel = function(s)
 				{
 					id = 'notif_id',
 					visible = false,
-					require('widget.notif-center')(s),
+					notif_center,
 					layout = wibox.layout.fixed.vertical,
 				}
 			},

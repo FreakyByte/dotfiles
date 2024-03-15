@@ -3,6 +3,14 @@ local wibox = require('wibox')
 local beautiful = require('beautiful')
 local dpi = beautiful.xresources.apply_dpi
 
+local home = require('widget.xdg-folders.home')()
+local downloads = require('widget.xdg-folders.downloads')()
+local documents = require('widget.xdg-folders.documents')()
+local dropbox = require('widget.xdg-folders.dropbox')()
+local pictures = require('widget.xdg-folders.pictures')()
+local videos = require('widget.xdg-folders.videos')()
+local trash = require('widget.xdg-folders.trash')()
+
 local create_xdg_widgets = function()
 	local separator =  wibox.widget {
 		orientation = 'horizontal',
@@ -16,14 +24,14 @@ local create_xdg_widgets = function()
 		layout = wibox.layout.align.vertical,
 	  	{
 			separator,
-			require('widget.xdg-folders.home')(),
-			require('widget.xdg-folders.downloads')(),
-			--require('widget.xdg-folders.documents')(),
-			require('widget.xdg-folders.dropbox')(),
-			-- require('widget.xdg-folders.pictures')(),
-			-- require('widget.xdg-folders.videos')(),
+			home,
+			downloads,
+			--documents,
+			dropbox,
+			-- pictures,
+			-- videos,
 			separator,
-			--require('widget.xdg-folders.trash')(),
+			--trash,
 			layout = wibox.layout.fixed.vertical,
 	  	},
 	}

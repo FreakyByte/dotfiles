@@ -132,6 +132,9 @@ local left_panel = function(screen)
 		)
 	)
 
+	dashboard = require('layout.left-panel.dashboard')(screen, panel)
+	action_bar = require('layout.left-panel.action-bar')(screen, panel, action_bar_width)
+
 	panel:setup {
 		layout = wibox.layout.align.horizontal,
 		nil,
@@ -142,11 +145,11 @@ local left_panel = function(screen)
 			visible = false,
 			forced_width = panel_content_width,
 			{
-				require('layout.left-panel.dashboard')(screen, panel),
+				dashboard,
 				layout = wibox.layout.stack
 			}
 		},
-		require('layout.left-panel.action-bar')(screen, panel, action_bar_width)
+		action_bar
 	}
 	return panel
 end

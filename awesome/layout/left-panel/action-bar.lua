@@ -7,6 +7,9 @@ local icons = require('theme.icons')
 local tag_list = require('widget.tag-list')
 local clickable_container = require('widget.clickable-container')
 
+local search_apps = require('widget.search-apps')()
+local xdg_folders = require("widget.xdg-folders")()
+
 return function(s, panel, action_bar_width)
 
 	local menu_icon = wibox.widget {
@@ -61,9 +64,9 @@ return function(s, panel, action_bar_width)
 		layout = wibox.layout.align.vertical,
 		forced_width = action_bar_width,
 		{
-			require('widget.search-apps')(),
+			search_apps,
 			--tag_list(s),
-			require("widget.xdg-folders")(),
+			xdg_folders,
 			layout = wibox.layout.fixed.vertical,
 		},
 		nil,
