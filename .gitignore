@@ -22,3 +22,5 @@ fish/fishd.tmp.6sfRLm
 
 awesome/configuration/user-profile/reiti.png
 awesome/configuration/config.lua
+
+qtile/__pycache__/
