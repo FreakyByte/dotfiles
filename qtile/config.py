@@ -24,9 +24,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile import bar, layout, qtile, widget
+from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
+import os
+import subprocess
 
 follow_mouse_focus = True
 bring_front_click = False
@@ -54,6 +56,18 @@ layouts = [
 
 groups = [Group(i) for i in "1234567890"]
 
+def go_to_group(qtile,group_name):
+    for s in qtile.screens:
+        if s.group.name == group_name:
+            qtile.cmd_to_screen(qtile.screens.index(s))
+            return
+    qtile.groups_map[group_name].toscreen()
+
+def switch_screens(qtile):
+    i = qtile.screens.index(qtile.current_screen)
+    group = qtile.screens[i - 1].group
+    qtile.current_screen.set_group(group)
+
 dgroups_key_binder = None
 
 groups.append(ScratchPad("scratchpad", [
@@ -63,8 +77,8 @@ groups.append(ScratchPad("scratchpad", [
 mod = "mod4"
 
 keys.extend([
-    Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
-    Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([mod], "j", lazy.layout.down(), desc="Move focus to next window"),
+    Key([mod], "k", lazy.layout.up(), desc="Move focus to previous window"),
 ])
 
 keys.extend([
@@ -74,18 +88,25 @@ keys.extend([
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
 ])
 
+keys.extend([
+    Key([mod, "control"], "j", lazy.next_screen(), desc="Move focus to next monitor"),
+    Key([mod, "control"], "k", lazy.prev_screen(), desc="Move focus to previous monitor"),
+])
+
 keys.append(Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"))
 
 keys.extend([
     Key([mod], "h", lazy.layout.shrink_main(), desc="Shrink window to the left"),
     Key([mod], "l", lazy.layout.grow_main(), desc="Shrink window to the right"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
+    Key([mod], "s", lazy.function(switch_screens), desc="Switch the groups on the two screens"),
 ])
 
 keys.extend([
     Key([mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen on the focused window",),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod], "m", lazy.window.toggle_minimize(), desc="Toggle Minimize Window"),
+    Key([mod, "shift"], "m", lazy.window.unminimize_all(), desc="Unminimize all windows in group"),
 ])
 
 keys.extend([
@@ -116,7 +137,8 @@ for i in groups:
                 Key(
                 [mod],
                 i.name,
-                lazy.group[i.name].toscreen(),
+                #lazy.group[i.name].toscreen(),      # the default behaviour
+                lazy.function(go_to_group, i.name),  # my alternative function
                 desc="Switch to group {}".format(i.name),
                 ),
                 # mod1 + shift + group number = switch to & move focused window to group
@@ -204,3 +226,8 @@ screens = [
         # x11_drag_polling_rate = 60,
     ),
 ]
+
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    subprocess.Popen([home])

@@ -1,4 +1,4 @@
-#+title: Config
+#+title: Qtile Config
 #+STARTUP: overview
 #+PROPERTY: header-args:python :tangle config.py :cache yes :results silent
 
@@ -12,6 +12,7 @@
   - [[#setup][Setup]]
 - [[#layouts][Layouts]]
 - [[#groups][Groups]]
+  - [[#multi-monitor-behaviour][Multi-Monitor Behaviour]]
   - [[#dgroups][DGroups]]
   - [[#scratchpad][Scratchpad]]
 - [[#keybindings][Keybindings]]
@@ -28,6 +29,7 @@
   - [[#app-rules][App Rules]]
   - [[#floating-rules][Floating Rules]]
 - [[#bar][Bar]]
+- [[#autostart][Autostart]]
 - [[#tangle-this-file][Tangle this file!]]
 
 * Intro
@@ -61,9 +63,11 @@
 #+end_src
 ** Imports
 #+begin_src python
-from libqtile import bar, layout, qtile, widget
+from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
+import os
+import subprocess
 #+end_src
 * Random Config Variables
 ** Settings
@@ -103,10 +107,30 @@ layouts = [
 ]
 #+end_src
 * Groups
+In qtile, /groups/ are what would commonly be referred to as workspaces.
 #+begin_src python
 groups = [Group(i) for i in "1234567890"]
 #+end_src
+** Multi-Monitor Behaviour
+Qtile's default way of handling multiple monitors is inspired by xmonad. When trying to switch to switch to a group that is not currently active on any monitor, it will just show this group on the current monitor. Pretty standard stuff. The interesting thing happens when you try to switch to the group that is currently displayed on another monitor -- then it'll switch the two groups around.
 
+While this is a very intriguing way to do things in theory, I could never quite get used to it in practice. So instead what I want instead: If the group to switch to is active on another monitor, just switch to that monitor and change nothing about the groups.
+#+begin_src python
+def go_to_group(qtile,group_name):
+    for s in qtile.screens:
+        if s.group.name == group_name:
+            qtile.cmd_to_screen(qtile.screens.index(s))
+            return
+    qtile.groups_map[group_name].toscreen()
+#+end_src
+
+This is nicely complemented by a function to switch the groups between monitors. Note that this just switches the group with the screen that comes one before it. If you have 3 or more monitors, you probably want something more sophisticated.
+#+begin_src python
+def switch_screens(qtile):
+    i = qtile.screens.index(qtile.current_screen)
+    group = qtile.screens[i - 1].group
+    qtile.current_screen.set_group(group)
+#+end_src
 ** DGroups
 As I understand it, /dynamic groups/ are a way in qtile to dynamically create groups whenever they're needed. For example, you could have a new group be created everytime you launch your web browser, which will be removed once you close the webbrowser. Unfortunately, there is basically no documentation for this feature. Though I probably wouldn't use it anyway.
 
@@ -132,8 +156,8 @@ A list of available commands that can be bound to keys can be found [[https://do
 Something worth mentioning that was unusual to me when first switching to qtile: Many of the functions bound below do different depending on which layout you are in. For example, in the ~Columns~ layout (used in the default config), you would use =lazy.layout.left()=, =lazy.layout.right()=, =lazy.layout.up()=, =lazy.layout.down()= to move the focus between windows, much like e.g. in i3. On the other hand, in the ~MonadTall~ layout, =lazy.layout.up()= and =lazy.layout.down()= suffice and just move the focus to the /previous/ or /next/ window, instead of actually depending on the geometry of where windows are placed on the screen. I much prefer the latter way of navigating my windows. If you prefer the former, will probably want to change a lot of these keybindings.
 #+begin_src python
 keys.extend([
-    Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
-    Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([mod], "j", lazy.layout.down(), desc="Move focus to next window"),
+    Key([mod], "k", lazy.layout.up(), desc="Move focus to previous window"),
 ])
 #+end_src
 
@@ -146,6 +170,14 @@ keys.extend([
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
 ])
 #+end_src
+
+Finally, moving between monitors.
+#+begin_src python
+keys.extend([
+    Key([mod, "control"], "j", lazy.next_screen(), desc="Move focus to next monitor"),
+    Key([mod, "control"], "k", lazy.prev_screen(), desc="Move focus to previous monitor"),
+])
+#+end_src
 ** Layout
 #+begin_src python
 keys.append(Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"))
@@ -156,6 +188,7 @@ keys.extend([
     Key([mod], "h", lazy.layout.shrink_main(), desc="Shrink window to the left"),
     Key([mod], "l", lazy.layout.grow_main(), desc="Shrink window to the right"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
+    Key([mod], "s", lazy.function(switch_screens), desc="Switch the groups on the two screens"),
 ])
 #+end_src
 ** Modyfing Window Properties
@@ -164,6 +197,7 @@ keys.extend([
     Key([mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen on the focused window",),
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod], "m", lazy.window.toggle_minimize(), desc="Toggle Minimize Window"),
+    Key([mod, "shift"], "m", lazy.window.unminimize_all(), desc="Unminimize all windows in group"),
 ])
 #+end_src
 ** Ending It All
@@ -194,7 +228,7 @@ keys.extend([
 The following adds the keybindings for groups whose names are only one character long. This character will be used in the keybinding.
 
 For example: If you have a group name that is "webbrowser", no keybinding will be set. If you want the first group ~i~ to be designated for surfing the web, set ~i.label~ to be "webbrowser", but leave ~i.name~ as ~1~.
-#+begin_src python
+#+begin_src python 
 for i in groups:
     if len(i.name) == 1:
         keys.extend(
@@ -203,7 +237,8 @@ for i in groups:
                 Key(
                 [mod],
                 i.name,
-                lazy.group[i.name].toscreen(),
+                #lazy.group[i.name].toscreen(),      # the default behaviour
+                lazy.function(go_to_group, i.name),  # my alternative function
                 desc="Switch to group {}".format(i.name),
                 ),
                 # mod1 + shift + group number = switch to & move focused window to group
@@ -307,6 +342,14 @@ screens = [
         # x11_drag_polling_rate = 60,
     ),
 ]
+#+end_src
+* Autostart
+The hook causes the ~autostart.sh~ script to be executed once at startup.
+#+begin_src python
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    subprocess.Popen([home])
 #+end_src
 
 
