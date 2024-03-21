@@ -25,10 +25,9 @@
 # SOFTWARE.
 
 from libqtile import bar, layout, qtile, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
 
-terminal = "kitty"
 follow_mouse_focus = True
 bring_front_click = False
 floats_kept_above = True
@@ -40,6 +39,11 @@ auto_minimize = True
 wl_input_rules = None
 wmname = "qtile"
 
+terminal = "kitty"
+file_manager = "nemo"
+web_browser = "firefox"
+sysmon = terminal + " htop"
+
 keys = []
 
 layouts = [
@@ -48,9 +52,15 @@ layouts = [
     layout.Max(),
 ]
 
-mod = "mod4"
+groups = [Group(i) for i in "1234567890"]
 
-dgroups_key_binder = None # don't use any builtin keybinder
+dgroups_key_binder = None
+
+groups.append(ScratchPad("scratchpad", [
+        DropDown("quake_term", terminal, height=0.4, width=1, x=0, y=0, opacity=0.9),
+]))
+
+mod = "mod4"
 
 keys.extend([
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
@@ -85,10 +95,53 @@ keys.extend([
 ])
 
 keys.extend([
-    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
     Key([mod], "d", lazy.spawn("rofi -dpi -show drun -theme /home/reiti/.config/awesome/configuration/rofi/appmenu/rofi.rasi"),
         desc="Spawn a command using a prompt widget"),
+
+    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+    Key([mod, "shift"], "Return", lazy.spawn(file_manager), desc="Launch File Manager"),
+    Key([mod], "w", lazy.spawn(web_browser), desc="Launch Web Browser"),
+    Key([mod], "e", lazy.spawn("emacsclient -c"), desc="Launch Emacs"),
+
+    Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
+    Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
+])
+
+for i in groups:
+    if len(i.name) == 1:
+        keys.extend(
+        [
+                # mod1 + group number = switch to group
+                Key(
+                [mod],
+                i.name,
+                lazy.group[i.name].toscreen(),
+                desc="Switch to group {}".format(i.name),
+                ),
+                # mod1 + shift + group number = switch to & move focused window to group
+                Key(
+                [mod, "shift"],
+                i.name,
+                lazy.window.togroup(i.name, switch_group=True),
+                desc="Switch to & move focused window to group {}".format(i.name),
+                ),
+        ])
+
+keys.extend([
+        Key([mod, "control"], 'Return', lazy.group['scratchpad'].dropdown_toggle('quake_term')),
+        ])
+
+keys.extend([
+    Key([mod], "XF86AudioRaiseVolume", lazy.spawn("amixer -D pulse sset Master 5%+"), desc="Raise Volume by 5%"),
+    Key([mod], "XF86AudioLowerVolume", lazy.spawn("amixer -D pulse sset Master 5%-"), desc="Lower Volume by 5%"),
+    Key([mod], "XF86AudioMute", lazy.spawn("amixer -D pulse set Master 1+ toggle"), desc="Toggle Mute Audio"),
+    Key([mod], "XF86AudioNext", lazy.spawn("mpc next"), desc="Music Next"),
+    Key([mod], "XF86AudioPrev", lazy.spawn("mpc prev"), desc="Music Previous"),
+    Key([mod], "XF86AudioPlay", lazy.spawn("mpc toggle"), desc="Play/Pause Music"),
+    Key([mod], "XF86AudioMicMute", lazy.spawn("amixer set Capture toggle"), desc="Toggle Mute Microphone"),
+    Key([mod], "XF86MonBrightnessUp", lazy.spawn("light -A 10"), desc="Increase Brightness by 10%"),
+    Key([mod], "XF86MonBrightnessDown", lazy.spawn("light -U 10"), desc="Increase Brightness by 10%"),
 ])
 
 mouse = [
@@ -96,32 +149,6 @@ mouse = [
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
-
-groups = [Group(i) for i in "1234567890"]
-
-for i in groups:
-    keys.extend(
-        [
-            # mod1 + group number = switch to group
-            Key(
-                [mod],
-                i.name,
-                lazy.group[i.name].toscreen(),
-                desc="Switch to group {}".format(i.name),
-            ),
-            # mod1 + shift + group number = switch to & move focused window to group
-            Key(
-                [mod, "shift"],
-                i.name,
-                lazy.window.togroup(i.name, switch_group=True),
-                desc="Switch to & move focused window to group {}".format(i.name),
-            ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod1 + shift + group number = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
-        ]
-    )
 
 dgroups_app_rules = []  # type: list
 
