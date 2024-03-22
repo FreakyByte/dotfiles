@@ -27,8 +27,19 @@
 from libqtile import bar, hook, layout, qtile, widget
 from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
+import json
 import os
 import subprocess
+
+process = subprocess.Popen('~/.config/change-wallpaper.sh', shell=True, stdout=subprocess.PIPE)
+process.wait()
+
+colors = os.path.expanduser('~/.cache/wal/colors.json')
+colordict = json.load(open(colors))
+wal_foreground = colordict['special']['foreground']
+wal_background = colordict['special']['background']
+wal_cursor = colordict['special']['cursor']
+wal_colors = [colordict['colors']['color' + str(i)] for i in range(16)]
 
 follow_mouse_focus = True
 bring_front_click = False
@@ -49,12 +60,32 @@ sysmon = terminal + " htop"
 keys = []
 
 layouts = [
-    layout.MonadTall(),
+    layout.MonadTall(
+        border_width = 2,
+        margin = 8,
+        border_focus = wal_colors[3],
+        border_normal = wal_background,
+        ),
     # layout.MonadWide(),
     layout.Max(),
 ]
 
-groups = [Group(i) for i in "1234567890"]
+floating_layout_theme = {"border_width": 2,
+                "border_focus": wal_colors[7],
+                "border_normal": wal_background}
+
+groups = [
+    Group("1"),
+    Group("2"),
+    Group("3"),
+    Group("4"),
+    Group("5"),
+    Group("6"),
+    Group("7"),
+    Group("8"),
+    Group("9", matches=[Match(wm_class = "discord", title = "Discord Updater")]),
+    Group("0"),
+        ]
 
 def go_to_group(qtile,group_name):
     for s in qtile.screens:
@@ -70,8 +101,10 @@ def switch_screens(qtile):
 
 dgroups_key_binder = None
 
+dgroups_app_rules = []  # type: list
+
 groups.append(ScratchPad("scratchpad", [
-        DropDown("quake_term", terminal, height=0.4, width=1, x=0, y=0, opacity=0.9),
+        DropDown("quake_term", terminal, height=0.4, width=1, x=0, y=0, opacity=0.9, on_focus_lost_hide=False),
 ]))
 
 mod = "mod4"
@@ -145,7 +178,7 @@ for i in groups:
                 Key(
                 [mod, "shift"],
                 i.name,
-                lazy.window.togroup(i.name, switch_group=True),
+                lazy.window.togroup(i.name, switch_group=False),
                 desc="Switch to & move focused window to group {}".format(i.name),
                 ),
         ])
@@ -172,9 +205,7 @@ mouse = [
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
-dgroups_app_rules = []  # type: list
-
-floating_layout = layout.Floating(
+floating_layout = layout.Floating(**floating_layout_theme,
     float_rules=[
         # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
@@ -184,47 +215,93 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
-    ]
+    ],
 )
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=12,
+    font="Ubuntu Nerd Font",
+    fontsize=15,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
 
+def init_widget_list(with_systray):
+        widget_list = [
+                        widget.GroupBox(
+                                highlight_method = 'line',
+                                disable_drag = True,
+                                font = "K2D ExtraBold",
+                                hide_unused = False,
+                                highlight_color = ['151515C0','303030C0'], # background gradient
+                                inactive = '505050', # font color
+                                this_current_screen_border = wal_colors[1],
+                                this_screen_border = wal_colors[1],
+                                other_current_screen_border = wal_colors[7],
+                                other_screen_border = wal_colors[7],
+                                urgent_alert_method = 'line',
+                                urgent_border = 'FF0000',
+                                urgent_text = '000000',
+                                use_mouse_wheel = False,
+                        ),
+                        widget.Prompt(),
+                        widget.Chord(
+                                chords_colors={
+                                        "launch": ("#ff0000", "#ffffff"),
+                                },
+                                name_transform=lambda name: name.upper(),
+                        ),
+                        widget.Spacer(),
+                        widget.TaskList(
+                                highlight_method = 'border',
+                                border = wal_colors[3],
+                                borderwidth = 2,
+                                unfocused_border = None,
+                                max_title_width = 250,
+                                markup_minimized = "<i>({})</i>",
+                                markup_maximized = "<b>{}</b>",
+                                txt_floating = "🗗 ",
+                                txt_maximized = "🗖 ",
+                                txt_minimized = "🗕 ",
+                                fontsize = 14,
+                                foreground = 'ffffff', # font color
+                                margin_y = 4,
+                                width = bar.CALCULATED,
+                        ),
+                        widget.Spacer(),
+                        widget.WidgetBox(
+                                close_button_location = 'right',
+                                start_opened = False,
+                                text_closed = '󰝡',
+                                text_open = '󰝠',
+                                fontsize = 20,
+                                widgets=[widget.Systray()]
+                        ),
+                        widget.Clock(
+                                format="%H:%M, %A %-d. %B %Y",
+                                update_interval = 1.0,
+                                padding = 4,
+                        ),
+                        widget.CurrentLayoutIcon(
+                                scale = 0.5,
+                                padding = 5,
+                        ),
+                ]
+        if not with_systray:
+                widget_list.pop(-3) # systray is third to last widget
+        return widget_list
+
+my_bars = [bar.Bar(
+            init_widget_list(with_systray),
+            size = 40,
+            background = '#00000080', # transparent background
+            opacity = 1, # but no transparency of widgets
+            border_width = 0,
+            reserve = True,
+        ) for with_systray in [True, False]]
+
 screens = [
-    Screen(
-        bottom=bar.Bar(
-            [
-                widget.CurrentLayout(),
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.WindowName(),
-                widget.Chord(
-                    chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                widget.TextBox("default config", name="default"),
-                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
-                # widget.StatusNotifier(),
-                widget.Systray(),
-                widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
-                widget.QuickExit(),
-            ],
-            24,
-            # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
-        ),
-        # You can uncomment this variable if you see that on X11 floating resize/moving is laggy
-        # By default we handle these events delayed to already improve performance, however your system might still be struggling
-        # This variable is set to None (no cap) by default, but you can set it to 60 to indicate that you limit it to 60 events per second
-        # x11_drag_polling_rate = 60,
-    ),
+    Screen(bottom=my_bars[0]),
+    Screen(bottom=my_bars[1]),
 ]
 
 @hook.subscribe.startup_once
