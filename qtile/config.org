@@ -27,7 +27,7 @@
   - [[#media-and-system-keys][Media and System Keys]]
   - [[#mouse][Mouse]]
 - [[#rules][Rules]]
-  - [[#app-rules][App Rules]]
+  - [[#group-rules][Group Rules]]
   - [[#floating-rules][Floating Rules]]
 - [[#bar][Bar]]
 - [[#autostart][Autostart]]
@@ -139,18 +139,7 @@ floating_layout_theme = {"border_width": 2,
 * Groups
 In qtile, /groups/ are what would commonly be referred to as workspaces.
 #+begin_src python
-groups = [
-    Group("1"),
-    Group("2"),
-    Group("3"),
-    Group("4"),
-    Group("5"),
-    Group("6"),
-    Group("7"),
-    Group("8"),
-    Group("9", matches=[Match(wm_class = "discord", title = "Discord Updater")]),
-    Group("0"),
-        ]
+groups = [Group(i) for i in "1234567890"]
 #+end_src
 ** Multi-Monitor Behaviour
 Qtile's default way of handling multiple monitors is inspired by xmonad. When trying to switch to switch to a group that is not currently active on any monitor, it will just show this group on the current monitor. Pretty standard stuff. The interesting thing happens when you try to switch to the group that is currently displayed on another monitor -- then it'll switch the two groups around.
@@ -327,7 +316,14 @@ mouse = [
 #+end_src
 Unfortunately [[https://github.com/qtile/qtile/issues/855][it seems like]] resizing /tiling/ windows with mouse is not really implemented into qtile yet. Oh well, there's worse things.
 * Rules
-** App Rules
+** Group Rules
+Rules that assign certain applications to certain groups. Keep in mind that python lists start at 0, so the numbers here have to be off by one.
+#+begin_src python
+groups[8].matches = [Match(wm_class = "discord", title = "Discord Updater")]
+groups[8].spawn = "discord"
+
+groups[9].matches = [Match(wm_class = "spotify")]
+#+end_src
 ** Floating Rules
 #+begin_src python
 floating_layout = layout.Floating(**floating_layout_theme,

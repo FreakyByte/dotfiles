@@ -74,18 +74,7 @@ floating_layout_theme = {"border_width": 2,
                 "border_focus": wal_colors[7],
                 "border_normal": wal_background}
 
-groups = [
-    Group("1"),
-    Group("2"),
-    Group("3"),
-    Group("4"),
-    Group("5"),
-    Group("6"),
-    Group("7"),
-    Group("8"),
-    Group("9", matches=[Match(wm_class = "discord", title = "Discord Updater")]),
-    Group("0"),
-        ]
+groups = [Group(i) for i in "1234567890"]
 
 def go_to_group(qtile,group_name):
     for s in qtile.screens:
@@ -204,6 +193,11 @@ mouse = [
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
+
+groups[8].matches = [Match(wm_class = "discord", title = "Discord Updater")]
+groups[8].spawn = "discord"
+
+groups[9].matches = [Match(wm_class = "spotify")]
 
 floating_layout = layout.Floating(**floating_layout_theme,
     float_rules=[
