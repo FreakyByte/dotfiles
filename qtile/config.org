@@ -2,7 +2,7 @@
 #+STARTUP: overview
 #+PROPERTY: header-args:python :tangle config.py :cache yes :results silent
 
-* Table of Contents :toc:
+* Table of Contents :toc:noexport:
 - [[#intro][Intro]]
   - [[#license][License]]
   - [[#imports][Imports]]
