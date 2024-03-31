@@ -382,32 +382,34 @@ space rather than before."
   ;;; Retrieving inital values that should be replaced
   (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
 
-  ;; Checking if link match the regular expression
-  (if (string-match-p "^id:.*|\s*:" raw-path)
-      (progn
-	;; Retrieving parameters after the vertical bar
-	(setq results (s-split "|" raw-path))
-	(setq raw-path (car results))
-	(setq path (s-chop-prefix "id:" raw-path))
+  ;; check if raw-path is not nil
+  (if raw-path
+        ;; Checking if link match the regular expression
+        (if (string-match-p "^id:.*|\s*:" raw-path)
+        (progn
+                ;; Retrieving parameters after the vertical bar
+                (setq results (s-split "|" raw-path))
+                (setq raw-path (car results))
+                (setq path (s-chop-prefix "id:" raw-path))
 
-        ;; Cleaning, splitting and making symbols
-        (setq results (s-split "\s" (s-trim (s-collapse-whitespace
-                                             (car (-slice results 1))))))
-        (setq results (--map (intern it) results))
+                ;; Cleaning, splitting and making symbols
+                (setq results (s-split "\s" (s-trim (s-collapse-whitespace
+                                                (car (-slice results 1))))))
+                (setq results (--map (intern it) results))
 
-	;; Updating the ouput with the new values
-	(setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
-	(setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
+                ;; Updating the ouput with the new values
+                (setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
+                (setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
 
-        ;; Check that the number is even
-        (if (= 2 (length (-last-item (-partition-all 2 results))))
-            (list 'link (-snoc orig-fun-cleaned :extra-attrs results))
-          (progn
-            (message "Links properties are incorrect.")
-            (list 'link orig-fun-cleaned))))
+                ;; Check that the number is even
+                (if (= 2 (length (-last-item (-partition-all 2 results))))
+                (list 'link (-snoc orig-fun-cleaned :extra-attrs results))
+                (progn
+                (message "Links properties are incorrect.")
+                (list 'link orig-fun-cleaned))))
 
     ;; Or returning original value of the function
-    orig-fun))
+    orig-fun)))
 
 (advice-add 'org-element-link-parser :filter-return #'odm/org-link-extra-attrs)
 
