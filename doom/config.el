@@ -218,6 +218,13 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (apply orig-fn count beg end type ?_ args))
 (advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
 
+(map! :n "ö" 'evil-next-buffer)
+(map! :n "Ö" 'evil-prev-buffer)
+(map! :n "ä" 'evil-window-next)
+(map! :n "Ä" 'evil-window-prev)
+(map! :n "C-ä" '+evil/window-vsplit-and-follow)
+(map! :n "C-Ä" '+evil/window-split-and-follow)
+
 (setq company-idle-delay 0.4)
 
 (add-hook 'spell-fu-mode-hook
