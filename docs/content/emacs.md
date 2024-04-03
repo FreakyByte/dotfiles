@@ -395,7 +395,7 @@ I'm used to this from my VimTex days.
 
 ### Move/Cut {#move-cut}
 
-I've always liked that the delete command in vim automatically yanks the deleted text, i.e. it acts more like cutting than deleting.
+I've always disliked that the delete command in vim automatically yanks the deleted text, i.e. it acts more like cutting than deleting.
 For this reason I've configured 'd' and 'x' to not yank the deleted text, and instead defined 'm' (for "move", because 'c' is already taken) to delete and yank, i.e. cut.
 
 First we clone the default `evil-delete` function under the name `evil-cut`.
