@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: game value
+# uuid: game_value
+# key: <g
+# condition: t
+# --
+\langle ${1:\quad} \mid ${2:\quad} \rangle$0

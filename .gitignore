@@ -20,4 +20,9 @@ fish/fish_plugins
 fish/conf.d/
 fish/fishd.tmp.6sfRLm
 
-One/awesome/configuration/user-profile/reiti.png
+awesome/configuration/user-profile/reiti.png
+awesome/configuration/config.lua
+
+qtile/__pycache__/
+
+docs/.hugo_build.lock

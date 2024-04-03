@@ -31,6 +31,8 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 """ Basic settings
+set encoding=utf-8 	" required by YouCompleteMe for example
+
 set nu		" absolute line numbers
 set rnu		" relative line numbers
 

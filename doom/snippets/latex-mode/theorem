@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: theorem
+# uuid: theorem
+# key: thm
+# condition: t
+# --
+\begin{theorem}{${1:Title}}{${2:label}}
+$3
+\end{theorem} $0
