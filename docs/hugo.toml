@@ -1,0 +1,35 @@
+baseURL = 'https://freakybyte.github.io/dotfiles/'
+languageCode = 'en-us'
+title = 'reitis Punktdateien'
+theme = 'relearn'
+canonifyURLs = true
+
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ''
+    hl_inline = false
+    lineAnchors = ''
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    noHl = false
+    style = 'doom-one'
+    tabWidth = 4
+[params]
+    themeVariant = 'my-custom-variant'
+    disableLandingPageButton = true
+    disableShortcutsTitle=true
+ [params.author]
+    name = 'Michael Reitmeir'
+
+[menu]
+    [[menu.shortcuts]]
+        identifier = 'ds'
+        name = "<i class='fa-fw fab fa-github'></i> GitHub repo"
+        url = 'https://github.com/FreakyByte/dotfiles'
+        weight = 10

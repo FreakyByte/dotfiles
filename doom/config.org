@@ -1,6 +1,7 @@
 #+title: DOOM Emacs Config
 #+STARTUP: showeverything
 #+PROPERTY: header-args:emacs-lisp :tangle yes :cache yes :results silent
+#+export_file_name: emacs
 
 * Table of Contents :toc:noexport:
 - [[#about-this-config][About this Config]]
@@ -1462,7 +1463,6 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
 * Tangle this file!
 
 Tangle on save? Reload after tangle? These hooks will ask you after every save.
-(Taken from https://github.com/joseph8th/literatemacs and modified for DOOM)
 
 ;; Local Variables:
 ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(doom/reload))) nil t)

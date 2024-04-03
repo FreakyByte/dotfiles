@@ -1,6 +1,7 @@
 #+title: Qtile Config
 #+STARTUP: overview
 #+PROPERTY: header-args:python :tangle config.py :cache yes :results silent
+#+export_file_name: qtile
 
 * Table of Contents :toc:noexport:
 - [[#intro][Intro]]
@@ -423,7 +424,7 @@ Now we package these into bars.
 my_bars = [bar.Bar(
             init_widget_list(with_systray),
             size = 40,
-            background = '#00000080', # transparent background
+            background = '#00000066', # transparent background
             opacity = 1, # but no transparency of widgets
             border_width = 0,
             reserve = True,
@@ -463,6 +464,7 @@ def autostart():
 * Tangle this file!
 
 Tangle on save? This hook will ask you after every save.
+
 ;; Local Variables:
 ;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t)
 ;; End:

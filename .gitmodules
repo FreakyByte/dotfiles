@@ -10,3 +10,6 @@
 [submodule "awesome/charitable"]
 	path = awesome/charitable
 	url = https://github.com/frioux/charitable
+[submodule "docs/themes/relearn"]
+	path = docs/themes/relearn
+	url = https://github.com/McShelby/hugo-theme-relearn

@@ -287,7 +287,7 @@ def init_widget_list(with_systray):
 my_bars = [bar.Bar(
             init_widget_list(with_systray),
             size = 40,
-            background = '#00000080', # transparent background
+            background = '#00000066', # transparent background
             opacity = 1, # but no transparency of widgets
             border_width = 0,
             reserve = True,
