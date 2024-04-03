@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>reitis Punktdateien</title>
-    <link>http://localhost:1313/dotfiles/index.html</link>
+    <link>https://freakybyte.github.io/dotfiles/index.html</link>
     <description>Recent content on reitis Punktdateien</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:1313/dotfiles/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://freakybyte.github.io/dotfiles/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>DOOM Emacs Config</title>
-      <link>http://localhost:1313/dotfiles/emacs/index.html</link>
+      <link>https://freakybyte.github.io/dotfiles/emacs/index.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/dotfiles/emacs/index.html</guid>
+      <guid>https://freakybyte.github.io/dotfiles/emacs/index.html</guid>
       <description>About this Config Here is some help from the default config.el that I haven&amp;rsquo;t found a better spot for yet.
 Here are some additional functions/macros that could help you configure Doom:
 `load!&amp;rsquo; for loading external *.el files relative to this one `use-package!&amp;rsquo; for configuring packages `after!&amp;rsquo; for running code after a package has loaded `add-load-path!&amp;rsquo; for adding directories to the `load-path&amp;rsquo;, relative to this file. Emacs searches the `load-path&amp;rsquo; when you load packages with `require&amp;rsquo; or `use-package&#39;.</description>
     </item>
     <item>
       <title>Qtile Config</title>
-      <link>http://localhost:1313/dotfiles/qtile/index.html</link>
+      <link>https://freakybyte.github.io/dotfiles/qtile/index.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/dotfiles/qtile/index.html</guid>
+      <guid>https://freakybyte.github.io/dotfiles/qtile/index.html</guid>
       <description>Intro License # Copyright (c) 2010 Aldo Cortesi # Copyright (c) 2010, 2014 dequis # Copyright (c) 2012 Randall Ma # Copyright (c) 2012-2014 Tycho Andersen # Copyright (c) 2012 Craig Barnes # Copyright (c) 2013 horsik # Copyright (c) 2013 Tao Sauvage # # Permission is hereby granted, free of charge, to any person obtaining a copy # of this software and associated documentation files (the &amp;#34;Software&amp;#34;), to deal # in the Software without restriction, including without limitation the rights # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell # copies of the Software, and to permit persons to whom the Software is # furnished to do so, subject to the following conditions: # # The above copyright notice and this permission notice shall be included in # all copies or substantial portions of the Software.</description>
     </item>
   </channel>
