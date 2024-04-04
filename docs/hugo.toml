@@ -1,6 +1,6 @@
 baseURL = 'https://freakybyte.github.io/dotfiles/'
 languageCode = 'en-us'
-title = 'reitis Punktdateien'
+title = 'Reitis Punktdateien'
 theme = 'relearn'
 canonifyURLs = true
 
@@ -20,6 +20,8 @@ canonifyURLs = true
     noHl = false
     style = 'doom-one'
     tabWidth = 4
+  [markup.goldmark.renderer]
+    unsafe = true
 [params]
     themeVariant = 'my-custom-variant'
     disableLandingPageButton = true
