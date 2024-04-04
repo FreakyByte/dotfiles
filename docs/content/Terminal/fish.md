@@ -7,7 +7,7 @@ weight = 1
 
 My [fish](https://fishshell.com/) config is actually really short. That's the nice thing about fish: The defaults are just very nice.
 
-Only thing to note is that [eza](https://github.com/eza-community/eza) instead of the classic `ls` command because its colors are nicer. So either install `eza` or remove this line.
+Only thing to note is that I use [eza](https://github.com/eza-community/eza) instead of the classic `ls` command because its colors are nicer. So either install `eza` or remove this line.
 
 ```fish
 {{% include file="symlink/config.fish" %}}

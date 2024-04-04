@@ -5,7 +5,7 @@
 
 My [[https://fishshell.com/][fish]] config is actually really short. That's the nice thing about fish: The defaults are just very nice.
 
-Only thing to note is that [[https://github.com/eza-community/eza][eza]] instead of the classic ~ls~ command because its colors are nicer. So either install ~eza~ or remove this line.
+Only thing to note is that I use [[https://github.com/eza-community/eza][eza]] instead of the classic ~ls~ command because its colors are nicer. So either install ~eza~ or remove this line.
 #+begin_src fish
 {{% include file="symlink/config.fish" %}}
 #+end_src
