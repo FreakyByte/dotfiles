@@ -249,7 +249,7 @@ keys.extend([
 #+begin_src python
 keys.extend([
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-    Key([mod], "d", lazy.spawn("rofi -dpi -show drun -theme /home/reiti/.config/awesome/configuration/rofi/appmenu/rofi.rasi"),
+    Key([mod], "d", lazy.spawn("rofi -dpi -show drun -theme ~/.config/rofi/rofi.rasi"),
         desc="Spawn a command using a prompt widget"),
 
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
