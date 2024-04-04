@@ -2,6 +2,7 @@
 title = "Qtile Config"
 author = ["Michael Reitmeir"]
 draft = false
+weight = 1
 +++
 
 ## Intro {#intro}

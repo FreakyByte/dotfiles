@@ -2,6 +2,7 @@
 title = "DOOM Emacs Config"
 author = ["Michael Reitmeir"]
 draft = false
+weight = 1
 +++
 
 ## About this Config {#about-this-config}

@@ -1,0 +1,12 @@
+#+title: Dunst
+#+hugo_section: DesktopEnvironment
+#+export_file_name: dunst
+#+hugo_weight: 4
+
+[[https://github.com/dunst-project/dunst][Dunst]] is my notification daemon. This means it is responsible for actually displaying the notifications that other apps want to send. You can send your own notifications using =notify-send=.
+
+The configuration below is mostly for visuals. You can find all configuration options [[https://dunst-project.org/documentation/][here]].
+
+#+begin_src toml
+{{% include file="symlink/dunstrc" %}}
+#+end_src

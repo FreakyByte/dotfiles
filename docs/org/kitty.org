@@ -1,0 +1,23 @@
+#+title: Kitty
+#+hugo_section: Terminal
+#+export_file_name: kitty
+#+hugo_weight: 2
+
+I use [[https://sw.kovidgoyal.net/kitty/][kitty]] as my terminal emulator, cause who doesn't love cute kitties?
+
+* Config
+My config is honestly not very interesting, just some appearance settings and some keybindings. The only mildly interesting thing is how to make it use the color scheme from [[https://github.com/dylanaraps/pywal][pywal]]. More on that below.
+
+#+begin_comment
+Note that this is not actually a python file. But I couldn't find something better for its syntax highlighting.
+#+end_comment
+#+begin_src python
+{{% include file="symlink/kitty.conf" %}}
+#+end_src
+
+* Pywal template
+
+For me the default pywal template for kitty somehow didn't theme the colors of tabs. No idea if that's still the case nowadays, but I just put the [[https://github.com/dylanaraps/pywal/blob/master/pywal/templates/colors-kitty.conf][template from here]] in my =~/.config/wal/templates= directory. No reason to change a running system.
+#+begin_src python
+{{% include file="symlink/colors-kitty.conf" %}}
+#+end_src
