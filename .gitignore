@@ -26,3 +26,4 @@ awesome/configuration/config.lua
 qtile/__pycache__/
 
 docs/.hugo_build.lock
+docs/public/
