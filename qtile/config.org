@@ -179,7 +179,7 @@ dgroups_app_rules = []  # type: list
 [[https://docs.qtile.org/en/latest/manual/config/groups.html#scratchpad-and-dropdown][Scratchpad]] groups are special groups that house dropdown windows. By default they are invisible, but the relevant dropdown windows can be made visible with the corresponding keybinding. I use this mainly to have a "quake-like" dropdown terminal available for when I quickly gotta execute some commands but don't want to leave the current workspace. Very convenient.
 #+begin_src python
 groups.append(ScratchPad("scratchpad", [
-        DropDown("quake_term", terminal, height=0.4, width=1, x=0, y=0, opacity=0.9, on_focus_lost_hide=False),
+        DropDown("quake_term", terminal, height=0.4, width=.995, x=.0025, y=0, opacity=0.9, on_focus_lost_hide=False),
 ]))
 #+end_src
 

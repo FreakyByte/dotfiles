@@ -195,7 +195,7 @@ dgroups_app_rules = []  # type: list
 
 ```python
 groups.append(ScratchPad("scratchpad", [
-        DropDown("quake_term", terminal, height=0.4, width=1, x=0, y=0, opacity=0.9, on_focus_lost_hide=False),
+        DropDown("quake_term", terminal, height=0.4, width=.995, x=.0025, y=0, opacity=0.9, on_focus_lost_hide=False),
 ]))
 ```
 
