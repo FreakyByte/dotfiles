@@ -276,6 +276,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        )
       )
 
+(setq jit-lock-defer-time 0.25)
+
 (setq org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
       org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams

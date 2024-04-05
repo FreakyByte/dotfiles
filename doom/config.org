@@ -26,6 +26,7 @@
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
   - [[#zenwriteroom][Zen/Writeroom]]
+  - [[#performance][Performance]]
 - [[#org-mode][Org Mode]]
   - [[#org-paths][Org-Paths]]
   - [[#org-appearance][Org Appearance]]
@@ -480,6 +481,13 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
        )
       )
+#+end_src
+** Performance
+I am experiencing a bunch of little performance issues related to font-lock, so syntax highlighting and other visuals of text. One big one seems to be related to having many folded org headings on the screen, so should try to avoid that.
+
+Another one comes in form of lags while typing "long" lines, where long is not actually long, but just a couple hundred characters. This setting delays font-lock for a bit, which seems to help
+#+begin_src emacs-lisp :tangle yes
+(setq jit-lock-defer-time 0.25)
 #+end_src
 
 * Org Mode
