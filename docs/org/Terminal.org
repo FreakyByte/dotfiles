@@ -1,6 +1,6 @@
 #+title: Terminal
 #+hugo_section: Terminal
 #+export_file_name: _index
-#+hugo_weight: 3
+#+hugo_weight: 4
 
 My terminal configurations, so both the shell itself as well as the terminal emulator that displays it.

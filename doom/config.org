@@ -2,7 +2,7 @@
 #+STARTUP: showeverything
 #+PROPERTY: header-args:emacs-lisp :tangle yes :cache yes :results silent
 #+export_file_name: emacs
-#+hugo_weight: 1
+#+hugo_weight: 2
 
 * Table of Contents :toc:noexport:
 - [[#about-this-config][About this Config]]

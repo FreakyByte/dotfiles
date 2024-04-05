@@ -2,7 +2,7 @@
 title = "DOOM Emacs Config"
 author = ["Michael Reitmeir"]
 draft = false
-weight = 1
+weight = 2
 +++
 
 ## About this Config {#about-this-config}
@@ -538,6 +538,17 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
        )
       )
+```
+
+
+### Performance {#performance}
+
+I am experiencing a bunch of little performance issues related to font-lock, so syntax highlighting and other visuals of text. One big one seems to be related to having many folded org headings on the screen, so should try to avoid that.
+
+Another one comes in form of lags while typing "long" lines, where long is not actually long, but just a couple hundred characters. This setting delays font-lock for a bit, which seems to help
+
+```emacs-lisp
+(setq jit-lock-defer-time 0.25)
 ```
 
 

@@ -1,0 +1,13 @@
+#+title: Graphics Driver
+#+hugo_section: FurtherNotes
+#+export_file_name: graphics_driver
+#+hugo_weight: 1
+
+My PC runs on a /AMD R9 280/ GPU (yes I know it's old). Other words to describe that are /Southern Islands/ and /GCN 1/ ([[https://en.wikipedia.org/wiki/List_of_AMD_graphics_processing_units#Features_overview][source]]). So I want to switch from the older =radeon= driver to the better =amdgpu= driver (which has [[https://wiki.archlinux.org/title/Vulkan][Vulkan]] support). The [[https://wiki.archlinux.org/title/AMDGPU][Arch wiki]] principally explains how to do this, but on EndeavourOS with systemd boot, I had to do it slightly differently. [[https://discovery.endeavouros.com/installation/systemd-boot/2022/12/][This guide]] mentions what file to edit, but it doesn't really mention the syntax, which is a bit different than the one mentioned in the Arch wiki.
+
+Turns out I had to add the following to the end of the one-line file =/etc/kernel/cmdline/=, then run =sudo reinstall-kernels= and reboot.
+
+#+NAME:/etc/kernel/cmdline
+#+begin_src
+amdgpu.si_support=1 radeon.si_support=0
+#+end_src

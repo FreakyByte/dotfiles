@@ -1,6 +1,6 @@
 #+title: Desktop Environment
 #+hugo_section: DesktopEnvironment
 #+export_file_name: _index
-#+hugo_weight: 2
+#+hugo_weight: 3
 
 Strictly speaking not a desktop environment, but rather a window manager plus some small extras. ^^

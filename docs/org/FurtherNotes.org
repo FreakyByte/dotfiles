@@ -1,0 +1,6 @@
+#+title: Further Notes
+#+hugo_section: FurtherNotes
+#+export_file_name: _index
+#+hugo_weight: 100
+
+Mostly notes to myself that I don't have any other place for.
