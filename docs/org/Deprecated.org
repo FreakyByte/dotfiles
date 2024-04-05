@@ -1,0 +1,6 @@
+#+title: Deprecated
+#+hugo_section: Deprecated
+#+export_file_name: _index
+#+hugo_weight: 100
+
+Configs that I currently don't use much and don't worry about maintaining.

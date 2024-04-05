@@ -1,0 +1,14 @@
+#+title:  Vim
+#+hugo_section: Deprecated
+#+export_file_name: vim
+#+hugo_weight: 1
+
+It's honestly a stretch to say my vim config is "deprecated". I still use it quite a lot, and I love vim! I just moved to Emacs as my general big text manipulator, whereas vim is only used for quick edits of system files or similar things. The /"Vim vs. Emacs"/ debate is quite silly; the real answer for me is both. I would probably never have used Emacs without [[https://github.com/emacs-evil/evil][evil mode]].
+
+Still, you probably don't wanna use my vim config. I haven't updated it in forever, and all the cool kids use [[https://neovim.io/][Neovim]] with fancy Lua configs nowadays. I would do that too, but there's no real point with the tiny things I use vim for.
+
+The plugin manager used by my vim is [[https://github.com/VundleVim/Vundle.vim][Vundle]]. Install it first, otherwise almost none of the following is gonna work properly. Also check out the installation instructions for [[https://github.com/ycm-core/YouCompleteMe][YouCompleteMe]], it requires a bit more setup outside of vim.
+
+#+begin_src vimrc
+{{% include file="symlink/vimrc" %}}
+#+end_src

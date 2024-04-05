@@ -1,0 +1,45 @@
+#+title: i3 + Polybar
+#+hugo_section: Deprecated
+#+export_file_name: i3
+#+hugo_weight: 3
+
+* i3
+Like for most people in 2018, [[https://i3wm.org/][i3]] was my first tiling window manager. More precisely actually, I used a hacky combination of i3 and the [[https://en.wikipedia.org/wiki/Cinnamon_(desktop_environment)][Cinnamon]] desktop environment at first. This was made by [[https://github.com/erikdubois][Eric Dubois]], who is nowadays known as the [[https://arcolinux.com/][ArcoLinux]] guy. I don't think it exists anymore.
+
+For my i3 config, I actually just had two different config files for my desktop PC ("One") and my convertible laptop ("IdeaPad").
+** i3 on One
+#+begin_comment
+Note that this is not actually a python file. But python syntax highlighting works well enough for it.
+#+end_comment
+#+begin_src python
+{{% include file="symlink/i3One" %}}
+#+end_src
+** i3 on IdeaPad
+#+begin_src python
+{{% include file="symlink/i3IdeaPad" %}}
+#+end_src
+
+* Polybar
+At some later point, I used [[https://github.com/polybar/polybar][Polybar]] instead of the default i3 bar. It's just sexier.
+
+Again, this has two different configs for my desktop and my laptop, respectively. They also both have their own start scripts.
+** Polybar on One
+*** config
+#+begin_src ini
+{{% include file="symlink/polybarOne" %}}
+#+end_src
+*** launch.sh
+#+begin_src bash
+{{% include file="symlink/polybarLaunchOne" %}}
+#+end_src
+
+** Polybar on IdeaPad
+*** config
+#+begin_src ini
+{{% include file="symlink/polybarIdeaPad" %}}
+#+end_src
+*** launch.sh
+This one actually has some fancy features like screen rotation... Let's see if I'll ever implement those properly again. ^^
+#+begin_src bash
+{{% include file="symlink/polybarLaunchIdeaPad" %}}
+#+end_src
