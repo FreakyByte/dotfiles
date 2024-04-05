@@ -110,6 +110,8 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 
 
 """ enable copying between vim instances
-let g:EasyClipShareYanks=1
+"" let g:EasyClipShareYanks=1
+""" make vim use the system wide clipboard
+set clipboard^=unnamed,unnamedplus
 nmap M <Plug>MoveMotionEndOfLinePlug
 "the above binds m to cut (delete and copy to clipboard)
