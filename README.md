@@ -30,7 +30,9 @@ The docs are generated using [hugo](https://gohugo.io/) + [ox-hugo](https://ox-h
 The main reason I use Linux and all of this stuff is because I'm obsessed with customizing things. Therefore I advocate you use my dotfiles as inspirations, stealing bits and pieces from them as you please.
 
 If you do really want to install some of my configs, I have an install script. However, **do not blindly run it**, and check first whether it won't do anything you don't want. It also relies on the pacman package manager, so it only works on Arch based distros. To run the script, first clone this repo using
-`git clone --depth 1 https://github.com/FreakyByte/dotfiles`
+``` sh
+git clone --depth 1 https://github.com/FreakyByte/dotfiles
+```
 After that, executing `install.sh` will prompt you which parts of my config you want, install the relevant packages and symlink the relevant config files. Note that symlinking means the cloned repo can not be removed afterwards. If you want that, you have to copy the files yourself.
 
 If you're using a stable release distribution like e.g. Ubuntu, keep in mind that the versions of programs in the official repos might be too old to work with these dotfiles. In this case, you'll have to manually build the newer packages yourself or use a [PPA](https://help.ubuntu.com/community/PPA) or something.
