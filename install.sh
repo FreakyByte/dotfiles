@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
 
+#### INSTALL SCRIPT FOR MY SYSTEM ####
+# The structure of this script is as follows: First I setup some variables and function.
+# Then the script promtps you for all the parts you want to install. If you say yes, the
+# relevant packages are added to a list and will be installed later. Even later, the dotfiles
+# will be symlinked to appropriate directory (usually in $HOME/.config). If there is already
+# a file or a directory where the symlink should be put, the script will print an error message
+# and will not overwrite the existing files. (Exception is if the destination is an empty
+# directoy - then it will be deleted and replaced by the symlink).
+
+# This script only works on Arch based systems with the pacman package manager. Additionally the
+# AUR helper yay as well as git is needed.
+
+# To properly run this script, clone the git repo at github.com/freakybyte/dotfiles to some place
+# you like, then execute the script. Read through the script first though pls, to make sure it's
+# not gonna do anything you don't want. Also note that, as mentioned, the dotfiles will only be
+# symlinked, not copied, so the clone of this repo can not be removed afterwards!
+
+
 #### PREAMBLE ####
 ### Colors
 BLACK='\e[0;30m'
@@ -48,11 +66,13 @@ if [ `id -u` == 0 ]
   exit
 fi
 
-echo -e "${RED}\n*** WARNING - Do not blindly run this script! ***"
+echo -e "${RED}\n*** Do not blindly run this script! ***"
 echo -e "${RESET}You don't know if you can trust me. And even if you believe me that this is not
 going to install anything malicious, I might've just made a dumb mistake
-somewhere in the script which is going to break your system. Rather, what you
-should do is read this script and execute only the parts that you actually need."
+somewhere in the script which is going to break your system. This script is
+mostly there for my own comfort when having to setting up a new system. Rather
+than executinng this script, I recommend you steal bits and pieces from my config
+and read the script to learn about the installation."
 echo -e "${GREEN}"
 read -p "Execute anyways? [y/N] " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
