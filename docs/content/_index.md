@@ -44,6 +44,6 @@ If you do really want to _install_ some of my configs, I have an install script.
 git clone --depth 1 https://github.com/FreakyByte/dotfiles
 ```
 
-After that, executing \`install.sh\` will prompt you which parts of my config you want, install the relevant packages and symlink the relevant config files. Note that symlinking means the cloned repo can not be removed afterwards. If you want that, you have to copy the files yourself.
+After that, executing `install.sh` will prompt you which parts of my config you want, install the relevant packages and symlink the relevant config files. Note that symlinking means the cloned repo can not be removed afterwards. If you want that, you have to copy the files yourself.
 
 If you're using a stable release distribution like e.g. Ubuntu, keep in mind that the versions of programs in the official repos might be too old to work with these dotfiles. In this case, you'll have to manually build the newer packages yourself or use a [PPA](https://help.ubuntu.com/community/PPA) or something.
