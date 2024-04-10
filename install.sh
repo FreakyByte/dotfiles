@@ -286,6 +286,7 @@ then
     read -p "Install Github Command Line Interface? [y/N] " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
+        INSTALL_GITHUB=1
         PACMAN_PACKAGES="$PACMAN_PACKAGES github-cli"
     fi
 
@@ -391,7 +392,15 @@ then
     read -p "Install Timeshift (backup utility)? [y/N] " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
+        INSTALL_TIMESHIFT=1
         PACMAN_PACKAGES="$PACMAN_PACKAGES timeshift"
+    fi
+
+    echo ""
+    read -p "Install Xournal++ (for taking handwritten notes)? [y/N] " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        PACMAN_PACKAGES="$PACMAN_PACKAGES xournalpp"
     fi
 
     echo ""
@@ -449,7 +458,7 @@ then
 
     echo -e "\n${BLUE}Installing Doom...${RESET}\n"
     COMMAND="git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs &&
-            ~/.config/emacs/bin/doom install"
+            ~/.config/emacs/bin/doom install && ~/.config/emacs/bin/doom sync && PATH=$PATH:~/.config/emacs/bin"
     do_if_doesnt_exist ~/.config/emacs "Doom could not be installed." "$COMMAND"
 fi
 
@@ -484,6 +493,15 @@ then
     echo -e "\n${BLUE}Symlinking fish config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/fish/config.fish $HOME/.config/fish/config.fish"
     do_if_doesnt_exist ~/.config/fish/config.fish "Fish configuration could not be installed." "$COMMAND"
+
+    echo -e "\n${BLUE}Changing default shell to fish...${RESET}\n"
+    chsh -s $(which fish)
+
+    if [ ! -z "$INSTALL_EMACS" ]
+    then
+        echo -e "\n${BLUE}Adding doom binary to fish path...${RESET}\n"
+        fish -c "fish_add_path ~/.config/emacs/bin"
+    fi
 fi
 if [ ! -z "$INSTALL_TIDE" ]
 then
@@ -500,6 +518,16 @@ then
     echo -e "\n${BLUE}Symlinking wallpaper change script...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/change-wallpaper.sh $HOME/.config/change-wallpaper.sh "
     do_if_doesnt_exist ~/.config/wal "Wallpaper change script could not be installed" "$COMMAND"
+
+    if [ ! -d "~/Pictures/Wallpapers/used" ]; then
+        echo -e "\n${BLUE}Wallpaper directory doesn't exist, creating...${RESET}\n"
+        mkdir -p ~/Pictures/Wallpapers/used
+    fi
+
+    if [ -z "$(ls -A ~/Pictures/Wallpapers/used)" ]; then
+        echo -e "\n${BLUE}No wallpapers found under ~/Pictures/Wallpapers/used \nDownloading example wallpaper...${RESET}\n"
+        wget https://raw.githubusercontent.com/pablocorbalann/arch-minimal-wallpapers/main/wallpapers/full-hd/onedark.png -P ~/Pictures/Wallpapers/used/
+    fi
 fi
 
 if [ ! -z "$INSTALL_FONTS" ]
@@ -544,4 +572,20 @@ then
     echo -e "\n${BLUE}Symlinking vim snippets...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/vim/UltiSnips/ $HOME/.vim/UltiSnips"
     do_if_doesnt_exist ~/.vim/UltiSnips "vim snippets could not be installed" "$COMMAND"
+fi
+
+
+
+echo -e "${BLUE}\n*** Done! Enjoy the config! :D ***\n${RESET}"
+if [ ! -z "$INSTALL_GITHUB" ]
+then
+    echo -e "Github: You can now log into your account using:"
+    echo -e "gh auth login"
+    echo -e "\n Also don't forget to set your email and username if you haven't already:"
+    echo -e "git config --global user.email \"my.address@email.com\""
+    echo -e "git config --global user.name \"My_Edgy_Username_005\"\n"
+fi
+if [ ! -z "$INSTALL_TIMESHIFT" ]
+then
+    echo -e "Don't forget to set up your timeshift backups!"
 fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-wal -i /home/reiti/Pictures/Wallpapers/used -n ${1: }
+wal -i $HOME/Pictures/Wallpapers/used -n ${1: }
 # optional parameter so I can e.g. pass the --iterative option
 
 feh --bg-scale "$(< "${HOME}/.cache/wal/wal")"
