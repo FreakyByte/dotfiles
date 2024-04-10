@@ -491,6 +491,7 @@ fi
 if [ ! -z "$INSTALL_FISH" ]
 then
     echo -e "\n${BLUE}Symlinking fish config...${RESET}\n"
+    mkdir -p ~/.config/fish
     COMMAND="ln -s $SCRIPT_DIR/fish/config.fish $HOME/.config/fish/config.fish"
     do_if_doesnt_exist ~/.config/fish/config.fish "Fish configuration could not be installed." "$COMMAND"
 
@@ -517,7 +518,7 @@ then
 
     echo -e "\n${BLUE}Symlinking wallpaper change script...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/change-wallpaper.sh $HOME/.config/change-wallpaper.sh "
-    do_if_doesnt_exist ~/.config/wal "Wallpaper change script could not be installed" "$COMMAND"
+    do_if_doesnt_exist ~/.config/change-wallpaper.sh "Wallpaper change script could not be installed" "$COMMAND"
 
     if [ ! -d "~/Pictures/Wallpapers/used" ]; then
         echo -e "\n${BLUE}Wallpaper directory doesn't exist, creating...${RESET}\n"
