@@ -118,15 +118,6 @@ echo -e "\nCloning git submodules..."
 git submodule init
 git submodule update
 
-### Upgrade?
-echo -e "${GREEN}\n"
-read -p "Upgrade currently installed packages? [y/N] " -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-    echo -e "${RESET}"
-    sudo pacman -Syu --noconfirm
-fi
-
 
 
 #### QUERIES ####
@@ -313,6 +304,13 @@ then
     fi
 
     echo ""
+    read -p "Install hugo (static website generator, used for the documentation of these dotfiles)? [y/N] " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        PACMAN_PACKAGES="$PACMAN_PACKAGES gpick"
+    fi
+
+    echo ""
     read -p "Install joyutils (useful programs for dealing with joysticks)? [y/N] " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
@@ -421,7 +419,16 @@ then
     exit 1
 fi
 
+# Upgrade?
+echo -e "${GREEN}\n"
+read -p "Upgrade currently installed packages? [y/N] " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    echo -e "${RESET}"
+    sudo pacman -Syu --noconfirm
+fi
 
+# install earlier specified packages
 if [ ! -z "$PACMAN_PACKAGES" ]
 then
     echo -e "\n${BLUE}Installing packages using pacman...${RESET}\n"
