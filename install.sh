@@ -31,8 +31,8 @@ WHITE='\e[0;37m'
 RESET='\033[0m'
 
 ### Variables
-PACMAN_PACKAGES = ""
-YAY_PACKAGES = ""
+PACMAN_PACKAGES=""
+YAY_PACKAGES=""
 
 ### Functions
 remove_if_empty () {
@@ -237,7 +237,7 @@ then
     read -p "Install Discord? [y/N] " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
-        YAY_PACKAGES="$YAY_PACKAGES discord_arch_electorn"
+        YAY_PACKAGES="$YAY_PACKAGES discord_arch_electron"
     fi
 
     echo ""
@@ -445,65 +445,67 @@ if [ ! -z "$INSTALL_EMACS" ]
 then
     echo -e "\n${BLUE}Symlinking Emacs config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/doom/ $HOME/.config/doom"
-    do_if_doesnt_exist ~/.config/doom "Emacs configuration could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/doom "Emacs configuration could not be installed." "$COMMAND"
 
     echo -e "\n${BLUE}Installing Doom...${RESET}\n"
     COMMAND="git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs &&
             ~/.config/emacs/bin/doom install"
-    do_if_doesnt_exist ~/.config/emacs "Doom could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/emacs "Doom could not be installed." "$COMMAND"
 fi
 
 if [ ! -z "$INSTALL_QTILE" ]
 then
     echo -e "\n${BLUE}Symlinking Qtile config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/qtile/ $HOME/.config/qtile"
-    do_if_doesnt_exist ~/.config/qtile "Qtile configuration could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/qtile "Qtile configuration could not be installed." "$COMMAND"
 
     echo -e "\n${BLUE}Symlinking Picom config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/picom.conf $HOME/.config/picom.conf"
-    do_if_doesnt_exist ~/.config/picom.conf "Picom configuration could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.config/picom.conf "Picom configuration could not be installed" "$COMMAND"
 
     echo -e "\n${BLUE}Symlinking Rofi config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/rofi/ $HOME/.config/rofi"
-    do_if_doesnt_exist ~/.config/rofi "Picom configuration could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.config/rofi "Picom configuration could not be installed" "$COMMAND"
 
     echo -e "\n${BLUE}Symlinking Dunst config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/dunst/ $HOME/.config/dunst"
-    do_if_doesnt_exist ~/.config/dunst "Dunst configuration could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.config/dunst "Dunst configuration could not be installed" "$COMMAND"
 fi
 
 if [ ! -z "$INSTALL_KITTY" ]
 then
     echo -e "\n${BLUE}Symlinking kitty config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/kitty/ $HOME/.config/kitty"
-    do_if_doesnt_exist ~/.config/kitty "Kitty configuration could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/kitty "Kitty configuration could not be installed." "$COMMAND"
 fi
 
 if [ ! -z "$INSTALL_FISH" ]
 then
     echo -e "\n${BLUE}Symlinking fish config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/fish/config.fish $HOME/.config/fish/config.fish"
-    do_if_doesnt_exist ~/.config/fish/config.fish "Fish configuration could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/fish/config.fish "Fish configuration could not be installed." "$COMMAND"
 fi
 if [ ! -z "$INSTALL_TIDE" ]
 then
     echo -e "\n${BLUE}Installing tide prompt...${RESET}\n"
-    fisher install IlanCosman/tide@v6
+    fish -c "fisher install IlanCosman/tide@v6"
 fi
 
 if [ ! -z "$INSTALL_PYWAL" ]
 then
     echo -e "\n${BLUE}Symlinking pywal config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/wal/ $HOME/.config/wal "
-    do_if_doesnt_exist ~/.config/wal "Pywal configuration could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.config/wal "Pywal configuration could not be installed" "$COMMAND"
 
     echo -e "\n${BLUE}Symlinking wallpaper change script...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/change-wallpaper.sh $HOME/.config/change-wallpaper.sh "
-    do_if_doesnt_exist ~/.config/wal "Wallpaper change script could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.config/wal "Wallpaper change script could not be installed" "$COMMAND"
 fi
 
 if [ ! -z "$INSTALL_FONTS" ]
 then
+    mkdir -p ~/.local/share/fonts    
+
     echo -e "\n${BLUE}Installing font Libertinus...${RESET}"
     wget -P /tmp/ https://github.com/alerque/libertinus/releases/download/v7.040/Libertinus-7.040.tar.xz
     tar -xf /tmp/Libertinus-7.040.tar.xz -C /tmp/
@@ -524,14 +526,14 @@ if [ ! -z "$INSTALL_AWESOME" ]
 then
     echo -e "\n${BLUE}Symlinking awesome config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/awesome/ $HOME/.config/awesome && cp ~/.config/awesome/configuration/config.lua.template ~/.config/awesome/configuration/config.lua"
-    do_if_doesnt_exist ~/.config/awesome "Awesome configuration could not be installed." $COMMAND
+    do_if_doesnt_exist ~/.config/awesome "Awesome configuration could not be installed." "$COMMAND"
 fi
 
 if [ ! -z "$INSTALL_VIM" ]
 then
     echo -e "\n${BLUE}Symlinking vim config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/.vimrc $HOME/.vimrc"
-    do_if_doesnt_exist ~/.vimrc ".vimrc could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.vimrc ".vimrc could not be installed" "$COMMAND"
 
     echo -e "\n${BLUE}Installing Vundle (vim plugin manager)...${RESET}"
     mkdir ~/.vim
@@ -541,5 +543,5 @@ then
 
     echo -e "\n${BLUE}Symlinking vim snippets...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/vim/UltiSnips/ $HOME/.vim/UltiSnips"
-    do_if_doesnt_exist ~/.vim/UltiSnips "vim snippets could not be installed" $COMMAND
+    do_if_doesnt_exist ~/.vim/UltiSnips "vim snippets could not be installed" "$COMMAND"
 fi
