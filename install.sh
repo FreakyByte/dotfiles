@@ -70,8 +70,8 @@ echo -e "${RED}\n*** Do not blindly run this script! ***"
 echo -e "${RESET}You don't know if you can trust me. And even if you believe me that this is not
 going to install anything malicious, I might've just made a dumb mistake
 somewhere in the script which is going to break your system. This script is
-mostly there for my own comfort when having to setting up a new system. Rather
-than executinng this script, I recommend you steal bits and pieces from my config
+mostly there for my own comfort when having to set up a new system. Rather
+than executing this script, I recommend you steal bits and pieces from my config
 and read the script to learn about the installation."
 echo -e "${GREEN}"
 read -p "Execute anyways? [y/N] " -n 1 -r
@@ -474,7 +474,7 @@ then
 
     echo -e "\n${BLUE}Symlinking Rofi config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/rofi/ $HOME/.config/rofi"
-    do_if_doesnt_exist ~/.config/rofi "Picom configuration could not be installed" "$COMMAND"
+    do_if_doesnt_exist ~/.config/rofi "Rofi configuration could not be installed" "$COMMAND"
 
     echo -e "\n${BLUE}Symlinking Dunst config...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/dunst/ $HOME/.config/dunst"
