@@ -37,7 +37,7 @@ hostname = hostname.decode("utf-8")  # decode from type 'byte' to type 'str'
 
 if hostname == "One":
     config_in_use = "desktop"
-else
+else:
     config_in_use = "laptop"
 
 process = subprocess.Popen('~/.config/change-wallpaper.sh', shell=True, stdout=subprocess.PIPE)
@@ -284,6 +284,22 @@ def init_widget_list(with_systray):
                                 update_interval = 1.0,
                                 padding = 4,
                         ),
+                        widget.BatteryIcon(
+                                update_interval = 60,
+                                theme_path = "~/.config/qtile/icons",
+                                scale = 1.05,
+                        ),
+                        widget.Battery(
+                                update_interval = 60,
+                                charge_char = "",
+                                discharge_char = "",
+                                format = "{percent:2.0%} / {hour:d}:{min:02d}h",
+                                hide_threshold = None,
+                                low_foreground = 'FF0000',
+                                low_percentage = 0.11,
+                                notify_below = 0.11,
+                                notification_timeout = 0,
+                        ),
                         widget.CurrentLayoutIcon(
                                 scale = 0.5,
                                 padding = 5,
@@ -291,6 +307,10 @@ def init_widget_list(with_systray):
                 ]
         if not with_systray:
                 widget_list.pop(-3) # systray is third to last widget
+        if config_in_use == "desktop":
+                widget_list.pop(-2) # remove battery and battery icon
+                widget_list.pop(-1)
+                # it's important that we pop things in ascending order
         return widget_list
 
 my_bars = [bar.Bar(
@@ -303,8 +323,8 @@ my_bars = [bar.Bar(
         ) for with_systray in [True, False]]
 
 screens = [
-    Screen(bottom=my_bars[0]),
-    Screen(bottom=my_bars[1]),
+    Screen(top=my_bars[0]),
+    Screen(top=my_bars[1]),
 ]
 
 @hook.subscribe.startup_once
