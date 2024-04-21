@@ -37,8 +37,12 @@ hostname = hostname.decode("utf-8")  # decode from type 'byte' to type 'str'
 
 if hostname == "One":
     config_in_use = "desktop"
+    desktop = True
+    laptop = False
 else:
     config_in_use = "laptop"
+    desktop = False
+    laptop = True
 
 process = subprocess.Popen('~/.config/change-wallpaper.sh', shell=True, stdout=subprocess.PIPE)
 process.wait()
@@ -194,7 +198,7 @@ keys.extend([
     Key([], "XF86AudioPlay", lazy.spawn("mpc toggle"), desc="Play/Pause Music"),
     Key([], "XF86AudioMicMute", lazy.spawn("amixer set Capture toggle"), desc="Toggle Mute Microphone"),
     Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10"), desc="Increase Brightness by 10%"),
-    Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10"), desc="Increase Brightness by 10%"),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10"), desc="Decrease Brightness by 10%"),
 ])
 
 mouse = [
@@ -245,6 +249,9 @@ def init_widget_list(with_systray):
                                 urgent_border = 'FF0000',
                                 urgent_text = '000000',
                                 use_mouse_wheel = False,
+
+                                padding_x = 8 if laptop else None,
+                                fontsize = 18 if laptop else 15,
                         ),
                         widget.Prompt(),
                         widget.Chord(
@@ -265,10 +272,10 @@ def init_widget_list(with_systray):
                                 txt_floating = "🗗 ",
                                 txt_maximized = "🗖 ",
                                 txt_minimized = "🗕 ",
-                                fontsize = 14,
                                 foreground = 'ffffff', # font color
-                                margin_y = 4,
                                 width = bar.CALCULATED,
+                                margin_y = 6,
+                                icon_size = 35
                         ),
                         widget.Spacer(),
                         widget.WidgetBox(
@@ -277,17 +284,19 @@ def init_widget_list(with_systray):
                                 text_closed = '󰝡',
                                 text_open = '󰝠',
                                 fontsize = 20,
-                                widgets=[widget.Systray()]
+                                widgets=[widget.Systray(padding = 8)],
+                                padding = 0,
                         ),
                         widget.Clock(
                                 format="%H:%M, %A %-d. %B %Y",
                                 update_interval = 1.0,
-                                padding = 4,
+                                padding = 9,
                         ),
                         widget.BatteryIcon(
                                 update_interval = 60,
                                 theme_path = "~/.config/qtile/icons",
                                 scale = 1.05,
+                                padding = 0,
                         ),
                         widget.Battery(
                                 update_interval = 60,
@@ -299,10 +308,11 @@ def init_widget_list(with_systray):
                                 low_percentage = 0.11,
                                 notify_below = 0.11,
                                 notification_timeout = 0,
+                                padding = 0,
                         ),
                         widget.CurrentLayoutIcon(
                                 scale = 0.5,
-                                padding = 5,
+                                padding = 9,
                         ),
                 ]
         if not with_systray:

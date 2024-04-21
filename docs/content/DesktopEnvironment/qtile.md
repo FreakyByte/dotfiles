@@ -63,13 +63,17 @@ hostname = hostname.strip()  # remove trailing newline
 hostname = hostname.decode("utf-8")  # decode from type 'byte' to type 'str'
 ```
 
-Later we use this by consulting the variable `config_in_use` whenever we want to configure something desktop or laptop specific. We default to the laptop config, since I expect this one to have more features.
+Later we use this by consulting the variable `config_in_use` as well as the booleans `desktop` and `laptop` whenever we want to configure something desktop or laptop specific. We default to the laptop config, since I expect this one to have more features.
 
 ```python
 if hostname == "One":
     config_in_use = "desktop"
+    desktop = True
+    laptop = False
 else:
     config_in_use = "laptop"
+    desktop = False
+    laptop = True
 ```
 
 
@@ -444,7 +448,7 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 ```
 
-The following is the widget list for my bar (aka. panel). The system tray widget is only allowed to be used once, so I need to create two widget lists for my two screens: One with the systray, and one without it.
+The following is the widget list for my bar (aka. panel). First we prepare the widget list, where some options depend on [desktop vs. laptop](#different-config-on-different-systems) use. The system tray widget is only allowed to be used once, so we need to create two widget lists for two screens: One with the systray, and one without it.
 
 ```python
 def init_widget_list(with_systray):
@@ -464,6 +468,9 @@ def init_widget_list(with_systray):
                                 urgent_border = 'FF0000',
                                 urgent_text = '000000',
                                 use_mouse_wheel = False,
+
+                                padding_x = 8 if laptop else None,
+                                fontsize = 18 if laptop else 15,
                         ),
                         widget.Prompt(),
                         widget.Chord(
@@ -484,10 +491,10 @@ def init_widget_list(with_systray):
                                 txt_floating = "🗗 ",
                                 txt_maximized = "🗖 ",
                                 txt_minimized = "🗕 ",
-                                fontsize = 14,
                                 foreground = 'ffffff', # font color
-                                margin_y = 4,
                                 width = bar.CALCULATED,
+                                margin_y = 6,
+                                icon_size = 35
                         ),
                         widget.Spacer(),
                         widget.WidgetBox(
@@ -496,17 +503,19 @@ def init_widget_list(with_systray):
                                 text_closed = '󰝡',
                                 text_open = '󰝠',
                                 fontsize = 20,
-                                widgets=[widget.Systray()]
+                                widgets=[widget.Systray(padding = 8)],
+                                padding = 0,
                         ),
                         widget.Clock(
                                 format="%H:%M, %A %-d. %B %Y",
                                 update_interval = 1.0,
-                                padding = 4,
+                                padding = 9,
                         ),
                         widget.BatteryIcon(
                                 update_interval = 60,
                                 theme_path = "~/.config/qtile/icons",
                                 scale = 1.05,
+                                padding = 0,
                         ),
                         widget.Battery(
                                 update_interval = 60,
@@ -518,10 +527,11 @@ def init_widget_list(with_systray):
                                 low_percentage = 0.11,
                                 notify_below = 0.11,
                                 notification_timeout = 0,
+                                padding = 0,
                         ),
                         widget.CurrentLayoutIcon(
                                 scale = 0.5,
-                                padding = 5,
+                                padding = 9,
                         ),
                 ]
         if not with_systray:
