@@ -51,6 +51,28 @@ import subprocess
 ```
 
 
+## Different Config on Different Systems {#different-config-on-different-systems}
+
+I use this config on a desktop PC (called "One") and a convertible laptop (called "IdeaPad"). While most things would stay the same between the two, some other things I would like to behave differently, especially since my laptop should also be able to be used using its touchscreen.
+
+To distinguish the two machines, let's look at the hostname:
+
+```python
+hostname = subprocess.Popen("hostname", stdout=subprocess.PIPE ).communicate()[0]
+hostname = hostname.strip()  # remove trailing newline
+hostname = hostname.decode("utf-8")  # decode from type 'byte' to type 'str'
+```
+
+Later we use this by consulting the variable `config_in_use` whenever we want to configure something desktop or laptop specific. We default to the laptop config, since I expect this one to have more features.
+
+```python
+if hostname == "One":
+    config_in_use = "desktop"
+else
+    config_in_use = "laptop"
+```
+
+
 ## Wallpaper and Pywal colors {#wallpaper-and-pywal-colors}
 
 I use [pywal](https://github.com/dylanaraps/pywal) to create colorschemes based on the current wallpaper. This lets me use these colors in qtile as well.
