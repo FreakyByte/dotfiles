@@ -556,10 +556,10 @@ def init_widget_list(with_systray):
                         ),
                 ]
         if not with_systray:
-                widget_list.pop(-3) # systray is third to last widget
+                widget_list.pop(-5) # systray is third to last widget
         if config_in_use == "desktop":
-                widget_list.pop(-2) # remove battery and battery icon
-                widget_list.pop(-1)
+                widget_list.pop(-3) # remove battery and battery icon
+                widget_list.pop(-2)
                 # it's important that we pop things in ascending order
         return widget_list
 ```
