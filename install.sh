@@ -137,6 +137,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     INSTALL_QTILE=1
     PACMAN_PACKAGES="$PACMAN_PACKAGES qtile picom rofi dunst python-dbus-next breeze-icons"
+    YAY_PACKAGES="$YAY_PACKAGES light"
 fi
 
 ### Terminal
