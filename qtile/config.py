@@ -186,15 +186,15 @@ keys.extend([
         ])
 
 keys.extend([
-    Key([mod], "XF86AudioRaiseVolume", lazy.spawn("amixer -D pulse sset Master 5%+"), desc="Raise Volume by 5%"),
-    Key([mod], "XF86AudioLowerVolume", lazy.spawn("amixer -D pulse sset Master 5%-"), desc="Lower Volume by 5%"),
-    Key([mod], "XF86AudioMute", lazy.spawn("amixer -D pulse set Master 1+ toggle"), desc="Toggle Mute Audio"),
-    Key([mod], "XF86AudioNext", lazy.spawn("mpc next"), desc="Music Next"),
-    Key([mod], "XF86AudioPrev", lazy.spawn("mpc prev"), desc="Music Previous"),
-    Key([mod], "XF86AudioPlay", lazy.spawn("mpc toggle"), desc="Play/Pause Music"),
-    Key([mod], "XF86AudioMicMute", lazy.spawn("amixer set Capture toggle"), desc="Toggle Mute Microphone"),
-    Key([mod], "XF86MonBrightnessUp", lazy.spawn("light -A 10"), desc="Increase Brightness by 10%"),
-    Key([mod], "XF86MonBrightnessDown", lazy.spawn("light -U 10"), desc="Increase Brightness by 10%"),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("amixer -D pulse sset Master 5%+"), desc="Raise Volume by 5%"),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("amixer -D pulse sset Master 5%-"), desc="Lower Volume by 5%"),
+    Key([], "XF86AudioMute", lazy.spawn("amixer -D pulse set Master 1+ toggle"), desc="Toggle Mute Audio"),
+    Key([], "XF86AudioNext", lazy.spawn("mpc next"), desc="Music Next"),
+    Key([], "XF86AudioPrev", lazy.spawn("mpc prev"), desc="Music Previous"),
+    Key([], "XF86AudioPlay", lazy.spawn("mpc toggle"), desc="Play/Pause Music"),
+    Key([], "XF86AudioMicMute", lazy.spawn("amixer set Capture toggle"), desc="Toggle Mute Microphone"),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10"), desc="Increase Brightness by 10%"),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10"), desc="Increase Brightness by 10%"),
 ])
 
 mouse = [
