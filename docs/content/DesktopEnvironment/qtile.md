@@ -435,6 +435,19 @@ floating_layout = layout.Floating(**floating_layout_theme,
 ```
 
 
+### On Screen Keyboard {#on-screen-keyboard}
+
+On my convertible laptop, I use [Onboard](https://archlinux.org/packages/extra/x86_64/onboard/) as an onscreen keyboard. It has a neat autoshow feature as well as the ability to shrink other windows to accommodate the keyboard. Only trouble is that it sometimes ends up behind other floating windows. The following hook brings Onboard to the front every time it appears.
+
+```python
+if laptop:
+        @hook.subscribe.client_managed
+        def onboard_in_front(client):
+                if client.name == "Onboard":
+                        client.bring_to_front()
+```
+
+
 ## Bar {#bar}
 
 Default settings for all widgets.
@@ -580,6 +593,7 @@ dropbox start &
 keepassxc &
 nm-applet &
 emacs --daemon &
+onboard &
 ```
 
 The hook causes the `autostart.sh` script to be executed once at startup.

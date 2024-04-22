@@ -225,6 +225,12 @@ floating_layout = layout.Floating(**floating_layout_theme,
     ],
 )
 
+if laptop:
+        @hook.subscribe.client_managed
+        def onboard_in_front(client):
+                if client.name == "Onboard":
+                        client.bring_to_front()
+
 widget_defaults = dict(
     font="Ubuntu Nerd Font",
     fontsize=15,

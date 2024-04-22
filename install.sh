@@ -369,6 +369,20 @@ then
     fi
 
     echo ""
+    read -p "Install Onboard (onscreen keyboard)? [y/N] " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        PACMAN_PACKAGES="$PACMAN_PACKAGES onboard"
+        echo "    Install acpid and enable using systemd? [y/N]"
+        read -p "    This is necessary for Onboard to be able to detect whether a convertible laptop is in tablet mode." -n 1 -r
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            ENABLE_ACPID=1
+            PACMAN_PACKAGES="$PACMAN_PACKAGES acpid"
+        fi
+    fi
+
+    echo ""
     read -p "Install pavucontrol (gui audio control center)? [y/N] " -n 1 -r
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
@@ -574,6 +588,13 @@ then
     echo -e "\n${BLUE}Symlinking vim snippets...${RESET}\n"
     COMMAND="ln -s $SCRIPT_DIR/vim/UltiSnips/ $HOME/.vim/UltiSnips"
     do_if_doesnt_exist ~/.vim/UltiSnips "vim snippets could not be installed" "$COMMAND"
+fi
+
+if [ ! -z "$ENABLE_ONBOARD" ]
+then
+    echo -e "\n${BLUE}Enabling acpid...${RESET}\n"
+    sudo systemctl enable acpid.service
+    sudo systemctl start acpid.service
 fi
 
 

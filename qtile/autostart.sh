@@ -7,3 +7,4 @@ dropbox start &
 keepassxc &
 nm-applet &
 emacs --daemon &
+onboard &
