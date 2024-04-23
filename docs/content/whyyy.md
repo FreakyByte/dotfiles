@@ -42,7 +42,7 @@ Org was definitely my gateway drug into Emacs. Of course I always used evil mode
 
 ## New Endeavours: A New Distro {#new-endeavours-a-new-distro}
 
-I was really satisfied with Linux Mint for a long time. But with all the bits and pieces I stole from bleeding-edge dotfiles online, there were a lot of programs where I needed newer versions than were available in the repositories of a stable-release distribution like Mint. Ok, no problem, I learned how to build stuff from source and install the things I needed manually. But then in my semester break of 2024, I found some time to improve a lot of my configs, and I wanted to start that off by upgrading to the newest version of Mint. To my surprise, it wouldn't let me do that with programs whose versions were "too new". So I had too options:
+I was really satisfied with Linux Mint for a long time. But with all the bits and pieces I stole from bleeding-edge dotfiles online, there were a lot of programs where I needed newer versions than were available in the repositories of a stable-release distribution like Mint. Ok, no problem, I learned how to build stuff from source and install the things I needed manually. But then in my semester break of 2024, I found some time to improve a lot of my configs, and I wanted to start that off by upgrading to the newest version of Mint. To my surprise, it wouldn't let me do that with programs whose versions were "too new". So I had two options:
 
 -   Uninstall all those things, upgrade Mint, hope that it would work with no further problems, and rebuilt and reinstall all that software I just uninstalled.
 -   Reinstall my OS and start from scratch.
