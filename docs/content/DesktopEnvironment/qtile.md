@@ -117,11 +117,16 @@ wmname = "qtile"
 
 ### Default Apps {#default-apps}
 
+Setting up some default apps and commands to make future sections less cluttered. These are later run using `lazy.spawn()`, which does not quite work like a shell. E.g. it doesn't seem to support use of `&`, so a more elaborate syntax is needed in those cases.
+
 ```python
 terminal = "kitty"
 file_manager = "nemo"
 web_browser = "firefox"
 sysmon = terminal + " htop"
+lockscreen = "xlock -mode \"rain\" -saturation 1 -mousemotion -timeout 10 -password \"Password please.\""
+hibernate = ["sh", "-c", lockscreen + "& systemctl hibernate"]
+suspend = ["sh", "-c", lockscreen + "& systemctl suspend"]
 ```
 
 
@@ -306,6 +311,9 @@ keys.extend([
     Key([mod, "shift"], "q", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "shift"], "e", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([mod, "control"], "l", lazy.spawn(lockscreen), desc="Lock screen"),
+    Key([mod, "control"], "h", lazy.spawn(hibernate), desc="Hibernate"),
+    Key([mod, "control"], "s", lazy.spawn(suspend), desc="Suspend system"),
 ])
 ```
 

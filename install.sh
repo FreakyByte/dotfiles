@@ -136,7 +136,7 @@ read -p "Install Qtile and Co? [y/N] " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     INSTALL_QTILE=1
-    PACMAN_PACKAGES="$PACMAN_PACKAGES qtile picom rofi dunst python-dbus-next breeze-icons"
+    PACMAN_PACKAGES="$PACMAN_PACKAGES qtile picom rofi dunst python-dbus-next breeze-icons xlockmore"
     YAY_PACKAGES="$YAY_PACKAGES light"
 fi
 
