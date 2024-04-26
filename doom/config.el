@@ -371,6 +371,8 @@ space rather than before."
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start nil))
 
+(setq org-roam-database-connector 'sqlite)
+
 ;;; org-roam-link-properties.el --- Frobnicate and bifurcate flanges
 
 ;; Author: Oleg Domanov <odomanov@yandex.ru>

@@ -587,6 +587,9 @@ space rather than before."
       (evil-normal-state))))
 #+end_src
 *** org-roam-ui
+:PROPERTIES:
+:ID:       b0d1213f-2df2-477b-9d38-e32d613d08bc
+:END:
 One of the killer features associated with org roam are fancy graphs, as e.g. provided by ~org-roam-ui~.
 #+begin_src emacs-lisp :tangle yes
 (use-package! websocket
@@ -603,6 +606,10 @@ One of the killer features associated with org roam are fancy graphs, as e.g. pr
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start nil))
+#+end_src
+There seems to be a bug in ~org-roam-ui~ that it only shows the first tag of a node when using emacs 29s ~sqlite-builtin~ (see [[https://github.com/org-roam/org-roam-ui/issues/289][this issue]]). So I unfortunately have to switch to using the system wide sqlite.
+#+begin_src emacs-lisp :tangle yes
+(setq org-roam-database-connector 'sqlite)
 #+end_src
 *** Tagging links
 While org-roam allows for files to be tagged, the links between files cannot. The following adds this functionality. Furthermore, I'm using a [[https://github.com/odomanov/org-roam-ui][fork of org-roam-ui]] which allows filtering these link tags and assigning colors to them (see ~packages.el~). This whole issue is talked about at length in the org-roam discourse (e.g. [[https://org-roam.discourse.group/t/link-categorization/2486/3][here]] and [[https://org-roam.discourse.group/t/add-link-tags-feature/171/34][here]]), but the discussion that this code comes from is [[https://github.com/org-roam/org-roam-ui/discussions/25][here]] (specifically this [[https://gist.github.com/odomanov/ed070a7faf3df1377fccf5d7c5000bf8][gist here]]).
