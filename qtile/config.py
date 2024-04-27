@@ -68,6 +68,7 @@ wmname = "qtile"
 terminal = "kitty"
 file_manager = "nemo"
 web_browser = "firefox"
+emacs = "emacsclient -c -a ''"
 sysmon = terminal + " htop"
 lockscreen = "xlock -mode \"rain\" -saturation 1 -mousemotion -timeout 10 -password \"Password please.\""
 hibernate = ["sh", "-c", lockscreen + "& systemctl hibernate"]
@@ -164,7 +165,7 @@ keys.extend([
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod, "shift"], "Return", lazy.spawn(file_manager), desc="Launch File Manager"),
     Key([mod], "w", lazy.spawn(web_browser), desc="Launch Web Browser"),
-    Key([mod], "e", lazy.spawn("emacsclient -c"), desc="Launch Emacs"),
+    Key([mod], "e", lazy.spawn(emacs), desc="Launch Emacs"),
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
