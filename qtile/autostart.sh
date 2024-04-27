@@ -7,4 +7,6 @@ dropbox start &
 keepassxc &
 nm-applet &
 emacs --daemon &
+touchegg &
+setxkbmap de -variant nodeadkeys &
 onboard &

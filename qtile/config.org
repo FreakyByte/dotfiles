@@ -521,8 +521,11 @@ dropbox start &
 keepassxc &
 nm-applet &
 emacs --daemon &
+touchegg &
+setxkbmap de -variant nodeadkeys &
 onboard &
 #+end_src
+Setting the keyboard layout is a workaround for a bug in Onboard that will change the layout of the on-screen keyboard while typing (cf. [[https://www.reddit.com/r/linuxmint/comments/qonjkc/onboard_virtual_keyboard_switches_layout_while/][here]] and [[https://www.antixforum.com/forums/topic/onboard-does-not-work-with-azerty-keyboard/][here]])
 
 The hook causes the ~autostart.sh~ script to be executed once at startup.
 #+begin_src python
