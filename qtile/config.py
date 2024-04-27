@@ -254,10 +254,10 @@ def init_widget_list(with_systray):
                                 hide_unused = False,
                                 highlight_color = ['151515C0','303030C0'], # background gradient
                                 inactive = '505050', # font color
-                                this_current_screen_border = wal_colors[1],
-                                this_screen_border = wal_colors[1],
-                                other_current_screen_border = wal_colors[7],
-                                other_screen_border = wal_colors[7],
+                                this_current_screen_border = wal_colors[7],
+                                this_screen_border = wal_colors[7],
+                                other_current_screen_border = None,
+                                other_screen_border = None,
                                 urgent_alert_method = 'line',
                                 urgent_border = 'FF0000',
                                 urgent_text = '000000',
