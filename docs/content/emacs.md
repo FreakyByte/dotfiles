@@ -1233,7 +1233,7 @@ The following are some basic settings for this system, including the latex packa
         ("" "amssymb" t ("pdflatex"))
         ("" "tikz" t ("pdflatex" "lualatex" "xetex"))
         ("" "pgfplots" t ("pdflatex" "lualatex" "xetex"))))
-  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}"))
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}\n"))
 
   (setq org-latex-compiler "pdflatex")
 
@@ -1274,6 +1274,20 @@ Annoyingly, the default method of rendering all previews in a buffer is by runni
     (call-interactively 'org-latex-preview)))
 
 (add-hook 'roam-pseudohook 'org-latex-preview-whole-buffer)
+```
+
+
+#### LaTeX Macros {#latex-macros}
+
+Typing `\operatorname` is very annoying, even with cdlatex. So lets declare a bunch of macros and add them to both the latex previews and org-roam-ui.
+
+```emacs-lisp
+(setq org-latex-mathoperators (list
+        "acl" "bd" "card" "cl" "coker" "dcl" "ED" "Ext" "fr" "Frac" "Hom" "im" "Li" "Mat" "RM" "sinc" "Spec" "Sub" "Th" "tp" "Tor"))
+(dolist (macro org-latex-mathoperators)
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
+  (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)
+  )
 ```
 
 

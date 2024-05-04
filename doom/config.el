@@ -820,7 +820,7 @@ INTER signals whether the function has been called interactively."
         ("" "amssymb" t ("pdflatex"))
         ("" "tikz" t ("pdflatex" "lualatex" "xetex"))
         ("" "pgfplots" t ("pdflatex" "lualatex" "xetex"))))
-  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}"))
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\n\\pgfplotsset{compat=1.16}\\usetikzlibrary{cd}\n"))
 
   (setq org-latex-compiler "pdflatex")
 
@@ -856,6 +856,13 @@ INTER signals whether the function has been called interactively."
     (call-interactively 'org-latex-preview)))
 
 (add-hook 'roam-pseudohook 'org-latex-preview-whole-buffer)
+
+(setq org-latex-mathoperators (list
+        "acl" "bd" "card" "cl" "coker" "dcl" "ED" "Ext" "fr" "Frac" "Hom" "im" "Li" "Mat" "RM" "sinc" "Spec" "Sub" "Th" "tp" "Tor"))
+(dolist (macro org-latex-mathoperators)
+  (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
+  (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)
+  )
 
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
