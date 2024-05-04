@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: homology
+# uuid:
+# key: HH
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\mathcal{H}

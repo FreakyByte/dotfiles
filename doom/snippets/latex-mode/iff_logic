@@ -1,0 +1,6 @@
+# key: IFF
+# name: iff_logic
+# condition: (and (texmathp) (quote auto))
+# group: math
+# --
+\leftrightarrow $0

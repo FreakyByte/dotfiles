@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: comment
+# uuid:
+# key: comment
+# condition: t
+# --
+#+BEGIN_COMMENT
+  ${1:dein senf}
+#+END_COMMENT
+$0

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: equiv
+# key: eqv
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\\equiv $0

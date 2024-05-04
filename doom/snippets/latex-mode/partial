@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: partial
+# uuid: partial
+# key: part
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\partial $0

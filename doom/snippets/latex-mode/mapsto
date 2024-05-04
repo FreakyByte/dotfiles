@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: mapsto
+# uuid:
+# key: mto
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\mapsto $0

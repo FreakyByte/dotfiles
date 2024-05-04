@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: finite field
+# key: FF
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\mathbb{F}_{$1}$0

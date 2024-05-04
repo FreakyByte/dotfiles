@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: rational numbers
 # key: QQ
+# condition: (and (texmathp) 'auto)
 # --
 \mathbb{Q}$0

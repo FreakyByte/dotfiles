@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: function_template
+# uuid:
+# key: func
+# condition: (and (texmathp) 'auto)
+# --
+${1:f}\colon ${2:A} \to ${3:B}\colon ${4:x} \mapsto ${5:f(x)} $0

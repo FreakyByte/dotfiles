@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: angle_brackets
+# uuid:
+# key: <>
+# condition: (and (texmathp) 'auto)
+# --
+\left\langle $1 \right\rangle $0

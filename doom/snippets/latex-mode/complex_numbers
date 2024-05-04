@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: complex numbers
+# key: CC
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\mathbb{C}$0

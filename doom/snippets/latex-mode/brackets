@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: brackets
+# uuid:
+# key: []
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\left[$1\right]$0

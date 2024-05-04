@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: d-by-dx
+# key: ddx
+# condition: (and (texmathp) 'auto)
+# group: math
+# --
+\\frac{\\mathrm{d} $1}{\\mathrm{d} ${2:x}}$0

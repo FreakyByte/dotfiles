@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: begin latex
-# key: beg
-# uuid: begin latex
-# --
-\begin{${1:environment}}
-`%`$2
-\end{$1}
-$0

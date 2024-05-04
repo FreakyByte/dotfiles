@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: natural numbers
-# key: NN
+# name: sqrt
+# key: sqrt
 # condition: (and (texmathp) 'auto)
 # --
-\mathbb{N}$0
+\sqrt{$1}$0

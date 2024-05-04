@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: big_parentheses
+# uuid:
+# key: big
+# condition: t
+# --
+\\${1:$$(yas/choose-value '("big" "Big" "bigg" "Bigg"))}l( $0  \\$1r)

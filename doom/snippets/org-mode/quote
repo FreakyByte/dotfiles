@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: quote
+# uuid:
+# key: quote
+# condition: t
+# --
+#+BEGIN_QUOTE
+  ${1:something smart}
+#+END_QUOTE
+$0

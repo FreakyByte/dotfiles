@@ -242,23 +242,6 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 
-; first unmap tab for snippets
-(map! :map yas-minor-mode-map ; key for snippet expansion
-      [tab] nil
-      "TAB" nil)
-(map! :map yas-keymap ; keys for navigation
-      [tab] nil
-      "TAB" nil
-      [(shift tab)] nil
-      [backtab] nil)
-
-; then map pause for snippets instead
-(map! :map 'yas-minor-mode-map ; key for snippet expansion
-      [pause] #'yas-expand)
-(map! :map yas-keymap ; keys for navigation
-      [pause] 'yas-next-field-or-maybe-expand
-      [(shift pause)] 'yas-prev)
-
 (map! :leader
       (:prefix ("y" . "YASnippet")
        :desc "edit snippet" "e" #'yas-visit-snippet-file
@@ -269,6 +252,20 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       )
 
 (setq yas-triggers-in-field t)
+
+  (defun yas-try-expanding-auto-snippets ()
+    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (yas-expand))))
+  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+
+(after! company
+        (map! :map company-search-map
+                [tab] nil
+                "TAB" nil)
+        (map! :map company-active-map
+                [tab] nil
+                "TAB" nil))
 
 (map! :leader
  (:prefix ("t" . "toggle")
@@ -1075,6 +1072,8 @@ INTER signals whether the function has been called interactively."
      (?D    ("\\Delta" "\\nabla" "\\deg"))
      ;; no idea why \Phi isnt on 'F' in first place, \phi is on 'f'.
      (?F    ("\\Phi"))
+     ;; varphi and phi are surely the wrong way around
+     (?f    ("\\varphi" "\\phi" ""))
      ;; now just convenience
      (?.    ("\\cdot" "\\dots"))
      (?:    ("\\vdots" "\\ddots"))

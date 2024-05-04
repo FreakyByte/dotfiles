@@ -429,6 +429,8 @@ Set path to languagetool.
 (setq langtool-java-classpath "/usr/share/languagetool/*")
 #+end_src
 ** Snippets
+My snippets are mostly to make typing LaTeX fast. I [[https://docs.doomemacs.org/v21.12/modules/editor/snippets/][disable Doom's default snippets]], but then I add some of them back again manually. Some other snippets come from this [[https://karthinks.com/software/latex-input-for-impatient-scholars/#create-math-environments][excellent article by karthink]].
+*** Basic YAS settings
 This disables the annoying final newline when creating a snippet, which always screws things up.
 #+begin_src emacs-lisp
 (add-hook 'snippet-mode-hook 'my-snippet-mode-hook)
@@ -437,26 +439,6 @@ This disables the annoying final newline when creating a snippet, which always s
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 #+end_src
-Also I want to use the Pause key (which I remapped onto my caps lock key) to expand snippets, since I find using tab for both snippets and autocompletion confusing.
-#+begin_src emacs-lisp
-; first unmap tab for snippets
-(map! :map yas-minor-mode-map ; key for snippet expansion
-      [tab] nil
-      "TAB" nil)
-(map! :map yas-keymap ; keys for navigation
-      [tab] nil
-      "TAB" nil
-      [(shift tab)] nil
-      [backtab] nil)
-
-; then map pause for snippets instead
-(map! :map 'yas-minor-mode-map ; key for snippet expansion
-      [pause] #'yas-expand)
-(map! :map yas-keymap ; keys for navigation
-      [pause] 'yas-next-field-or-maybe-expand
-      [(shift pause)] 'yas-prev)
-#+end_src
-TODO: Snippet expansion is somehow not unmapped from tab yet by this.
 
 Some nicer shortcuts for creating snippets and etc. would also be nice.
 #+begin_src emacs-lisp
@@ -474,6 +456,27 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 #+begin_src emacs-lisp :tangle yes
 (setq yas-triggers-in-field t)
 #+end_src
+*** Automatic snippet expansion
+YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [[https://github.com/ymarco/auto-activating-snippets][AAS]], was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [[https://github.com/joaotavora/yasnippet/issues/998][manually adding auto expanding capabilities to YAS.]] This way, snippets that are marked with the condition ='auto= will be auto-expanded.
+#+begin_src emacs-lisp :tangle yes
+  (defun yas-try-expanding-auto-snippets ()
+    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (yas-expand))))
+  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+#+end_src
+*** The TAB key
+The tab key is getting intentionally overloaded with snippets, cdlatex and various org-mode things. But one thing that annoyingly interferes with these is autocomplete. Lets unbind the tab key from that and rather use Return for autocomplete and arrow keys (or C-j, C-k) for picking completion suggestions.
+#+begin_src emacs-lisp :tangle yes
+(after! company
+        (map! :map company-search-map
+                [tab] nil
+                "TAB" nil)
+        (map! :map company-active-map
+                [tab] nil
+                "TAB" nil))
+#+end_src
+
 ** Zen/Writeroom
 #+begin_src emacs-lisp
 (map! :leader
@@ -1458,7 +1461,7 @@ The internal variables also need to be changed, or otherwise the old keys will s
 (setq cdlatex-math-modify-prefix 180)
 (setq cdlatex-math-symbol-prefix 96)
 #+end_src
-
+\(\)
 Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/emacs-config/config.html#math-input-cdlatex][tecosaur]])
 #+begin_src emacs-lisp :tangle yes
 (after! cdlatex
@@ -1475,6 +1478,8 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
      (?D    ("\\Delta" "\\nabla" "\\deg"))
      ;; no idea why \Phi isnt on 'F' in first place, \phi is on 'f'.
      (?F    ("\\Phi"))
+     ;; varphi and phi are surely the wrong way around
+     (?f    ("\\varphi" "\\phi" ""))
      ;; now just convenience
      (?.    ("\\cdot" "\\dots"))
      (?:    ("\\vdots" "\\ddots"))

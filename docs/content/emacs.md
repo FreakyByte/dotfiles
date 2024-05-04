@@ -477,6 +477,11 @@ Set path to languagetool.
 
 ### Snippets {#snippets}
 
+My snippets are mostly to make typing LaTeX fast. I [disable Doom's default snippets](https://docs.doomemacs.org/v21.12/modules/editor/snippets/), but then I add some of them back again manually. Some other snippets come from this [excellent article by karthink](https://karthinks.com/software/latex-input-for-impatient-scholars/#create-math-environments).
+
+
+#### Basic YAS settings {#basic-yas-settings}
+
 This disables the annoying final newline when creating a snippet, which always screws things up.
 
 ```emacs-lisp
@@ -486,29 +491,6 @@ This disables the annoying final newline when creating a snippet, which always s
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 ```
-
-Also I want to use the Pause key (which I remapped onto my caps lock key) to expand snippets, since I find using tab for both snippets and autocompletion confusing.
-
-```emacs-lisp
-; first unmap tab for snippets
-(map! :map yas-minor-mode-map ; key for snippet expansion
-      [tab] nil
-      "TAB" nil)
-(map! :map yas-keymap ; keys for navigation
-      [tab] nil
-      "TAB" nil
-      [(shift tab)] nil
-      [backtab] nil)
-
-; then map pause for snippets instead
-(map! :map 'yas-minor-mode-map ; key for snippet expansion
-      [pause] #'yas-expand)
-(map! :map yas-keymap ; keys for navigation
-      [pause] 'yas-next-field-or-maybe-expand
-      [(shift pause)] 'yas-prev)
-```
-
-TODO: Snippet expansion is somehow not unmapped from tab yet by this.
 
 Some nicer shortcuts for creating snippets and etc. would also be nice.
 
@@ -527,6 +509,34 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 
 ```emacs-lisp
 (setq yas-triggers-in-field t)
+```
+
+
+#### Automatic snippet expansion {#automatic-snippet-expansion}
+
+YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [AAS](https://github.com/ymarco/auto-activating-snippets), was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [manually adding auto expanding capabilities to YAS.](https://github.com/joaotavora/yasnippet/issues/998) This way, snippets that are marked with the condition `'auto` will be auto-expanded.
+
+```emacs-lisp
+  (defun yas-try-expanding-auto-snippets ()
+    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (yas-expand))))
+  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+```
+
+
+#### The TAB key {#the-tab-key}
+
+The tab key is getting intentionally overloaded with snippets, cdlatex and various org-mode things. But one thing that annoyingly interferes with these is autocomplete. Lets unbind the tab key from that and rather use Return for autocomplete and arrow keys (or C-j, C-k) for picking completion suggestions.
+
+```emacs-lisp
+(after! company
+        (map! :map company-search-map
+                [tab] nil
+                "TAB" nil)
+        (map! :map company-active-map
+                [tab] nil
+                "TAB" nil))
 ```
 
 

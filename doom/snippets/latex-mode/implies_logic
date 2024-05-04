@@ -1,0 +1,6 @@
+# key: ->
+# name: implies_logic
+# condition: (and (texmathp) (quote auto))
+# group: math
+# --
+\rightarrow $0

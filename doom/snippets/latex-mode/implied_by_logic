@@ -1,0 +1,6 @@
+# key: <-
+# name: implied_by_logic
+# condition: (and (texmathp) (quote auto))
+# group: math
+# --
+\leftarrow $0
