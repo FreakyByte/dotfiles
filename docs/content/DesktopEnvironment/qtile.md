@@ -331,6 +331,7 @@ keys.extend([
     Key([mod, "shift"], "Return", lazy.spawn(file_manager), desc="Launch File Manager"),
     Key([mod], "w", lazy.spawn(web_browser), desc="Launch Web Browser"),
     Key([mod], "e", lazy.spawn(emacs), desc="Launch Emacs"),
+    Key([mod], "a", lazy.spawn("emacsclient --eval \"(emacs-everywhere)\""), desc="Use Emacs ANYWHERE"),
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
@@ -428,6 +429,8 @@ groups[9].matches = [Match(wm_class = "spotify")]
 
 ### Floating Rules {#floating-rules}
 
+Makes the following windows floating by default.
+
 ```python
 floating_layout = layout.Floating(**floating_layout_theme,
     float_rules=[
@@ -439,8 +442,19 @@ floating_layout = layout.Floating(**floating_layout_theme,
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(title="emacs-everywhere"),
     ],
 )
+```
+
+In addition, let's change the default size of some windows.
+
+```python
+@hook.subscribe.client_managed
+def resize_floating(client):
+    if "emacs-everywhere" in client.name:
+        client.set_size_floating(1200,700)
+        client.center()
 ```
 
 

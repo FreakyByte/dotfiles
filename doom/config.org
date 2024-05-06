@@ -109,9 +109,10 @@ Specifically, I want my window manager to handle it's position rather than emacs
 #+begin_src emacs-lisp :tangle yes
 (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
 #+end_src
-Org mode is nice.
+Org mode is nice. But the variable =emacs-everywhere-major-mode-function= itself doesn't seem to do the trick. So let's add org to the init hook as well.
 #+begin_src emacs-lisp :tangle yes
 (setq emacs-everywhere-major-mode-function #'org-mode)
+(add-hook 'emacs-everywhere-init-hooks 'org-mode)
 #+end_src
 
 * Appearance

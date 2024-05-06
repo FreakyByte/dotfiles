@@ -166,6 +166,7 @@ keys.extend([
     Key([mod, "shift"], "Return", lazy.spawn(file_manager), desc="Launch File Manager"),
     Key([mod], "w", lazy.spawn(web_browser), desc="Launch Web Browser"),
     Key([mod], "e", lazy.spawn(emacs), desc="Launch Emacs"),
+    Key([mod], "a", lazy.spawn("emacsclient --eval \"(emacs-everywhere)\""), desc="Use Emacs ANYWHERE"),
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
@@ -229,8 +230,15 @@ floating_layout = layout.Floating(**floating_layout_theme,
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(title="emacs-everywhere"),
     ],
 )
+
+@hook.subscribe.client_managed
+def resize_floating(client):
+    if "emacs-everywhere" in client.name:
+        client.set_size_floating(1200,700)
+        client.center()
 
 if laptop:
         @hook.subscribe.client_managed

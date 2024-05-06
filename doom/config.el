@@ -28,6 +28,7 @@
 (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
 
 (setq emacs-everywhere-major-mode-function #'org-mode)
+(add-hook 'emacs-everywhere-init-hooks 'org-mode)
 
 (setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'regular)
       doom-variable-pitch-font (font-spec :family "Libertinus Sans" :size 19))
