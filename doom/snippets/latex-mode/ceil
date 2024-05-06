@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: ceiling function
+# uuid: ceiling
 # key: ceil
 # condition: (and (texmathp) 'auto)
 # group: math

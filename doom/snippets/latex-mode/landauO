@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: landauO
-# uuid:
+# uuid: landauO
 # key: OO
 # condition: (and (texmathp) 'auto)
 # --

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: eulers_number
-# uuid:
+# uuid: eulers_number
 # key: e
 # condition: (texmathp)
 # --

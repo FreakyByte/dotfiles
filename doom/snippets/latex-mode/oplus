@@ -1,5 +1,6 @@
 # key: o+
 # name: oplus
+# uuid: oplus
 # condition: (and (texmathp) 'auto)
 # group: math
 # --

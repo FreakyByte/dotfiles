@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: mapsto
-# uuid:
+# uuid: mapsto
 # key: mto
 # condition: (and (texmathp) 'auto)
 # --

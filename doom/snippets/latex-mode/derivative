@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: derivative
+# uuid: derivative
 # key: diff
 # condition: (and (texmathp) 'auto)
 # group: math

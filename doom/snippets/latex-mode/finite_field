@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: finite field
+# uuid: finite_field
 # key: FF
 # condition: (and (texmathp) 'auto)
 # --

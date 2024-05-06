@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: lim
+# uuid: lim
 # key: lim
 # condition: (and (texmathp) 'auto)
 # --

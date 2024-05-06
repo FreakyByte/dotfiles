@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: Exists
+# uuid: exists
 # key: EE
 # condition: (and (texmathp) 'auto)
 # group: math

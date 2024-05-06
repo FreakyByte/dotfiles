@@ -1,5 +1,6 @@
 # key: //
 # name: Fraction auto
+# uuid: frac_auto
 # expand-env: ((numerator (quote t)))
 # condition: (and (texmathp) (quote auto))
 # group: math

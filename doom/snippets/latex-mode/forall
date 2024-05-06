@@ -1,5 +1,6 @@
 # key: AA
 # name: forall
+# uuid: forall
 # condition: (and (texmathp) (quote auto))
 # group: math
 # --

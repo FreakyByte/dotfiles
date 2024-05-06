@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: homology
-# uuid:
+# uuid: homology
 # key: HH
 # condition: (and (texmathp) 'auto)
 # --

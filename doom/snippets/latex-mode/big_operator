@@ -3,5 +3,6 @@
 # key: bigop
 # group: math
 # name: big_operator
+# uuid: big_operator
 # --
 \\big${1:$$(yas/choose-value '("oplus" "otimes" "odot" "cup" "cap" "uplus" "sqcup" "vee" "wedge"))}_{$2}^{${3:\infty}}$0

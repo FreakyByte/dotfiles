@@ -1,5 +1,6 @@
 # key: frame
 # name: frame
+# uuid: frame
 # --
 \begin{frame}
   \frametitle{$1}

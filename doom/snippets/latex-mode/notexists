@@ -1,5 +1,6 @@
 # key: nEE
 # name: notexists
+# uuid: notexists
 # condition: (and (texmathp) 'auto)
 # group: math
 # --

@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: limsup
+# uuid: limsup
 # key: lsup
 # condition: (and (texmathp) 'auto)
 # --

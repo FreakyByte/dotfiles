@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: bigcup_^
+# uuid: bigcup
 # key: cup
 # condition: (texmathp)
 # --

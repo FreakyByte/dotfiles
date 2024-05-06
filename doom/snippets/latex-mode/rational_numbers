@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: rational numbers
+# uuid: rational_numbers
 # key: QQ
 # condition: (and (texmathp) 'auto)
 # --

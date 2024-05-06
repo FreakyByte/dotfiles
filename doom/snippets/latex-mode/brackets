@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: brackets
-# uuid:
+# uuid: brackets
 # key: []
 # condition: (and (texmathp) 'auto)
 # --

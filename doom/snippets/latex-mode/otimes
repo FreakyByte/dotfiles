@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: otimes
+# uuid: otimes
 # key: ox
 # condition: (and (texmathp) 'auto)
 # group: math

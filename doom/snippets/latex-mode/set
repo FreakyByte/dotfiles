@@ -1,7 +1,8 @@
 # -*- mode: snippet -*-
 # name: set
+# uuid: set
 # key: set
-# condition: (and (texmathp) 'auto)
+# condition: (texmathp)
 # group: math
 # --
 \\left\\{ $1 : $2\\right\\}$0

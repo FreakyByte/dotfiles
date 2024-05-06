@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: bigcap_^
+# uuid: bigcap
 # key: cap
 # condition: (texmathp)
 # --

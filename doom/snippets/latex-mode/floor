@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: floor function
+# uuid: floor
 # key: floor
 # condition: (and (texmathp) 'auto)
 # group: math

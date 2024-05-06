@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: dots
+# uuid: dots
 # key: ...
 # condition: (and (texmathp) 'auto)
 # group: math

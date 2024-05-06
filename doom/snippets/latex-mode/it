@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: itemize
 # key: it
-# uuid: it
+# uuid: itemize
 # --
 \begin{itemize}
   $0

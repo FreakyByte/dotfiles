@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: integers
+# uuid: integers
 # key: ZZ
 # --
 \mathbb{Z}$0

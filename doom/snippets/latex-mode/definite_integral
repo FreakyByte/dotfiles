@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: definite integral
+# uuid: definite_integral
 # key: dint
 # condition: (and (texmathp) 'auto)
 # group: math

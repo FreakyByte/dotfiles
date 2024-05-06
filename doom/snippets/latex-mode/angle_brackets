@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: angle_brackets
-# uuid:
+# uuid: angle_brackets
 # key: <>
 # condition: (and (texmathp) 'auto)
 # --

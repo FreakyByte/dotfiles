@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: enumerate
 # key: en
-# uuid: en
+# uuid: enumerate
 # --
 \begin{enumerate}
   $0

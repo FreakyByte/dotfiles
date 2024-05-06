@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: parentheses
-# uuid:
+# uuid: parentheses
 # key: ()
 # condition: (and (texmathp) 'auto)
 # --

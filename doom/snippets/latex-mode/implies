@@ -1,5 +1,6 @@
 # key: =>
 # name: implies
+# uuid: implies
 # condition: (and (texmathp) (quote auto))
 # group: math
 # --

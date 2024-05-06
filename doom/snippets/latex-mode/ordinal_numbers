@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: ordinal numbers
+# uuid: ordinal_numbers
 # key: On
 # --
 \mathbf{On}$0

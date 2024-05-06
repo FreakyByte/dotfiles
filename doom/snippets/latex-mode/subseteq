@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: subseteq
+# uuid: subseteq
 # key: cc
 # group: math
 # condition: (and (texmathp) 'auto)

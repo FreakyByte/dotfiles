@@ -457,6 +457,15 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 #+begin_src emacs-lisp :tangle yes
 (setq yas-triggers-in-field t)
 #+end_src
+
+I use some snippets that modify the surrounding characters of the buffer (e.g. by deleting the space before the snippet). This causes YAS to throw a warning. Let's disable that.
+#+begin_src emacs-lisp
+(use-package warnings
+    :config
+    (cl-pushnew '(yasnippet backquote-change)
+                warning-suppress-types
+                :test 'equal))
+#+end_src
 *** Automatic snippet expansion
 YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [[https://github.com/ymarco/auto-activating-snippets][AAS]], was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [[https://github.com/joaotavora/yasnippet/issues/998][manually adding auto expanding capabilities to YAS.]] This way, snippets that are marked with the condition ='auto= will be auto-expanded.
 #+begin_src emacs-lisp :tangle yes
@@ -476,6 +485,46 @@ The tab key is getting intentionally overloaded with snippets, cdlatex and vario
         (map! :map company-active-map
                 [tab] nil
                 "TAB" nil))
+#+end_src
+
+Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. This solves that (cf. [[https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb][karthink]], adapted for doom).
+(*TODO*: This makes default values in snippets harder to use. Hitting tab first jumps to the end of the field, and only hitting tab a second time jumps to the next field.)
+#+begin_src emacs-lisp
+(defun cdlatex-in-yas-field ()
+        ;; Check if we're at the end of the Yas field
+        (when-let* ((_ (overlayp yas--active-field-overlay))
+                        (end (overlay-end yas--active-field-overlay)))
+        (if (>= (point) end)
+                ;; Call yas-next-field if cdlatex can't expand here
+                (let ((s (thing-at-point 'sexp)))
+                (unless (and s (assoc (substring-no-properties s)
+                                        cdlatex-command-alist-comb))
+                (yas-next-field-or-maybe-expand)
+                t))
+                ;; otherwise expand and jump to the correct location
+                (let (cdlatex-tab-hook minp)
+                (setq minp
+                        (min (save-excursion (cdlatex-tab)
+                                        (point))
+                        (overlay-end yas--active-field-overlay)))
+                (goto-char minp) t))))
+
+(defun yas-next-field-or-cdlatex nil
+        (interactive)
+        "Jump to the next Yas field correctly with cdlatex active."
+        (if
+                (or (bound-and-true-p cdlatex-mode)
+                (bound-and-true-p org-cdlatex-mode))
+                (cdlatex-tab)
+        (yas-next-field-or-maybe-expand)))
+
+(after! cdlatex
+        (add-hook 'cdlatex-tab-hook 'yas-expand)
+        (add-hook 'cdlatex-tab-hook 'cdlatex-in-yas-field))
+(after! yasnippet
+        (map! :map yas-keymap
+                [tab] 'yas-next-field-or-cdlatex
+                "TAB" 'yas-next-field-or-cdlatex))
 #+end_src
 
 ** Zen/Writeroom

@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: partial derivative
 # key: pdiff
+# uuid: pdiff
 # condition: (texmathp)
 # group: math
 # --

@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: liminf
+# uuid: liminf
 # key: linf
 # condition: (and (texmathp) 'auto)
 # --

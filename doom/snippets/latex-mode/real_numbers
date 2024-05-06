@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: real numbers
+# uuid: real_numbers
 # key: RR
 # condition: (and (texmathp) 'auto)
 # --

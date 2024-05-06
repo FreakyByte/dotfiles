@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: natural numbers
+# uuid: natural_numbers
 # key: NN
 # condition: (and (texmathp) 'auto)
 # --

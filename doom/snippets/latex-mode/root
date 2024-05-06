@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: sqrt[]{}
+# uuid: root
 # key: root
 # condition: (and (texmathp) 'auto)
 # --

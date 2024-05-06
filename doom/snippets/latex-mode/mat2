@@ -1,5 +1,6 @@
 # key: mat2
 # name: bmatrix (2 x 2)
+# uuid: bmatrix22
 # group: math
 # --
 \\begin{bmatrix}

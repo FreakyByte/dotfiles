@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: Fraction slash
+# uuid: frac_slash
 # key: /
 # expand-env: ((numerator 't))
 # condition: (texmathp)

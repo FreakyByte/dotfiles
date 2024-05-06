@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: sqrt
+# uuid: sqrt
 # key: sqrt
 # condition: (and (texmathp) 'auto)
 # --

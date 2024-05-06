@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: includegraphics
 # key: ig
-# uuid: ig
+# uuid: includegraphics
 # --
 \includegraphics${1:[width=${2:\textwidth}]}{$0}

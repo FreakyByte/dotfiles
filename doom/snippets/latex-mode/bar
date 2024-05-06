@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: bar
 # key: bar
+# uuid: bar
 # condition: (and (texmathp) 'auto)
 # expand-env: ((argument (quote t)))
 # group: math

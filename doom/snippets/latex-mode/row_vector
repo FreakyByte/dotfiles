@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: row vector
+# uuid: row_vector
 # key: rvec
 # condition: 'auto
 # group: math

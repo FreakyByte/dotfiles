@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: implied by
+# uuid: implied_by
 # key: <=
 # condition: (and (texmathp) 'auto)
 # group: math

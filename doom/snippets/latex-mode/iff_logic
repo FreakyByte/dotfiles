@@ -1,5 +1,6 @@
 # key: IFF
 # name: iff_logic
+# uuid: iff_logic
 # condition: (and (texmathp) (quote auto))
 # group: math
 # --
