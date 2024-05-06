@@ -86,10 +86,11 @@ Specifically, I want my window manager to handle it's position rather than emacs
 (remove-hook 'emacs-everywhere-init-hooks #'emacs-everywhere-set-frame-position)
 ```
 
-Org mode is nice.
+Org mode is nice. But the variable `emacs-everywhere-major-mode-function` itself doesn't seem to do the trick. So let's add org to the init hook as well.
 
 ```emacs-lisp
 (setq emacs-everywhere-major-mode-function #'org-mode)
+(add-hook 'emacs-everywhere-init-hooks 'org-mode)
 ```
 
 
@@ -511,6 +512,16 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 (setq yas-triggers-in-field t)
 ```
 
+I use some snippets that modify the surrounding characters of the buffer (e.g. by deleting the space before the snippet). This causes YAS to throw a warning. Let's disable that.
+
+```emacs-lisp
+(use-package warnings
+    :config
+    (cl-pushnew '(yasnippet backquote-change)
+                warning-suppress-types
+                :test 'equal))
+```
+
 
 #### Automatic snippet expansion {#automatic-snippet-expansion}
 
@@ -537,6 +548,47 @@ The tab key is getting intentionally overloaded with snippets, cdlatex and vario
         (map! :map company-active-map
                 [tab] nil
                 "TAB" nil))
+```
+
+Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. This solves that (cf. [karthink](https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb), adapted for doom).
+(**TODO**: This makes default values in snippets harder to use. Hitting tab first jumps to the end of the field, and only hitting tab a second time jumps to the next field.)
+
+```emacs-lisp
+(defun cdlatex-in-yas-field ()
+        ;; Check if we're at the end of the Yas field
+        (when-let* ((_ (overlayp yas--active-field-overlay))
+                        (end (overlay-end yas--active-field-overlay)))
+        (if (>= (point) end)
+                ;; Call yas-next-field if cdlatex can't expand here
+                (let ((s (thing-at-point 'sexp)))
+                (unless (and s (assoc (substring-no-properties s)
+                                        cdlatex-command-alist-comb))
+                (yas-next-field-or-maybe-expand)
+                t))
+                ;; otherwise expand and jump to the correct location
+                (let (cdlatex-tab-hook minp)
+                (setq minp
+                        (min (save-excursion (cdlatex-tab)
+                                        (point))
+                        (overlay-end yas--active-field-overlay)))
+                (goto-char minp) t))))
+
+(defun yas-next-field-or-cdlatex nil
+        (interactive)
+        "Jump to the next Yas field correctly with cdlatex active."
+        (if
+                (or (bound-and-true-p cdlatex-mode)
+                (bound-and-true-p org-cdlatex-mode))
+                (cdlatex-tab)
+        (yas-next-field-or-maybe-expand)))
+
+(after! cdlatex
+        (add-hook 'cdlatex-tab-hook 'yas-expand)
+        (add-hook 'cdlatex-tab-hook 'cdlatex-in-yas-field))
+(after! yasnippet
+        (map! :map yas-keymap
+                [tab] 'yas-next-field-or-cdlatex
+                "TAB" 'yas-next-field-or-cdlatex))
 ```
 
 
@@ -1658,6 +1710,8 @@ Let's also add a few more symbols/modifiers. (cf. [tecosaur](https://tecosaur.gi
      (?D    ("\\Delta" "\\nabla" "\\deg"))
      ;; no idea why \Phi isnt on 'F' in first place, \phi is on 'f'.
      (?F    ("\\Phi"))
+     ;; varphi and phi are surely the wrong way around
+     (?f    ("\\varphi" "\\phi" ""))
      ;; now just convenience
      (?.    ("\\cdot" "\\dots"))
      (?:    ("\\vdots" "\\ddots"))

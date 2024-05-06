@@ -1511,7 +1511,7 @@ The internal variables also need to be changed, or otherwise the old keys will s
 (setq cdlatex-math-modify-prefix 180)
 (setq cdlatex-math-symbol-prefix 96)
 #+end_src
-\(\)
+
 Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/emacs-config/config.html#math-input-cdlatex][tecosaur]])
 #+begin_src emacs-lisp :tangle yes
 (after! cdlatex
