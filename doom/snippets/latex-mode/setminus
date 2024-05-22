@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: setminus
+# uuid: setminus
+# key: \
+# condition: (texmathp)
+# --
+\setminus

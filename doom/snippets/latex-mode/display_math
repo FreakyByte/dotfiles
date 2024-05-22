@@ -4,4 +4,4 @@
 # condition: (and (not (texmathp)) (quote auto))
 # group: math
 # --
-\[`(save-excursion (previous-line)(make-string (current-indentation) ?\s))`$0\]
+\[$0\]

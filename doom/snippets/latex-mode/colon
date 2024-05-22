@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
-# name: integers
-# uuid: integers
-# key: ZZ
+# name: colon
+# uuid: colon
+# key: ::
 # condition: (and (texmathp) (quote auto))
 # --
-\mathbb{Z}$0
+\colon

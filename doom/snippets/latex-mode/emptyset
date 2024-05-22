@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
-# name: integers
-# uuid: integers
-# key: ZZ
+# name: emptyset
+# uuid: emptyset
+# key: emp
 # condition: (and (texmathp) (quote auto))
 # --
-\mathbb{Z}$0
+\emptyset

@@ -473,7 +473,7 @@ YAS has no built-in way to auto-expand snippets, i.e. expand them without hittin
     (when (and (boundp 'yas-minor-mode) yas-minor-mode)
       (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
         (yas-expand))))
-  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 #+end_src
 *** The TAB key
 The tab key is getting intentionally overloaded with snippets, cdlatex and various org-mode things. But one thing that annoyingly interferes with these is autocomplete. Lets unbind the tab key from that and rather use Return for autocomplete and arrow keys (or C-j, C-k) for picking completion suggestions.

@@ -264,7 +264,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     (when (and (boundp 'yas-minor-mode) yas-minor-mode)
       (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
         (yas-expand))))
-  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 
 (after! company
         (map! :map company-search-map

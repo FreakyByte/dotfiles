@@ -532,7 +532,7 @@ YAS has no built-in way to auto-expand snippets, i.e. expand them without hittin
     (when (and (boundp 'yas-minor-mode) yas-minor-mode)
       (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
         (yas-expand))))
-  (add-hook 'post-command-hook #'yas-try-expanding-auto-snippets)
+  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 ```
 
 

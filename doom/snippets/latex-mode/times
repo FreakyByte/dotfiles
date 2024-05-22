@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: times
+# uuid: times
+# key: xx
+# condition: (and (texmathp) 'auto)
+# --
+\times
