@@ -1116,7 +1116,9 @@ INTER signals whether the function has been called interactively."
      ;; no idea why \Phi isnt on 'F' in first place, \phi is on 'f'.
      (?F    ("\\Phi"))
      ;; varphi and phi are surely the wrong way around
+     ;; similarly for epsilon
      (?f    ("\\varphi" "\\phi" ""))
+     (?e    ("\\varepsilon" "\\exp" "\\epsilon"))
      ;; now just convenience
      (?.    ("\\cdot" "\\dots"))
      (?:    ("\\vdots" "\\ddots"))
