@@ -55,9 +55,9 @@ wal_cursor = colordict['special']['cursor']
 wal_colors = [colordict['colors']['color' + str(i)] for i in range(16)]
 
 follow_mouse_focus = True
-bring_front_click = False
+bring_front_click = "floating_only"
 floats_kept_above = True
-cursor_warp = True
+cursor_warp = False
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
@@ -231,6 +231,7 @@ floating_layout = layout.Floating(**floating_layout_theme,
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
         Match(title="emacs-everywhere"),
+        Match(func=lambda c: ("REAPER" in c.info()['wm_class']) and (not "REAPER v" in c.info()['name'])),
     ],
 )
 

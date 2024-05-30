@@ -103,9 +103,9 @@ Somehow this runs the `change-wallpaper.sh` script twice, don't know why as of n
 
 ```python
 follow_mouse_focus = True
-bring_front_click = False
+bring_front_click = "floating_only"
 floats_kept_above = True
-cursor_warp = True
+cursor_warp = False
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
@@ -443,9 +443,12 @@ floating_layout = layout.Floating(**floating_layout_theme,
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
         Match(title="emacs-everywhere"),
+        Match(func=lambda c: ("REAPER" in c.info()['wm_class']) and (not "REAPER v" in c.info()['name'])),
     ],
 )
 ```
+
+The more complicated looking entry above is for the digital audio workstation Reaper. In a more regular desktop environment, all its popup windows will be small and floating, not full screen. This is a bit harder to achieve here since (using `xprop`) the popup windows don't really have any properties that sets them apart from the main window. I settled on differentiating between them by whether there is a version number in the title (i.e. whether `"REAPER v"` is a substring of the title).
 
 In addition, let's change the default size of some windows.
 
