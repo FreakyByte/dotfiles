@@ -2,7 +2,7 @@
 # key: sum
 # uuid: sum
 # name: sum_^
-# condition: (and (texmathp) 'auto)
+# condition: (texmathp)
 # --
 \sum${1:$(when (> (length yas-text) 0) "_")
 }${1:$(when (> (length yas-text) 1) "{")
