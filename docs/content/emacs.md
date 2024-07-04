@@ -1345,7 +1345,7 @@ Typing `\operatorname` is very annoying, even with cdlatex. So lets declare a bu
 
 ```emacs-lisp
 (setq org-latex-mathoperators (list
-        "acl" "bd" "card" "cl" "coker" "dcl" "ED" "Ext" "fr" "Frac" "GL" "Hom" "im" "Li" "Mat" "RM" "sinc" "SL" "SO" "Spec" "Sub" "Th" "tp" "Tor"))
+        "acl" "bd" "card" "cl" "coker" "dcl" "ED" "Ext" "fr" "Frac" "GL" "Hom" "im" "Li" "Mat" "ord" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor"))
 (dolist (macro org-latex-mathoperators)
   (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
   (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)

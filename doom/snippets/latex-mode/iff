@@ -1,7 +1,7 @@
 # key: iff
 # name: if and only if
 # uuid: iff
-# condition: (and (texmathp) (quote auto))
+# condition: (texmathp)
 # group: math
 # --
 \iff $0

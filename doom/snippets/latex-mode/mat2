@@ -1,9 +1,9 @@
 # key: mat2
-# name: bmatrix (2 x 2)
-# uuid: bmatrix22
+# name: pmatrix (2 x 2)
+# uuid: pmatrix22
 # group: math
 # --
-\\begin{bmatrix}
+\\begin{pmatrix}
 ${1:A} & ${2:$1} \\\\
 ${3:$1} & ${4:$1}
- \\end{bmatrix}$0
+ \\end{pmatrix}$0
