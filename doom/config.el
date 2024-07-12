@@ -898,7 +898,7 @@ INTER signals whether the function has been called interactively."
 (add-hook 'roam-pseudohook 'org-latex-preview-whole-buffer)
 
 (setq org-latex-mathoperators (list
-        "acl" "bd" "card" "cl" "coker" "dcl" "ED" "Ext" "fr" "Frac" "GL" "Hom" "im" "Li" "Mat" "ord" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor"))
+        "acl" "Ad" "Aut" "bd" "card" "cl" "coker" "dcl" "ED" "End" "Ext" "fr" "Frac" "GL" "Hom" "im" "lexmin" "lexmax" "Li" "Mat" "ord" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor"))
 (dolist (macro org-latex-mathoperators)
   (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
   (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)
@@ -1127,4 +1127,6 @@ INTER signals whether the function has been called interactively."
    cdlatex-math-modify-alist
    '((?B    "\\mathbb"        nil          t    nil  nil)
      (?o    "\\operatorname"  nil          t    nil  nil)
-     (?a    "\\abs"           nil          t    nil  nil))))
+     (?a    "\\abs"           nil          t    nil  nil)
+     (?f    "\\mathfrak"      nil          t    nil  nil)
+     (?s    "\\mathsf"        nil          t    nil  nil))))

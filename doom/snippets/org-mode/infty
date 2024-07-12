@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: infty
+# uuid: infty
+# key: oo
+# condition: (and (texmathp) (quote auto))
+# --
+\infty

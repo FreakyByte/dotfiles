@@ -2,6 +2,6 @@
 # name: inline math
 # uuid: org_inline_math
 # key: m
-# condition: t
+# condition: (not (texmathp))
 # --
 \\($1\\)$0
