@@ -127,7 +127,7 @@ read -p "Install Doom Emacs + config? [y/N] " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     INSTALL_EMACS=1
-    PACMAN_PACKAGES="$PACMAN_PACKAGES git emacs-nativecomp findutils ripgrep fd"
+    PACMAN_PACKAGES="$PACMAN_PACKAGES git emacs-nativecomp findutils ripgrep fd xclip xdotool xorg-xwininfo xorg-xprop"
 fi
 
 ### Qtile
