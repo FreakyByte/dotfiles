@@ -38,6 +38,8 @@
   - [[#fixing-defaults]["Fixing" defaults]]
   - [[#appearance-1][Appearance]]
   - [[#cdlatex][CDLaTeX]]
+- [[#citations][Citations]]
+  - [[#note-taking][Note Taking]]
 - [[#tangle-this-file][Tangle this file!]]
 
 * About this Config
@@ -1545,6 +1547,42 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
      (?s    "\\mathsf"        nil          t    nil  nil))))
 #+end_src
 
+* Citations
+The ~:biblio~ module of Doom makes citations a lot easier. Built on [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html][org-cite]], [[https://github.com/emacs-citar/citar][citar]], and [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]], it provides a uniform way of inserting citations in org-mode and LaTeX-mode, viewing saved PDFs and writing roam-notes on them.
+
+In order to generate and maintain my bibliography, I'm using [[https://www.zotero.org/][Zotero]] (since there doesn't seem to be a solution that works fully within emacs, has comparable functionality and is as simple to set up). This automatically exports a BibLaTeX file (using [[https://retorque.re/zotero-better-bibtex/][Better BibTeX]]), which we should let emacs know about:
+#+begin_src emacs-lisp
+(setq! citar-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+(setq! org-cite-global-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+#+end_src
+
+** Note Taking
+The defaults for [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]] are pretty great already, I just want to modify the template a little. Let's start with the title:
+#+begin_src emacs-lisp
+(setq citar-org-roam-note-title-template "${author} - ${title}")
+#+end_src
+
+Now the rest of the template. For that, we first extend ~citar-org-roam-template-fields~ to be able to automatically insert the file path of our reference. Then we add our template to the list ~org-roam-capture-template~. Finally, we gotta tell ~citar-org-roam~ to use this template.
+#+begin_src emacs-lisp
+(setq citar-org-roam-template-fields '(
+        (:citar-title "title")
+        (:citar-author "author" "editor")
+        (:citar-date "date" "year" "issued")
+        (:citar-pages "pages")
+        (:citar-type "=type=")
+        (:citar-file "file" "pdf")))
+
+(add-to-list 'org-roam-capture-templates
+  '("l" "Literature Note" plain
+        "%?"
+        :target
+        (file+head
+         "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+         "#+title: ${note-title}\n#+date: ${citar-date}\nFile: [[file:${citar-file}][${citar-citekey}]]\n\n")
+        :unnarrowed t
+     ))
+(setq citar-org-roam-capture-template-key "l")
+#+end_src
 
 * Tangle this file!
 

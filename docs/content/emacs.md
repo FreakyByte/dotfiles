@@ -1728,6 +1728,50 @@ Let's also add a few more symbols/modifiers. (cf. [tecosaur](https://tecosaur.gi
 ```
 
 
+## Citations {#citations}
+
+The `:biblio` module of Doom makes citations a lot easier. Built on [org-cite](https://blog.tecosaur.com/tmio/2021-07-31-citations.html), [citar](https://github.com/emacs-citar/citar), and [citar-org-roam](https://github.com/emacs-citar/citar-org-roam), it provides a uniform way of inserting citations in org-mode and LaTeX-mode, viewing saved PDFs and writing roam-notes on them.
+
+In order to generate and maintain my bibliography, I'm using [Zotero](https://www.zotero.org/) (since there doesn't seem to be a solution that works fully within emacs, has comparable functionality and is as simple to set up). This automatically exports a BibLaTeX file (using [Better BibTeX](https://retorque.re/zotero-better-bibtex/)), which we should let emacs know about:
+
+```emacs-lisp
+(setq! citar-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+(setq! org-cite-global-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+```
+
+
+### Note Taking {#note-taking}
+
+The defaults for [citar-org-roam](https://github.com/emacs-citar/citar-org-roam) are pretty great already, I just want to modify the template a little. Let's start with the title:
+
+```emacs-lisp
+(setq citar-org-roam-note-title-template "${author} - ${title}")
+```
+
+Now the rest of the template. For that, we first extend `citar-org-roam-template-fields` to be able to automatically insert the file path of our reference. Then we add our template to the list `org-roam-capture-template`. Finally, we gotta tell `citar-org-roam` to use this template.
+
+```emacs-lisp
+(setq citar-org-roam-template-fields '(
+        (:citar-title "title")
+        (:citar-author "author" "editor")
+        (:citar-date "date" "year" "issued")
+        (:citar-pages "pages")
+        (:citar-type "=type=")
+        (:citar-file "file" "pdf")))
+
+(add-to-list 'org-roam-capture-templates
+  '("l" "Literature Note" plain
+        "%?"
+        :target
+        (file+head
+         "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+         "#+title: ${note-title}\n#+date: ${citar-date}\nFile: [[file:${citar-file}][${citar-citekey}]]\n\n")
+        :unnarrowed t
+     ))
+(setq citar-org-roam-capture-template-key "l")
+```
+
+
 ## Tangle this file! {#tangle-this-file}
 
 Tangle on save? Reload after tangle? These hooks will ask you after every save.

@@ -1130,3 +1130,27 @@ INTER signals whether the function has been called interactively."
      (?a    "\\abs"           nil          t    nil  nil)
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
+
+(setq! citar-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+(setq! org-cite-global-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+
+(setq citar-org-roam-note-title-template "${author} - ${title}")
+
+(setq citar-org-roam-template-fields '(
+        (:citar-title "title")
+        (:citar-author "author" "editor")
+        (:citar-date "date" "year" "issued")
+        (:citar-pages "pages")
+        (:citar-type "=type=")
+        (:citar-file "file" "pdf")))
+
+(add-to-list 'org-roam-capture-templates
+  '("l" "Literature Note" plain
+        "%?"
+        :target
+        (file+head
+         "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+         "#+title: ${note-title}\n#+date: ${citar-date}\nFile: [[file:${citar-file}][${citar-citekey}]]\n\n")
+        :unnarrowed t
+     ))
+(setq citar-org-roam-capture-template-key "l")
