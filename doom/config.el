@@ -1189,3 +1189,18 @@ INTER signals whether the function has been called interactively."
                 citar-indicator-links-icons
                 citar-indicator-notes-icons
                 citar-indicator-cited-icons)))
+
+(map! :leader
+      (:prefix ("l" . "literature")
+         :desc "Insert Citation"        "@" #'citar-insert-citation
+         :desc "Attach Files"           "a" #'citar-attach-files
+         :desc "Create Note"            "c" #'citar-create-note
+         :desc "Open Files"             "f" #'citar-open-files
+         :desc "Insert Citation"        "i" #'citar-insert-citation
+         :desc "Insert Citekey"         "I" #'citar-insert-keys
+         :desc "Open Notes"             "n" #'citar-open-notes
+         :desc "Open"                   "o" #'citar-open
+         :desc "Insert Reference"       "r" #'citar-insert-reference))
+(map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
+        (lambda () (interactive) (let ((current-prefix-arg '(4))) ; call with C-u prefix argument
+                                   (call-interactively #'citar-insert-citation))))
