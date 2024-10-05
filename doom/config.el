@@ -1134,6 +1134,8 @@ INTER signals whether the function has been called interactively."
 (setq! citar-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
 (setq! org-cite-global-bibliography citar-bibliography)
 
+(setq citar-org-roam-subdir "/home/reiti/Dropbox/roam/literature")
+
 (setq citar-org-roam-note-title-template "${author} - ${title}")
 
 (add-to-list 'org-roam-capture-templates
@@ -1194,7 +1196,6 @@ INTER signals whether the function has been called interactively."
       (:prefix ("l" . "literature")
          :desc "Insert Citation"        "@" #'citar-insert-citation
          :desc "Attach Files"           "a" #'citar-attach-files
-         :desc "Create Note"            "c" #'citar-create-note
          :desc "Open Files"             "f" #'citar-open-files
          :desc "Insert Citation"        "i" #'citar-insert-citation
          :desc "Insert Citekey"         "I" #'citar-insert-keys

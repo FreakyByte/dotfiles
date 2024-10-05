@@ -1742,6 +1742,12 @@ In order to generate and maintain my bibliography, I'm using [Zotero](https://ww
 
 ### Note Taking {#note-taking}
 
+Literature notes get their own subfolder.
+
+```emacs-lisp
+(setq citar-org-roam-subdir "/home/reiti/Dropbox/roam/literature")
+```
+
 The defaults for [citar-org-roam](https://github.com/emacs-citar/citar-org-roam) are pretty great already, I just want to modify the template a little. Let's start with the title:
 
 ```emacs-lisp
@@ -1837,16 +1843,15 @@ Even though the [citar documentation](https://github.com/emacs-citar/citar/wiki/
       (:prefix ("l" . "literature")
          :desc "Insert Citation"        "@" #'citar-insert-citation
          :desc "Attach Files"           "a" #'citar-attach-files
-         :desc "Create Note"            "c" #'citar-create-note
          :desc "Open Files"             "f" #'citar-open-files
          :desc "Insert Citation"        "i" #'citar-insert-citation
          :desc "Insert Citekey"         "I" #'citar-insert-keys
          :desc "Open Notes"             "n" #'citar-open-notes
          :desc "Open"                   "o" #'citar-open
          :desc "Insert Reference"       "r" #'citar-insert-reference))
-;(map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
-;        (lambda () (interactive) (let ((current-prefix-arg '(4)))
-;                                  (call-interactively #'citar-insert-citation))))
+(map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
+        (lambda () (interactive) (let ((current-prefix-arg '(4))) ; call with C-u prefix argument
+                                   (call-interactively #'citar-insert-citation))))
 ```
 
 
