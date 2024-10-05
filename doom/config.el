@@ -1131,18 +1131,10 @@ INTER signals whether the function has been called interactively."
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
 
-(setq! citar-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
-(setq! org-cite-global-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+(setq! citar-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
+(setq! org-cite-global-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
 
 (setq citar-org-roam-note-title-template "${author} - ${title}")
-
-(setq citar-org-roam-template-fields '(
-        (:citar-title "title")
-        (:citar-author "author" "editor")
-        (:citar-date "date" "year" "issued")
-        (:citar-pages "pages")
-        (:citar-type "=type=")
-        (:citar-file "file" "pdf")))
 
 (add-to-list 'org-roam-capture-templates
   '("l" "Literature Note" plain
@@ -1150,7 +1142,8 @@ INTER signals whether the function has been called interactively."
         :target
         (file+head
          "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-         "#+title: ${note-title}\n#+date: ${citar-date}\nFile: [[file:${citar-file}][${citar-citekey}]]\n\n")
+         "#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
         :unnarrowed t
      ))
+
 (setq citar-org-roam-capture-template-key "l")

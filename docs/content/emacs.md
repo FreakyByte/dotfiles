@@ -1735,8 +1735,8 @@ The `:biblio` module of Doom makes citations a lot easier. Built on [org-cite](h
 In order to generate and maintain my bibliography, I'm using [Zotero](https://www.zotero.org/) (since there doesn't seem to be a solution that works fully within emacs, has comparable functionality and is as simple to set up). This automatically exports a BibLaTeX file (using [Better BibTeX](https://retorque.re/zotero-better-bibtex/)), which we should let emacs know about:
 
 ```emacs-lisp
-(setq! citar-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
-(setq! org-cite-global-bibliography '("/home/reiti/Zotero/MyLibrary.bib"))
+(setq! citar-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
+(setq! org-cite-global-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
 ```
 
 
@@ -1748,7 +1748,7 @@ The defaults for [citar-org-roam](https://github.com/emacs-citar/citar-org-roam)
 (setq citar-org-roam-note-title-template "${author} - ${title}")
 ```
 
-Now the rest of the template. For that, we first extend `citar-org-roam-template-fields` to be able to automatically insert the file path of our reference. Then we add our template to the list `org-roam-capture-template`. Finally, we gotta tell `citar-org-roam` to use this template.
+Now the rest of the template. I want to have a link to the relevant pdf file in the note, if that exists. The intended way of achieving this is by extending `citar-org-roam-template-fields` to be able to automatically insert the file path of our reference like so:
 
 ```emacs-lisp
 (setq citar-org-roam-template-fields '(
@@ -1758,16 +1758,25 @@ Now the rest of the template. For that, we first extend `citar-org-roam-template
         (:citar-pages "pages")
         (:citar-type "=type=")
         (:citar-file "file" "pdf")))
+```
 
+Unfortunately, in case the `file`-entry of our bibliography entry is empty, this method will query the user for a filename (before evaluating any code that would eliminate empty strings). I don't want this, since I clearly don't have the file. So let's use `citar-get-value` instead and check for the empty sting that way.
+
+```emacs-lisp
 (add-to-list 'org-roam-capture-templates
   '("l" "Literature Note" plain
         "%?"
         :target
         (file+head
          "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-         "#+title: ${note-title}\n#+date: ${citar-date}\nFile: [[file:${citar-file}][${citar-citekey}]]\n\n")
+         "#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
         :unnarrowed t
      ))
+```
+
+Finally, we gotta tell `citar-org-roam` to use this template.
+
+```emacs-lisp
 (setq citar-org-roam-capture-template-key "l")
 ```
 
