@@ -1132,7 +1132,7 @@ INTER signals whether the function has been called interactively."
      (?s    "\\mathsf"        nil          t    nil  nil))))
 
 (setq! citar-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
-(setq! org-cite-global-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
+(setq! org-cite-global-bibliography citar-bibliography)
 
 (setq citar-org-roam-note-title-template "${author} - ${title}")
 
@@ -1147,3 +1147,45 @@ INTER signals whether the function has been called interactively."
      ))
 
 (setq citar-org-roam-capture-template-key "l")
+
+(after! citar
+    (defvar citar-indicator-files-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-file_o"
+                :face 'nerd-icons-green
+                :v-adjust -0.1)
+       :function #'citar-has-files
+       :padding "  " ; need this because the default padding is too low for these icons
+       :tag "has:files"))
+    (defvar citar-indicator-links-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-link"
+                :face 'nerd-icons-orange
+                :v-adjust 0.01)
+       :function #'citar-has-links
+       :padding "  "
+       :tag "has:links"))
+    (defvar citar-indicator-notes-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-codicon
+                "nf-cod-note"
+                :face 'nerd-icons-blue
+                :v-adjust -0.3)
+       :function #'citar-has-notes
+       :padding "    "
+       :tag "has:notes"))
+    (defvar citar-indicator-cited-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-circle_o"
+                :face 'nerd-icon-green)
+       :function #'citar-is-cited
+       :padding "  "
+       :tag "is:cited"))
+    (setq citar-indicators
+       (list citar-indicator-files-icons
+                citar-indicator-links-icons
+                citar-indicator-notes-icons
+                citar-indicator-cited-icons)))
