@@ -677,35 +677,45 @@ Another one comes in form of lags while typing "long" lines, where long is not a
 
 ### Org Roam {#org-roam}
 
+A good resource to read for some org-roam configuration goodness is [this guide from the creator of org-roam themselves.](https://jethrokuan.github.io/org-roam-guide/)
+
 
 #### Capture {#capture}
 
+My default template for regular notes:
+
 ```emacs-lisp
-(setq org-roam-capture-templates
-      '(("d" "default" plain "%?" :target
-            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: \n#+title: ${title}\n\n")
-        :unnarrowed t)))
+(setq org-roam-default-template '("d" "default" plain "%?" :target
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: :draft:\n#+title: ${title}\n\n")
+        :unnarrowed t :immediate-finish t))
 ```
 
-Every node should be marked as a draft, until I revisit and refine it (stolen form [here](https://jethrokuan.github.io/org-roam-guide/))
+Notice:
+
+-   I want nodes to be marked as a draft, until I revisit and refine them. (I originally used the method described [here](https://jethrokuan.github.io/org-roam-guide/) for this, but I personally only want the draft tag on the default template, not on other templates.)
+-   When I insert a link to a note that doesn't exist yet, I don't wanna be interrupted and type stuff in that new note before returning to the original one. I also find capture buffers a bit annoying sometimes and would prefer to just start typing in a regular org buffer. The `:immediate-finish` keyword takes care of both of that, when calling `org-roam-node-insert` and `org-roam-node-find`, respectively. If I really want a capture buffer, I can still use `org-roam-capture`, as this overwrites `:immediate-finish` anyways. (If you only want captures to sometimes finish immediately, the approach presented by [SystemCrafters here](https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/) is nice.)
+
+Now we make the list of templates. For now it just contains the default template, more are to come later on.
 
 ```emacs-lisp
-(defun jethro/tag-new-node-as-draft ()
-  (org-roam-tag-add '("draft")))
-(add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+(setq org-roam-capture-templates (list org-roam-default-template))
 ```
 
-Sometimes I want to link notes that are not created yet, but also don't want to be distracted from writing the current note.
-This function (taken from [SystemCrafters](https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/)) inserts the link without opening the new note in a new buffer. It uses the _first template_ in `org-roam-capture-templates` for the new note.
+The default template is fast and simple, so most of the time, I want to skip the template selection buffer and use just the default.
 
 ```emacs-lisp
-(defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (cons arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t) ; this is the essential bit
-                                                  ))))
-    (apply #'org-roam-node-insert args)))
+(defun org-roam-node-insert-default (&optional FILTER-FN &key INFO)
+        "org-roam-node-insert, but it always uses the default template"
+        (interactive)
+        (org-roam-node-insert FILTER-FN :templates (list org-roam-default-template) :info INFO))
+(defun org-roam-node-find-default (&optional OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED)
+        "org-roam-node-find, but it always uses the default template"
+        (interactive current-prefix-arg)
+        (org-roam-node-find OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED :templates (list org-roam-default-template)))
+(defun org-roam-capture-default (&optional GOTO KEYS &key FILTER-FN INFO)
+        "org-roam-capture, but it always uses the default template"
+        (interactive "P")
+        (org-roam-capture GOTO KEYS :filter-fn FILTER-FN :templates (list org-roam-default-template) :info INFO))
 ```
 
 Additionally, I'm getting quite annoyed that links are inserted at the cursor position, not after the cursor position. Even though I guess this is consistent with usual vim functionality, having to press space twice feels weird to me, and binding a new key to have it work similar to "append" ('a' in vim) rather than "insert" ('i' in vim) is a bit unnecessary. So this workaround suits me best. (cf. [this issue](https://github.com/syl20bnr/spacemacs/issues/14137))
@@ -892,16 +902,10 @@ To make all this nice to use, let's write a bunch of functions to add and remove
   (interactive)
   (org-link-set-tags "implication")
   )
-(defun org-roam-implication-insert ()
-  "org-roam-node-insert, but the link is tagged with \"implication\"\n TODO: Does not currently work when a new node is created!"
+(defun org-roam-implication-insert (&optional FILTER-FN &key INFO)
+  "org-roam-node-insert-default, but the link is tagged with \"implication\""
   (interactive)
-  (org-roam-node-insert)
-  (org-link-set-tags "implication")
-  )
-(defun org-roam-implication-insert-immediate ()
-  "org-roam-node-insert-immediately, but the link is tagged with \"implication\""
-  (interactive)
-  (org-roam-node-insert-immediate nil)
+  (org-roam-node-insert-default FILTER-FN :key INFO)
   (org-link-set-tags "implication")
   )
 ```
@@ -961,38 +965,39 @@ Only change is that I'm using `org-roam-ui` for the graph.
 ```emacs-lisp
 (map! :leader
       (:prefix ("r" . "roam")
-         :desc "Open random node"           "0" #'org-roam-node-random
-         :desc "Find node"                  "f" #'org-roam-node-find
-         :desc "Find ref"                   "F" #'org-roam-ref-find
-         :desc "Show UI"                    "g" #'org-roam-ui-open
-         :desc "Insert node"                "i" #'org-roam-node-insert
-         :desc "Insert node immediately"    "I" #'org-roam-node-insert-immediate
-         :desc "Insert imp. immediately"    "j" #'org-roam-implication-insert-immediate
-         :desc "Tag link as implication"    "J" #'org-roam-implication-tag
-         :desc "Capture to node"            "n" #'org-roam-capture
-         :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
-         :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
-         :desc "Sync database"              "s" #'org-roam-db-sync
-         :desc "Add tag"                    "t" #'org-roam-tag-add
-         :desc "Remove tag"                 "T" #'org-roam-tag-remove
-         :desc "Set link tags"              "l" #'org-link-set-tags
-         :desc "Remove link tags"           "L" #'org-link-remove-tags
-         :desc "Add alias"                  "a" #'org-roam-alias-add
-         :desc "Remove alias"               "A" #'org-roam-alias-remove
-         :desc "Commutative diagram"        "c" #'org-capture-commutative-diagram
+         :desc "Open random node"                       "0" #'org-roam-node-random
+         :desc "Find node (default template)"           "f" #'org-roam-node-find-default
+         :desc "Find node (choose template)"            "F" #'org-roam-node-find
+         :desc "Show UI"                                "g" #'org-roam-ui-open
+         :desc "Insert node (default template)"         "i" #'org-roam-node-insert-default
+         :desc "Insert node (choose template)"          "I" #'org-roam-node-insert
+         :desc "Insert implication"                     "j" #'org-roam-implication-insert
+         :desc "Tag link as implication"                "J" #'org-roam-implication-tag
+         :desc "Capture to node (default template)"     "n" #'org-roam-capture-default
+         :desc "Capture to node (choose template)"      "N" #'org-roam-capture
+         :desc "Toggle roam buffer"                     "r" #'org-roam-buffer-toggle
+         :desc "Launch roam buffer"                     "R" #'org-roam-buffer-display-dedicated
+         :desc "Sync database"                          "s" #'org-roam-db-sync
+         :desc "Add tag"                                "t" #'org-roam-tag-add
+         :desc "Remove tag"                             "T" #'org-roam-tag-remove
+         :desc "Set link tags"                          "l" #'org-link-set-tags
+         :desc "Remove link tags"                       "L" #'org-link-remove-tags
+         :desc "Add alias"                              "a" #'org-roam-alias-add
+         :desc "Remove alias"                           "A" #'org-roam-alias-remove
+         :desc "Commutative diagram"                    "c" #'org-capture-commutative-diagram
          (:prefix ("d" . "by date")
-          :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
-          :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
-          :desc "Capture date"              "D" #'org-roam-dailies-capture-date
-          :desc "Goto next note"            "f" #'org-roam-dailies-goto-next-note
-          :desc "Goto tomorrow"             "m" #'org-roam-dailies-goto-tomorrow
-          :desc "Capture tomorrow"          "M" #'org-roam-dailies-capture-tomorrow
-          :desc "Capture today"             "n" #'org-roam-dailies-capture-today
-          :desc "Goto today"                "t" #'org-roam-dailies-goto-today
-          :desc "Capture today"             "T" #'org-roam-dailies-capture-today
-          :desc "Goto yesterday"            "y" #'org-roam-dailies-goto-yesterday
-          :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
-          :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
+          :desc "Goto previous note"                    "b" #'org-roam-dailies-goto-previous-note
+          :desc "Goto date"                             "d" #'org-roam-dailies-goto-date
+          :desc "Capture date"                          "D" #'org-roam-dailies-capture-date
+          :desc "Goto next note"                        "f" #'org-roam-dailies-goto-next-note
+          :desc "Goto tomorrow"                         "m" #'org-roam-dailies-goto-tomorrow
+          :desc "Capture tomorrow"                      "M" #'org-roam-dailies-capture-tomorrow
+          :desc "Capture today"                         "n" #'org-roam-dailies-capture-today
+          :desc "Goto today"                            "t" #'org-roam-dailies-goto-today
+          :desc "Capture today"                         "T" #'org-roam-dailies-capture-today
+          :desc "Goto yesterday"                        "y" #'org-roam-dailies-goto-yesterday
+          :desc "Capture yesterday"                     "Y" #'org-roam-dailies-capture-yesterday
+          :desc "Find directory"                        "-" #'org-roam-dailies-find-directory)))
 ```
 
 Then additionally, I want quick control over the UI from the local leader.
@@ -1777,7 +1782,7 @@ Unfortunately, in case the `file`-entry of our bibliography entry is empty, this
          "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
          "#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
         :unnarrowed t
-     ))
+     ) t)
 ```
 
 Finally, we gotta tell `citar-org-roam` to use this template.
@@ -1847,6 +1852,7 @@ Even though the [citar documentation](https://github.com/emacs-citar/citar/wiki/
          :desc "Insert Citation"        "i" #'citar-insert-citation
          :desc "Insert Citekey"         "I" #'citar-insert-keys
          :desc "Open Notes"             "n" #'citar-open-notes
+         :desc "Open Existing Note"     "N" #'org-roam-ref-find
          :desc "Open"                   "o" #'citar-open
          :desc "Insert Reference"       "r" #'citar-insert-reference))
 (map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"

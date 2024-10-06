@@ -366,22 +366,24 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0)
 )
 
-(setq org-roam-capture-templates
-      '(("d" "default" plain "%?" :target
-            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: \n#+title: ${title}\n\n")
-        :unnarrowed t)))
+(setq org-roam-default-template '("d" "default" plain "%?" :target
+            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: :draft:\n#+title: ${title}\n\n")
+        :unnarrowed t :immediate-finish t))
 
-(defun jethro/tag-new-node-as-draft ()
-  (org-roam-tag-add '("draft")))
-(add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+(setq org-roam-capture-templates (list org-roam-default-template))
 
-(defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (cons arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t) ; this is the essential bit
-                                                  ))))
-    (apply #'org-roam-node-insert args)))
+(defun org-roam-node-insert-default (&optional FILTER-FN &key INFO)
+        "org-roam-node-insert, but it always uses the default template"
+        (interactive)
+        (org-roam-node-insert FILTER-FN :templates (list org-roam-default-template) :info INFO))
+(defun org-roam-node-find-default (&optional OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED)
+        "org-roam-node-find, but it always uses the default template"
+        (interactive current-prefix-arg)
+        (org-roam-node-find OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED :templates (list org-roam-default-template)))
+(defun org-roam-capture-default (&optional GOTO KEYS &key FILTER-FN INFO)
+        "org-roam-capture, but it always uses the default template"
+        (interactive "P")
+        (org-roam-capture GOTO KEYS :filter-fn FILTER-FN :templates (list org-roam-default-template) :info INFO))
 
 (defadvice org-roam-node-insert (around append-if-in-evil-normal-mode activate compile)
   "If in evil normal mode and cursor is on a whitespace character, then go into
@@ -536,16 +538,10 @@ space rather than before."
   (interactive)
   (org-link-set-tags "implication")
   )
-(defun org-roam-implication-insert ()
-  "org-roam-node-insert, but the link is tagged with \"implication\"\n TODO: Does not currently work when a new node is created!"
+(defun org-roam-implication-insert (&optional FILTER-FN &key INFO)
+  "org-roam-node-insert-default, but the link is tagged with \"implication\""
   (interactive)
-  (org-roam-node-insert)
-  (org-link-set-tags "implication")
-  )
-(defun org-roam-implication-insert-immediate ()
-  "org-roam-node-insert-immediately, but the link is tagged with \"implication\""
-  (interactive)
-  (org-roam-node-insert-immediate nil)
+  (org-roam-node-insert-default FILTER-FN :key INFO)
   (org-link-set-tags "implication")
   )
 
@@ -580,38 +576,39 @@ space rather than before."
 
 (map! :leader
       (:prefix ("r" . "roam")
-         :desc "Open random node"           "0" #'org-roam-node-random
-         :desc "Find node"                  "f" #'org-roam-node-find
-         :desc "Find ref"                   "F" #'org-roam-ref-find
-         :desc "Show UI"                    "g" #'org-roam-ui-open
-         :desc "Insert node"                "i" #'org-roam-node-insert
-         :desc "Insert node immediately"    "I" #'org-roam-node-insert-immediate
-         :desc "Insert imp. immediately"    "j" #'org-roam-implication-insert-immediate
-         :desc "Tag link as implication"    "J" #'org-roam-implication-tag
-         :desc "Capture to node"            "n" #'org-roam-capture
-         :desc "Toggle roam buffer"         "r" #'org-roam-buffer-toggle
-         :desc "Launch roam buffer"         "R" #'org-roam-buffer-display-dedicated
-         :desc "Sync database"              "s" #'org-roam-db-sync
-         :desc "Add tag"                    "t" #'org-roam-tag-add
-         :desc "Remove tag"                 "T" #'org-roam-tag-remove
-         :desc "Set link tags"              "l" #'org-link-set-tags
-         :desc "Remove link tags"           "L" #'org-link-remove-tags
-         :desc "Add alias"                  "a" #'org-roam-alias-add
-         :desc "Remove alias"               "A" #'org-roam-alias-remove
-         :desc "Commutative diagram"        "c" #'org-capture-commutative-diagram
+         :desc "Open random node"                       "0" #'org-roam-node-random
+         :desc "Find node (default template)"           "f" #'org-roam-node-find-default
+         :desc "Find node (choose template)"            "F" #'org-roam-node-find
+         :desc "Show UI"                                "g" #'org-roam-ui-open
+         :desc "Insert node (default template)"         "i" #'org-roam-node-insert-default
+         :desc "Insert node (choose template)"          "I" #'org-roam-node-insert
+         :desc "Insert implication"                     "j" #'org-roam-implication-insert
+         :desc "Tag link as implication"                "J" #'org-roam-implication-tag
+         :desc "Capture to node (default template)"     "n" #'org-roam-capture-default
+         :desc "Capture to node (choose template)"      "N" #'org-roam-capture
+         :desc "Toggle roam buffer"                     "r" #'org-roam-buffer-toggle
+         :desc "Launch roam buffer"                     "R" #'org-roam-buffer-display-dedicated
+         :desc "Sync database"                          "s" #'org-roam-db-sync
+         :desc "Add tag"                                "t" #'org-roam-tag-add
+         :desc "Remove tag"                             "T" #'org-roam-tag-remove
+         :desc "Set link tags"                          "l" #'org-link-set-tags
+         :desc "Remove link tags"                       "L" #'org-link-remove-tags
+         :desc "Add alias"                              "a" #'org-roam-alias-add
+         :desc "Remove alias"                           "A" #'org-roam-alias-remove
+         :desc "Commutative diagram"                    "c" #'org-capture-commutative-diagram
          (:prefix ("d" . "by date")
-          :desc "Goto previous note"        "b" #'org-roam-dailies-goto-previous-note
-          :desc "Goto date"                 "d" #'org-roam-dailies-goto-date
-          :desc "Capture date"              "D" #'org-roam-dailies-capture-date
-          :desc "Goto next note"            "f" #'org-roam-dailies-goto-next-note
-          :desc "Goto tomorrow"             "m" #'org-roam-dailies-goto-tomorrow
-          :desc "Capture tomorrow"          "M" #'org-roam-dailies-capture-tomorrow
-          :desc "Capture today"             "n" #'org-roam-dailies-capture-today
-          :desc "Goto today"                "t" #'org-roam-dailies-goto-today
-          :desc "Capture today"             "T" #'org-roam-dailies-capture-today
-          :desc "Goto yesterday"            "y" #'org-roam-dailies-goto-yesterday
-          :desc "Capture yesterday"         "Y" #'org-roam-dailies-capture-yesterday
-          :desc "Find directory"            "-" #'org-roam-dailies-find-directory)))
+          :desc "Goto previous note"                    "b" #'org-roam-dailies-goto-previous-note
+          :desc "Goto date"                             "d" #'org-roam-dailies-goto-date
+          :desc "Capture date"                          "D" #'org-roam-dailies-capture-date
+          :desc "Goto next note"                        "f" #'org-roam-dailies-goto-next-note
+          :desc "Goto tomorrow"                         "m" #'org-roam-dailies-goto-tomorrow
+          :desc "Capture tomorrow"                      "M" #'org-roam-dailies-capture-tomorrow
+          :desc "Capture today"                         "n" #'org-roam-dailies-capture-today
+          :desc "Goto today"                            "t" #'org-roam-dailies-goto-today
+          :desc "Capture today"                         "T" #'org-roam-dailies-capture-today
+          :desc "Goto yesterday"                        "y" #'org-roam-dailies-goto-yesterday
+          :desc "Capture yesterday"                     "Y" #'org-roam-dailies-capture-yesterday
+          :desc "Find directory"                        "-" #'org-roam-dailies-find-directory)))
 
 (map! :after org
     :map org-mode-map
@@ -1146,7 +1143,7 @@ INTER signals whether the function has been called interactively."
          "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
          "#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
         :unnarrowed t
-     ))
+     ) t)
 
 (setq citar-org-roam-capture-template-key "l")
 
@@ -1200,6 +1197,7 @@ INTER signals whether the function has been called interactively."
          :desc "Insert Citation"        "i" #'citar-insert-citation
          :desc "Insert Citekey"         "I" #'citar-insert-keys
          :desc "Open Notes"             "n" #'citar-open-notes
+         :desc "Open Existing Note"     "N" #'org-roam-ref-find
          :desc "Open"                   "o" #'citar-open
          :desc "Insert Reference"       "r" #'citar-insert-reference))
 (map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
