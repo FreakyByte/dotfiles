@@ -254,6 +254,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq yas-triggers-in-field t)
 
+(setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
+
 (use-package warnings
     :config
     (cl-pushnew '(yasnippet backquote-change)

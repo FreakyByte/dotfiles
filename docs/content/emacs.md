@@ -512,6 +512,12 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 (setq yas-triggers-in-field t)
 ```
 
+Also I don't want to have to insert an unnecessary space before being able to expand a snippet.
+
+```emacs-lisp
+(setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
+```
+
 I use some snippets that modify the surrounding characters of the buffer (e.g. by deleting the space before the snippet). This causes YAS to throw a warning. Let's disable that.
 
 ```emacs-lisp
