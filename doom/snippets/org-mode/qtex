@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: qtex
+# uuid: qtex
+# key: qtex
+# condition: (texmathp)
+# --
+\quad \text{$1} \quad $0

@@ -2,6 +2,6 @@
 # name: del
 # uuid: del
 # key: del
-# condition: (and (texmathp) 'auto)
+# condition: (texmathp)
 # --
 \partial $0

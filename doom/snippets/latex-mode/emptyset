@@ -4,4 +4,4 @@
 # key: emp
 # condition: (and (texmathp) (quote auto))
 # --
-\emptyset
+\emptyset $0

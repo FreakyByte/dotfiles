@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: monster
+# uuid: monster
+# key: MM
+# condition: (and (texmathp) 'auto)
+# --
+\mathbb{M}
