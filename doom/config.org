@@ -23,6 +23,7 @@
   - [[#movecut][Move/Cut]]
   - [[#windows-and-buffers][Windows and Buffers]]
   - [[#auto-complete][Auto-complete]]
+  - [[#search--replace][Search & Replace]]
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
   - [[#zenwriteroom][Zen/Writeroom]]
@@ -414,6 +415,31 @@ Increase time until auto-complete shows up.
 #+begin_src emacs-lisp
 (setq company-idle-delay 0.4)
 #+end_src
+** Search & Replace
+Ok, I admit it: I never learned how to do search and replace properly in vim. It seems like too much to remember and type every time. So let's use emacs functions instead.
+The ~replace-string~ and ~query-replace~ suit my needs the most, but by default they only operate from the current point to the end of the buffer, not on the whole buffer. This fixes that, while still working when used with a specific region selected (adapted from [[https://superuser.com/a/1152391][here]]).
+#+begin_src emacs-lisp
+(defun advice--replace-whole-buffer (oldfun &rest args)
+        "advice for search functions to search the whole buffer (if not specified otherwise)"
+        ;; set start pos
+        (unless (nth 3 args)
+                (setf (nth 3 args)
+                (if (region-active-p)
+                        (region-beginning)
+                        (point-min))))
+        (unless (nth 4 args)
+                (setf (nth 4 args)
+                (if (region-active-p)
+                        (region-end)
+                        (point-max))))
+        (apply oldfun args))
+(advice-add 'replace-string :around 'advice--replace-whole-buffer)
+(advice-add 'query-replace :around 'advice--replace-whole-buffer)
+
+(map! :n "C-s" 'replace-string
+      :n "C-S-s" 'query-replace)
+#+end_src
+
 ** Spell- and grammar checker
 These are the dictionaries I want to use for spell checking.
 #+begin_src emacs-lisp

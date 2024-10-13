@@ -223,6 +223,26 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq company-idle-delay 0.4)
 
+(defun advice--replace-whole-buffer (oldfun &rest args)
+        "advice for search functions to search the whole buffer (if not specified otherwise)"
+        ;; set start pos
+        (unless (nth 3 args)
+                (setf (nth 3 args)
+                (if (region-active-p)
+                        (region-beginning)
+                        (point-min))))
+        (unless (nth 4 args)
+                (setf (nth 4 args)
+                (if (region-active-p)
+                        (region-end)
+                        (point-max))))
+        (apply oldfun args))
+(advice-add 'replace-string :around 'advice--replace-whole-buffer)
+(advice-add 'query-replace :around 'advice--replace-whole-buffer)
+
+(map! :n "C-s" 'replace-string
+      :n "C-S-s" 'query-replace)
+
 (add-hook 'spell-fu-mode-hook
   (lambda ()
     (spell-fu-dictionary-add (spell-fu-get-ispell-dictionary "de"))
