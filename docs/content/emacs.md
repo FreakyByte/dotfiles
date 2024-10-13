@@ -497,8 +497,7 @@ Some nicer shortcuts for creating snippets and etc. would also be nice.
        :desc "insert snippet" "i" #'yas-insert-snippet
        :desc "new snippet" "n" #'+snippets/new
        :desc "find private snippet" "p" #'+snippets/find-private
-       )
-      )
+       :desc "reload all snippets" "r" #'yas-reload-all))
 ```
 
 Hey boy, I heard you like snippets... so I put some snippets in your snippets...

@@ -244,8 +244,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        :desc "insert snippet" "i" #'yas-insert-snippet
        :desc "new snippet" "n" #'+snippets/new
        :desc "find private snippet" "p" #'+snippets/find-private
-       )
-      )
+       :desc "reload all snippets" "r" #'yas-reload-all))
 
 (setq yas-triggers-in-field t)
 

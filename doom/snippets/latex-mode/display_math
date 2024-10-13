@@ -1,7 +1,7 @@
 # key: dm
 # name: Display Math
 # uuid: display_math
-# condition: (and (not (texmathp)) (quote auto))
+# condition: (not (texmathp))
 # group: math
 # --
 \[$0\]
