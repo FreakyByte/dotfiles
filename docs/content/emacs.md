@@ -438,7 +438,7 @@ Tecosaur finds it handy to be asked which buffer to see after splitting a window
 ```emacs-lisp
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
-  (if (eq (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
+  (if (<= (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
 ```
 
 
@@ -1693,7 +1693,7 @@ Set default viewer to `pdf-tools` and automatically refresh the document buffer.
 ```emacs-lisp
 (setq +latex-viewers '(pdf-tools zathura okular)
       TeX-view-program-selection '((output-pdf "Zathura") (output-pdf "Okular") (output-pdf "PDF Tools"))
-      TeX-view-program-list '((("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)
                               ("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a")))
                               ("preview-pane" latex-preview-pane-mode))
       TeX-source-correlate-start-server t

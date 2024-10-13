@@ -219,7 +219,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
-  (if (eq (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
+  (if (<= (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
 
 (setq company-idle-delay 0.4)
 
