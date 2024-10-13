@@ -51,18 +51,9 @@ Inspired by [tecosaur](https://tecosaur.github.io/emacs-config/config.html#bette
       evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
       auto-save-default t                         ; Nobody likes to loose work, I certainly don't
       truncate-string-ellipsis "…")
-```
 
-Tecosaur finds it handy to be asked which buffer to see after splitting a window. So do I.
-
-```emacs-lisp
-;; first, enter the new window
 (setq evil-vsplit-window-right t
       evil-split-window-below t)
-;; then, pull up buffer prompt
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (consult-buffer))
 ```
 
 The [fish](https://fishshell.com/) shell is not [POSIX compatible](https://stackoverflow.com/questions/48732986/why-how-fish-does-not-support-posix), which among other things causes a bunch of garbage characters to appear whenever it is used in emacs (at least with my fish config). So it's better to have emacs use bash instead, especially in the interest of packages that rely on shell outputs
@@ -430,12 +421,24 @@ We also need to do it for `evil-org-delete-char`, since that has different input
 A key chord every time I want to switch windows or buffers is way too much work.
 
 ```emacs-lisp
-(map! :n "ö" 'evil-next-buffer)
-(map! :n "Ö" 'evil-prev-buffer)
-(map! :n "ä" 'evil-window-next)
-(map! :n "Ä" 'evil-window-prev)
-(map! :n "C-ä" '+evil/window-vsplit-and-follow)
-(map! :n "C-Ä" '+evil/window-split-and-follow)
+(map! :n "ö" 'evil-next-buffer
+      :n "Ö" 'evil-prev-buffer
+      :n "C-ö" 'switch-to-buffer
+      :n "C-j" 'evil-window-next
+      :n "C-k" 'evil-window-prev
+      :n "C-l" 'evil-window-vsplit
+      :n "C-ä" 'evil-window-split)
+(map! :after org
+    :map org-mode-map
+    "C-j" 'evil-window-next)
+```
+
+Tecosaur finds it handy to be asked which buffer to see after splitting a window. So do I. But let's tweak it so it only shows the buffers of the current workspace/perspective so I don't get overwhelmed. There's also no point in asking which buffer I want if there's only one available.
+
+```emacs-lisp
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (if (eq (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
 ```
 
 
@@ -621,7 +624,8 @@ Another one comes in form of lags while typing "long" lines, where long is not a
 (setq org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
       org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
-(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
+;;(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
+(setq org-agenda-files nil) ;currently not using org-agenda
 ```
 
 

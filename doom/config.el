@@ -13,13 +13,8 @@
       auto-save-default t                         ; Nobody likes to loose work, I certainly don't
       truncate-string-ellipsis "…")
 
-;; first, enter the new window
 (setq evil-vsplit-window-right t
       evil-split-window-below t)
-;; then, pull up buffer prompt
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (consult-buffer))
 
 (setq shell-file-name (executable-find "bash"))
 
@@ -211,12 +206,20 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (apply orig-fn count beg end type ?_ args))
 (advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
 
-(map! :n "ö" 'evil-next-buffer)
-(map! :n "Ö" 'evil-prev-buffer)
-(map! :n "ä" 'evil-window-next)
-(map! :n "Ä" 'evil-window-prev)
-(map! :n "C-ä" '+evil/window-vsplit-and-follow)
-(map! :n "C-Ä" '+evil/window-split-and-follow)
+(map! :n "ö" 'evil-next-buffer
+      :n "Ö" 'evil-prev-buffer
+      :n "C-ö" 'switch-to-buffer
+      :n "C-j" 'evil-window-next
+      :n "C-k" 'evil-window-prev
+      :n "C-l" 'evil-window-vsplit
+      :n "C-ä" 'evil-window-split)
+(map! :after org
+    :map org-mode-map
+    "C-j" 'evil-window-next)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (if (eq (length (persp-buffer-list)) 1) nil (call-interactively 'persp-switch-to-buffer)))
 
 (setq company-idle-delay 0.4)
 
@@ -315,7 +318,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (setq org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
       org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
-(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
+;;(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
+(setq org-agenda-files nil) ;currently not using org-agenda
 
 (after! org
   (setq org-ellipsis " ▼ "
