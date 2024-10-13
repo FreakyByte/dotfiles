@@ -106,30 +106,22 @@
 
 (setq-default fill-column 100)
 
-(defconst doom-frame-transparency 85)
+(defconst frame-default-opacity 85)
 
 (defun toggle-background-opacity ()
         "toggle transparent background"
         (interactive)
-        (if (eq doom-frame-opacity 100)
-            (setq doom-frame-opacity doom-frame-transparency)
-            (setq doom-frame-opacity 100))
-        (set-frame-parameter (selected-frame) 'alpha doom-frame-opacity)
-        (add-to-list 'default-frame-alist `(alpha . ,doom-frame-opacity))
-        (defun dwc-smart-transparent-frame ()
-        (set-frame-parameter
-        (selected-frame)
-        'alpha (if (frame-parameter (selected-frame) 'fullscreen)
-                100
-                doom-frame-opacity))))
+        (if (eq frame-opacity 100)
+            (setq frame-opacity frame-default-opacity)
+            (setq frame-opacity 100))
+        (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
+        (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity)))
 
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity
-       )
-      )
+       :desc "transparency"          "t"     #'toggle-background-opacity))
 
-(setq doom-frame-opacity 100)
+(setq frame-opacity 100)
 (toggle-background-opacity)
 
 (use-package! whitespace

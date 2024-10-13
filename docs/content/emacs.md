@@ -259,10 +259,10 @@ Maximum line length (when `window-margin-mode` is active)
 I like me some transparent backgrounds. This value controls the opacity if transparent background is enabled.
 
 ```emacs-lisp
-(defconst doom-frame-transparency 85)
+(defconst frame-default-opacity 85)
 ```
 
-In contrast, the variable `doom-frame-opacity` is used for the current opacity. So this variable is set to `100` if transparency is disabled.
+In contrast, the variable `frame-opacity` is used for the current opacity. So this variable is set to `100` if transparency is disabled.
 
 Now follows a function to toggle the transparent background on and off.
 
@@ -270,29 +270,21 @@ Now follows a function to toggle the transparent background on and off.
 (defun toggle-background-opacity ()
         "toggle transparent background"
         (interactive)
-        (if (eq doom-frame-opacity 100)
-            (setq doom-frame-opacity doom-frame-transparency)
-            (setq doom-frame-opacity 100))
-        (set-frame-parameter (selected-frame) 'alpha doom-frame-opacity)
-        (add-to-list 'default-frame-alist `(alpha . ,doom-frame-opacity))
-        (defun dwc-smart-transparent-frame ()
-        (set-frame-parameter
-        (selected-frame)
-        'alpha (if (frame-parameter (selected-frame) 'fullscreen)
-                100
-                doom-frame-opacity))))
+        (if (eq frame-opacity 100)
+            (setq frame-opacity frame-default-opacity)
+            (setq frame-opacity 100))
+        (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
+        (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity)))
 
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity
-       )
-      )
+       :desc "transparency"          "t"     #'toggle-background-opacity))
 ```
 
 This will make the background transparent at startup.
 
 ```emacs-lisp
-(setq doom-frame-opacity 100)
+(setq frame-opacity 100)
 (toggle-background-opacity)
 ```
 
