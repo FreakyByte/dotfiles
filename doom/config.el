@@ -334,11 +334,12 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq jit-lock-defer-time 0.25)
 
-(setq org-directory "~/org/"
+(setq ;org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
       org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
 ;;(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 (setq org-agenda-files nil) ;currently not using org-agenda
+(setq org-directory nil) ;currently not using org-agenda
 
 (after! org
   (setq org-ellipsis " ▼ "

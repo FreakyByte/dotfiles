@@ -648,11 +648,12 @@ Another one comes in form of lags while typing "long" lines, where long is not a
 ### Org-Paths {#org-paths}
 
 ```emacs-lisp
-(setq org-directory "~/org/"
+(setq ;org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
       org-cd-directory (concat org-roam-directory "/tikz-cd")) ; for commutative diagrams
 ;;(setq org-agenda-files (list "~/org/todo.org" "~/org/lv_Sommer2023.org"))
 (setq org-agenda-files nil) ;currently not using org-agenda
+(setq org-directory nil) ;currently not using org-agenda
 ```
 
 
