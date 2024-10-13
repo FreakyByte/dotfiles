@@ -37,12 +37,14 @@
   - [[#org-d20][org-d20]]
 - [[#latex][LaTeX]]
   - [[#fixing-defaults]["Fixing" defaults]]
+  - [[#viewer][Viewer]]
   - [[#appearance-1][Appearance]]
   - [[#cdlatex][CDLaTeX]]
-- [[#citations][Citations]]
+- [[#literature--citations][Literature & Citations]]
   - [[#note-taking][Note Taking]]
   - [[#appearance-2][Appearance]]
   - [[#keybindings][Keybindings]]
+  - [[#pdf-tools][PDF-Tools]]
 - [[#tangle-this-file][Tangle this file!]]
 
 * About this Config
@@ -1458,8 +1460,6 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
 There are a couple of things that I, a person who learned LaTeX long before emacs, find quite annoying in how Doom is setup do deal with LaTeX by default.
 These changes make everything feel more intuitive to me.
 #+begin_src emacs-lisp
-;;(setq +latex-viewers nil)
-(setq +latex-indent-item-continuation-offset 'auto)
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
 ;;... so I map toggle keybindings to localleader instead
 (map! :localleader
@@ -1470,10 +1470,7 @@ These changes make everything feel more intuitive to me.
        :desc "environment"      "e"     #'evil-tex-toggle-env
        :desc "math"             "m"     #'evil-tex-toggle-math
        :desc "math align*"      "M"     #'evil-tex-toggle-math-align
-       :desc "section"          "S"     #'evil-tex-toggle-section
-       )
-      )
-;;
+       :desc "section"          "S"     #'evil-tex-toggle-section))
 #+end_src
 
 The following turns of all flycheck-warnings in AUCTex, since for the most part I just find them annoying.
@@ -1514,6 +1511,21 @@ So instead, after like 3 hours of trial and error, I'm settling for this hack.
 (map! :after tex
       :map LaTeX-mode-map
       "\"" 'insert-standard-quote)
+#+end_src
+** Viewer
+Set default viewer to ~pdf-tools~ and automatically refresh the document buffer.
+#+begin_src emacs-lisp
+(setq +latex-viewers '(pdf-tools zathura okular)
+      TeX-view-program-selection '((output-pdf "Zathura") (output-pdf "Okular") (output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)
+                              ("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a")))
+                              ("preview-pane" latex-preview-pane-mode))
+      TeX-source-correlate-start-server t
+      +latex-indent-item-continuation-offset 'auto)
+
+;; Update PDF buffers after successful LaTeX runs
+(add-hook 'TeX-after-compilation-finished-functions
+           #'TeX-revert-document-buffer)
 #+end_src
 ** Appearance
 Long lines are hard to read. This activates a maximum line length in TeX-buffers.
@@ -1576,7 +1588,7 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
      (?s    "\\mathsf"        nil          t    nil  nil))))
 #+end_src
 
-* Citations
+* Literature & Citations
 The ~:biblio~ module of Doom makes citations a lot easier. Built on [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html][org-cite]], [[https://github.com/emacs-citar/citar][citar]], and [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]], it provides a uniform way of inserting citations in org-mode and LaTeX-mode, viewing saved PDFs and writing roam-notes on them.
 
 In order to generate and maintain my bibliography, I'm using [[https://www.zotero.org/][Zotero]] (since there doesn't seem to be a solution that works fully within emacs, has comparable functionality and is as simple to set up). This automatically exports a BibLaTeX file (using [[https://retorque.re/zotero-better-bibtex/][Better BibTeX]]), which we should let emacs know about:
@@ -1683,6 +1695,35 @@ Even though the [[https://github.com/emacs-citar/citar/wiki/Indicators][citar do
 (map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
         (lambda () (interactive) (let ((current-prefix-arg '(4))) ; call with C-u prefix argument
                                    (call-interactively #'citar-insert-citation))))
+#+end_src
+** PDF-Tools
+Some nicer keybindings.
+#+begin_src emacs-lisp
+(map! :after pdf-tools :localleader :map pdf-view-mode-map
+      :desc "auto slice mode" "s" 'pdf-view-auto-slice-minor-mode
+      :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
+      :desc "themed mode" "t" 'pdf-view-themed-minor-mode
+      :desc "printer mode" "p" 'pdf-view-printer-minor-mode)
+(map! :after pdf-tools :map pdf-view-mode-map
+      "<normal-state> C-f" 'pdf-view-next-page-command
+      "<normal-state> C-b" 'pdf-view-previous-page-command
+      :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
+      "C-j" nil
+      "C-l" nil
+      "C-k" nil
+      "<normal-state> C-j" nil
+      "<normal-state> C-l" nil
+      "<normal-state> C-k" nil)
+#+end_src
+
+The doom one theme doesn't actually look too great for PDFs in my opinion. [[https://blog.karenying.com/posts/50-shades-of-dark-mode-gray][This blog post]] helped me pick something better:
+#+begin_src emacs-lisp
+(setq pdf-view-midnight-colors '("#E4E6EB" . "#18191A"))
+#+end_src
+
+And now let's make everything behave the way I want from the get-go.
+#+begin_src emacs-lisp
+(add-hook! 'pdf-view-mode-hook :append #'pdf-view-auto-slice-minor-mode #'pdf-view-themed-minor-mode #'pdf-view-fit-width-to-window)
 #+end_src
 
 * Tangle this file!

@@ -1054,8 +1054,6 @@ INTER signals whether the function has been called interactively."
        )
       )
 
-;;(setq +latex-viewers nil)
-(setq +latex-indent-item-continuation-offset 'auto)
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
 ;;... so I map toggle keybindings to localleader instead
 (map! :localleader
@@ -1066,10 +1064,7 @@ INTER signals whether the function has been called interactively."
        :desc "environment"      "e"     #'evil-tex-toggle-env
        :desc "math"             "m"     #'evil-tex-toggle-math
        :desc "math align*"      "M"     #'evil-tex-toggle-math-align
-       :desc "section"          "S"     #'evil-tex-toggle-section
-       )
-      )
-;;
+       :desc "section"          "S"     #'evil-tex-toggle-section))
 
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
 
@@ -1095,6 +1090,18 @@ INTER signals whether the function has been called interactively."
 (map! :after tex
       :map LaTeX-mode-map
       "\"" 'insert-standard-quote)
+
+(setq +latex-viewers '(pdf-tools zathura okular)
+      TeX-view-program-selection '((output-pdf "Zathura") (output-pdf "Okular") (output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)
+                              ("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a")))
+                              ("preview-pane" latex-preview-pane-mode))
+      TeX-source-correlate-start-server t
+      +latex-indent-item-continuation-offset 'auto)
+
+;; Update PDF buffers after successful LaTeX runs
+(add-hook 'TeX-after-compilation-finished-functions
+           #'TeX-revert-document-buffer)
 
 (add-hook 'TeX-mode-hook 'window-margin-mode)
 
@@ -1220,3 +1227,23 @@ INTER signals whether the function has been called interactively."
 (map! :localleader :map evil-tex-mode-map :desc "Insert quick citation" "@"
         (lambda () (interactive) (let ((current-prefix-arg '(4))) ; call with C-u prefix argument
                                    (call-interactively #'citar-insert-citation))))
+
+(map! :after pdf-tools :localleader :map pdf-view-mode-map
+      :desc "auto slice mode" "s" 'pdf-view-auto-slice-minor-mode
+      :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
+      :desc "themed mode" "t" 'pdf-view-themed-minor-mode
+      :desc "printer mode" "p" 'pdf-view-printer-minor-mode)
+(map! :after pdf-tools :map pdf-view-mode-map
+      "<normal-state> C-f" 'pdf-view-next-page-command
+      "<normal-state> C-b" 'pdf-view-previous-page-command
+      :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
+      "C-j" nil
+      "C-l" nil
+      "C-k" nil
+      "<normal-state> C-j" nil
+      "<normal-state> C-l" nil
+      "<normal-state> C-k" nil)
+
+(setq pdf-view-midnight-colors '("#E4E6EB" . "#18191A"))
+
+(add-hook! 'pdf-view-mode-hook :append #'pdf-view-auto-slice-minor-mode #'pdf-view-themed-minor-mode #'pdf-view-fit-width-to-window)
