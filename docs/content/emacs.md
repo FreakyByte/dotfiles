@@ -238,7 +238,7 @@ This works well for me, because I like overlength lines to always automatically 
 (global-visual-line-mode t)
 ```
 
-Maximum line length (when `window-margin-mode` is active)
+Maximum line length (when `word-wrap-mode` is active and `+word-wrap-fill-style` is set to `'auto` or `'soft`)
 
 ```emacs-lisp
 (setq-default fill-column 100)
@@ -1068,7 +1068,7 @@ It'd be nice to be able to toggle some settings only for roam notes. Usually thi
 I want org roam notes to have special appearance.
 
 ```emacs-lisp
-(add-hook 'roam-pseudohook (lambda () (window-margin-mode 1)))
+(add-hook 'roam-pseudohook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 (add-hook 'roam-pseudohook (lambda () (mixed-pitch-mode 1)))
 ```
 
@@ -1711,7 +1711,7 @@ Set default viewer to `pdf-tools` and automatically refresh the document buffer.
 Long lines are hard to read. This activates a maximum line length in TeX-buffers.
 
 ```emacs-lisp
-(add-hook 'TeX-mode-hook 'window-margin-mode)
+(add-hook 'TeX-mode-hook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 ```
 
 

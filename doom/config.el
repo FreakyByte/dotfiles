@@ -649,7 +649,7 @@ space rather than before."
          )))
 (after! org (add-hook 'org-mode-hook 'roam-pseudohook-function))
 
-(add-hook 'roam-pseudohook (lambda () (window-margin-mode 1)))
+(add-hook 'roam-pseudohook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 (add-hook 'roam-pseudohook (lambda () (mixed-pitch-mode 1)))
 
 (defun writeroom-mode-deactivate () (writeroom-mode -1))
@@ -1104,7 +1104,7 @@ INTER signals whether the function has been called interactively."
 (add-hook 'TeX-after-compilation-finished-functions
            #'TeX-revert-document-buffer)
 
-(add-hook 'TeX-mode-hook 'window-margin-mode)
+(add-hook 'TeX-mode-hook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 
 (map! :after latex :map cdlatex-mode-map
       ; I'm too used to using the ' key to type stuff like "f prime"

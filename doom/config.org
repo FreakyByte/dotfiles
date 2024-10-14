@@ -242,7 +242,7 @@ This works well for me, because I like overlength lines to always automatically 
 #+begin_src emacs-lisp
 (global-visual-line-mode t)
 #+end_src
-Maximum line length (when =window-margin-mode= is active)
+Maximum line length (when =word-wrap-mode= is active and =+word-wrap-fill-style= is set to ~'auto~ or ~'soft~)
 #+begin_src emacs-lisp :tangle yes
 (setq-default fill-column 100)
 #+end_src
@@ -957,7 +957,7 @@ It'd be nice to be able to toggle some settings only for roam notes. Usually thi
 *** Appearance
 I want org roam notes to have special appearance.
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'roam-pseudohook (lambda () (window-margin-mode 1)))
+(add-hook 'roam-pseudohook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 (add-hook 'roam-pseudohook (lambda () (mixed-pitch-mode 1)))
 #+end_src
 Writeroom mode isn't a great idea during capture buffers. Let's add a hook to ~org-capture-mode~ to disable it.
@@ -1531,7 +1531,7 @@ Set default viewer to ~pdf-tools~ and automatically refresh the document buffer.
 ** Appearance
 Long lines are hard to read. This activates a maximum line length in TeX-buffers.
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'TeX-mode-hook 'window-margin-mode)
+(add-hook 'TeX-mode-hook (lambda () (setq-local +word-wrap-fill-style 'soft) (+word-wrap-mode 1)))
 #+end_src
 ** CDLaTeX
 This mode provides pretty useful shortcuts for writing math. I ignored this package for too long, probably cause the default keybindings really don't work with me.
