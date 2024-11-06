@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: expected value
+# uuid: expect
+# key: expect
+# condition: (and (texmathp) 'auto)
+# --
+\mathbb{E}\left[$1\right]$0

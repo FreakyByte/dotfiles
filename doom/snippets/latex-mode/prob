@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: probability
+# uuid: prob
+# key: prob
+# condition: (and (texmathp) 'auto)
+# --
+\mathbb{P}\left($1\right)$0
