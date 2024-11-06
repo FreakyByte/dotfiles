@@ -1824,7 +1824,7 @@ Unfortunately, in case the `file`-entry of our bibliography entry is empty, this
         :target
         (file+head
          "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-         "#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
+         ":PROPERTIES:\n:NOTER_DOCUMENT: %(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") ( ) (print \"%(citar-get-value \"file\" \"${citar-citekey}\")\"))\n:NOTER_PAGE: 1\n:END:\n#+title: ${note-title}\n%(if (string= \"\" \"%(citar-get-value \"file\" \"${citar-citekey}\")\") (print \"${citar-citekey}\") (print \"[[file:%(citar-get-value \"file\" \"${citar-citekey}\")][${citar-citekey}]]\")), ${citar-date}\n\n")
         :unnarrowed t
      ) t)
 ```
@@ -1914,17 +1914,30 @@ Some nicer keybindings.
       :desc "auto slice mode" "s" 'pdf-view-auto-slice-minor-mode
       :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
       :desc "themed mode" "t" 'pdf-view-themed-minor-mode
-      :desc "printer mode" "p" 'pdf-view-printer-minor-mode)
+      :desc "printer mode" "p" 'pdf-view-printer-minor-mode
+      (:prefix ("f" . "fit")
+         :desc "fit page to window"     "p" #'pdf-view-fit-page-to-window
+         :desc "fit width to window"    "w" #'pdf-view-fit-width-to-window
+         :desc "fit height to window"   "h" #'pdf-view-fit-height-to-window))
+
 (map! :after pdf-tools :map pdf-view-mode-map
       "<normal-state> C-f" 'pdf-view-next-page-command
       "<normal-state> C-b" 'pdf-view-previous-page-command
       :desc "midnight mode" "m" 'pdf-view-midnight-minor-mode
+      ;; free up window navigation keys
       "C-j" nil
       "C-l" nil
       "C-k" nil
       "<normal-state> C-j" nil
       "<normal-state> C-l" nil
-      "<normal-state> C-k" nil)
+      "<normal-state> C-k" nil
+      ;; org-noter keybindings
+      "<normal-state> <remap> <evil-insert>" nil
+      "<normal-state> i" 'org-noter-insert-note
+      "i" 'org-noter-insert-note
+      "<normal-state> <remap> <evil-insert-line>" nil
+      "<normal-state> I" 'org-noter-insert-precise-note
+      "I" 'org-noter-insert-precise-note)
 ```
 
 The doom one theme doesn't actually look too great for PDFs in my opinion. [This blog post](https://blog.karenying.com/posts/50-shades-of-dark-mode-gray) helped me pick something better:
@@ -1937,6 +1950,20 @@ And now let's make everything behave the way I want from the get-go.
 
 ```emacs-lisp
 (add-hook! 'pdf-view-mode-hook :append #'pdf-view-auto-slice-minor-mode #'pdf-view-themed-minor-mode #'pdf-view-fit-width-to-window)
+```
+
+
+### Org Noter {#org-noter}
+
+```emacs-lisp
+(after! org-noter
+  (org-noter-enable-org-roam-integration))
+(setq! org-noter-always-create-frame nil
+       org-noter-kill-frame-at-session-end nil
+       org-noter-prefer-root-as-file-level t)
+
+(map! :after org :localleader :map org-mode-map
+      "N" 'org-noter)
 ```
 
 
