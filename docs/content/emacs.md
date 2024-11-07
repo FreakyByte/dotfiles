@@ -257,19 +257,15 @@ The [perfect-margin](https://github.com/mpwang/perfect-margin) package automatic
     ;; (setq minimap-highlight-line nil)
     (setq minimap-width-fraction 0.08))
   ;; (setq perfect-margin-only-set-left-margin t)
-  (perfect-margin-mode t))
+  (perfect-margin-mode t)
+  ;; make perfect-margin use fill-column as width
+  (setq perfect-margin-visible-width -1))
 (map! :leader
  (:prefix ("t" . "toggle")
        :desc "Perfect margin mode"  "p"     #'perfect-margin-mode))
 ```
 
-In theory, setting `perfect-margin-visible-width` to `-1` should make it use `fill-column` as width. I've found that this causes strange problems with vertical splits somehow, where it applies margins to a window that is clearly too small to have margins like that. So best do it manually.
-
-```emacs-lisp
-(after! perfect-margin (setq perfect-margin-visible-width fill-column))
-```
-
-In some modes the "perfect" margins don't make sense. The `writeroom-width` setting is overwritten by them, and with `doom-big-font-mode` there's simply not enough space. So let's filter those out. The dummy variable is there because `perfect-margin-ignore-filters` likes to call functions with the current window as parameter.
+However, in some modes the "perfect" margins don't make sense. The `writeroom-width` setting is overwritten by them, and with `doom-big-font-mode` there's simply not enough space. So let's filter those out. The dummy variable is there because `perfect-margin-ignore-filters` likes to call functions with the current window as parameter.
 
 ```emacs-lisp
 (add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p writeroom-mode)))
