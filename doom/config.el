@@ -111,12 +111,12 @@
     ;; (setq minimap-highlight-line nil)
     (setq minimap-width-fraction 0.08))
   ;; (setq perfect-margin-only-set-left-margin t)
-  (perfect-margin-mode t)
-  ;; make perfect-margin use fill-column as width
-  (setq perfect-margin-visible-width -1))
+  (perfect-margin-mode t))
 (map! :leader
  (:prefix ("t" . "toggle")
        :desc "Perfect margin mode"  "p"     #'perfect-margin-mode))
+
+(after! perfect-margin (setq perfect-margin-visible-width fill-column))
 
 (add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p writeroom-mode)))
 (add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p doom-big-font-mode)))
