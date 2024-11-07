@@ -102,3 +102,5 @@
 
 ;; While some of the snippets that are included with doom are very nice, others get in my way. So better take things into my own hands.
 (package! doom-snippets :ignore t)
+
+(package! perfect-margin)

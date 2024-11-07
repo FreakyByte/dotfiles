@@ -224,7 +224,7 @@ I the silly banner I found at <https://github.com/jeetelongname/doom-banners> fo
 The change in padding is to remove the whitespace after the splash image, so that everything still fits on the screen (for the most part).
 
 
-### Line Numbers and Wrapping {#line-numbers-and-wrapping}
+### Line Numbers, Wrapping and Margins {#line-numbers-wrapping-and-margins}
 
 Display relative line numbers, but do so counting lines as displayed, not actual line breaks in the buffer.
 
@@ -238,10 +238,56 @@ This works well for me, because I like overlength lines to always automatically 
 (global-visual-line-mode t)
 ```
 
-Maximum line length (when `word-wrap-mode` is active and `+word-wrap-fill-style` is set to `'auto` or `'soft`)
+Maximum line length (when `word-wrap-mode` is active and `+word-wrap-fill-style` is set to `'auto` or `'soft`, or when `perfect-margin-mode` is active)
 
 ```emacs-lisp
-(setq-default fill-column 100)
+(setq-default fill-column 110)
+```
+
+The [perfect-margin](https://github.com/mpwang/perfect-margin) package automatically centers windows if there is enough space for that. Keep in mind it needs to be installed with `(package! perfect-margin)` in `package.el`.
+
+```emacs-lisp
+(use-package! perfect-margin
+  :config
+  (after! doom-modeline
+    (setq mode-line-right-align-edge 'right-fringe))
+  (after! minimap
+    ;; if you use (vc-gutter +pretty)
+    ;; and theme is causing "Invalid face attribute :foreground nil"
+    ;; (setq minimap-highlight-line nil)
+    (setq minimap-width-fraction 0.08))
+  ;; (setq perfect-margin-only-set-left-margin t)
+  (perfect-margin-mode t)
+  ;; make perfect-margin use fill-column as width
+  (setq perfect-margin-visible-width -1))
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Perfect margin mode"  "p"     #'perfect-margin-mode))
+```
+
+However, in some modes the "perfect" margins don't make sense. The `writeroom-width` setting is overwritten by them, and with `doom-big-font-mode` there's simply not enough space. So let's filter those out. The dummy variable is there because `perfect-margin-ignore-filters` likes to call functions with the current window as parameter.
+
+```emacs-lisp
+(add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p writeroom-mode)))
+(add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p doom-big-font-mode)))
+```
+
+Big Font Mode is actually even more resilient: It doesn't seem to let `perfect-margin-mode` deactivate itself properly while `doom-big-font-mode` is active. So some advice is necessary...
+
+```emacs-lisp
+(defadvice doom-big-font-mode (before deactivate-perfect-margins) (perfect-margin-mode 0))
+```
+
+
+### Zen/Writeroom {#zen-writeroom}
+
+Zen mode (as it is called in doom emacs) or writeroom mode (the package it is based on) increases the font size, actives the mixed-pitch font and disables some possible distractions.
+
+```emacs-lisp
+(setq writeroom-width 45)
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode))
 ```
 
 
@@ -617,17 +663,6 @@ Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. Th
         (map! :map yas-keymap
                 [tab] 'yas-next-field-or-cdlatex
                 "TAB" 'yas-next-field-or-cdlatex))
-```
-
-
-### Zen/Writeroom {#zen-writeroom}
-
-```emacs-lisp
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
-       )
-      )
 ```
 
 

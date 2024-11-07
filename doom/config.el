@@ -99,7 +99,34 @@
 
 (global-visual-line-mode t)
 
-(setq-default fill-column 100)
+(setq-default fill-column 110)
+
+(use-package! perfect-margin
+  :config
+  (after! doom-modeline
+    (setq mode-line-right-align-edge 'right-fringe))
+  (after! minimap
+    ;; if you use (vc-gutter +pretty)
+    ;; and theme is causing "Invalid face attribute :foreground nil"
+    ;; (setq minimap-highlight-line nil)
+    (setq minimap-width-fraction 0.08))
+  ;; (setq perfect-margin-only-set-left-margin t)
+  (perfect-margin-mode t)
+  ;; make perfect-margin use fill-column as width
+  (setq perfect-margin-visible-width -1))
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Perfect margin mode"  "p"     #'perfect-margin-mode))
+
+(add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p writeroom-mode)))
+(add-to-list 'perfect-margin-ignore-filters '(lambda (window) (bound-and-true-p doom-big-font-mode)))
+
+(defadvice doom-big-font-mode (before deactivate-perfect-margins) (perfect-margin-mode 0))
+
+(setq writeroom-width 45)
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode))
 
 (defconst frame-default-opacity 85)
 
@@ -325,12 +352,6 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
         (map! :map yas-keymap
                 [tab] 'yas-next-field-or-cdlatex
                 "TAB" 'yas-next-field-or-cdlatex))
-
-(map! :leader
- (:prefix ("t" . "toggle")
-       :desc "Global writeroom mode"  "W"     #'global-writeroom-mode
-       )
-      )
 
 (setq jit-lock-defer-time 0.25)
 
