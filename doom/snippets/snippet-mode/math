@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: math
+# uuid: snippet-math
+# key: math
+# condition: t
+# --
+(texmathp)

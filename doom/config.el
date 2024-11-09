@@ -285,14 +285,6 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (setq-local require-final-newline nil)
   (setq-local mode-require-final-newline nil))
 
-(map! :leader
-      (:prefix ("y" . "YASnippet")
-       :desc "edit snippet" "e" #'yas-visit-snippet-file
-       :desc "insert snippet" "i" #'yas-insert-snippet
-       :desc "new snippet" "n" #'+snippets/new
-       :desc "find private snippet" "p" #'+snippets/find-private
-       :desc "reload all snippets" "r" #'yas-reload-all))
-
 (setq yas-triggers-in-field t)
 
 (setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
@@ -302,6 +294,32 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
     (cl-pushnew '(yasnippet backquote-change)
                 warning-suppress-types
                 :test 'equal))
+
+(defun yas-new-snippet-clone (&optional no-template)
+  "Clone of `yas-new-snippet' to avoid Doom Emacs remapping keys."
+  (interactive "P")
+  (yas-new-snippet no-template))
+(defun yas-visit-snippet-file-clone (&optional no-template)
+  "Clone of `yas-visit-snippet-file' to avoid Doom Emacs remapping keys."
+  (interactive)
+  (yas-visit-snippet-file))
+(map! :leader
+      (:prefix ("y" . "YASnippet")
+       :desc "edit snippet"             "e" #'yas-visit-snippet-file-clone
+       :desc "edit snippet (doom ver.)" "E" #'+snippets/edit
+       :desc "insert snippet"           "i" #'yas-insert-snippet
+       :desc "new snippet"              "n" #'yas-new-snippet-clone
+       :desc "new snippet (doom ver.)"  "N" #'+snippets/new
+       :desc "find private snippet"     "p" #'+snippets/find-private
+       :desc "reload all snippets"      "r" #'yas-reload-all))
+
+  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                    "# name: $1\n"
+                                    "# uuid: $2\n"
+                                    "# key: $3\n"
+                                    "# condition: ${4:t}\n"
+                                    "# --\n"
+                                    "$0"))
 
   (defun yas-try-expanding-auto-snippets ()
     (when (and (boundp 'yas-minor-mode) yas-minor-mode)

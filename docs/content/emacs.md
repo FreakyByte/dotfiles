@@ -562,18 +562,6 @@ This disables the annoying final newline when creating a snippet, which always s
   (setq-local mode-require-final-newline nil))
 ```
 
-Some nicer shortcuts for creating snippets and etc. would also be nice.
-
-```emacs-lisp
-(map! :leader
-      (:prefix ("y" . "YASnippet")
-       :desc "edit snippet" "e" #'yas-visit-snippet-file
-       :desc "insert snippet" "i" #'yas-insert-snippet
-       :desc "new snippet" "n" #'+snippets/new
-       :desc "find private snippet" "p" #'+snippets/find-private
-       :desc "reload all snippets" "r" #'yas-reload-all))
-```
-
 Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 
 ```emacs-lisp
@@ -594,6 +582,44 @@ I use some snippets that modify the surrounding characters of the buffer (e.g. b
     (cl-pushnew '(yasnippet backquote-change)
                 warning-suppress-types
                 :test 'equal))
+```
+
+
+#### Keybindings (and avoiding remappings) {#keybindings--and-avoiding-remappings}
+
+Some nicer shortcuts for creating snippets etc. would also be nice.
+Doom however automatically remaps the functions `yas-new-snippet` and `yas-visit-snippet-file` to the "superior alternatives" `+snippets/new` and `+snippets/edit` (see [~/config/emacs/modules/editor/snippets/config.el, line 81](~/.config/emacs/modules/editor/snippets/config.el)). I respectfully disagree with that. My main problem is `+snippets/new` doesn't save the snippet in the right folder when creating a snippet for a mode different from the current major mode. Other issues are discussed [here](https://github.com/doomemacs/doomemacs/issues/4330). Since this issue is a bit older and hasn't seen recent activity, I'll opt for a workaround for now.
+
+```emacs-lisp
+(defun yas-new-snippet-clone (&optional no-template)
+  "Clone of `yas-new-snippet' to avoid Doom Emacs remapping keys."
+  (interactive "P")
+  (yas-new-snippet no-template))
+(defun yas-visit-snippet-file-clone (&optional no-template)
+  "Clone of `yas-visit-snippet-file' to avoid Doom Emacs remapping keys."
+  (interactive)
+  (yas-visit-snippet-file))
+(map! :leader
+      (:prefix ("y" . "YASnippet")
+       :desc "edit snippet"             "e" #'yas-visit-snippet-file-clone
+       :desc "edit snippet (doom ver.)" "E" #'+snippets/edit
+       :desc "insert snippet"           "i" #'yas-insert-snippet
+       :desc "new snippet"              "n" #'yas-new-snippet-clone
+       :desc "new snippet (doom ver.)"  "N" #'+snippets/new
+       :desc "find private snippet"     "p" #'+snippets/find-private
+       :desc "reload all snippets"      "r" #'yas-reload-all))
+```
+
+Now let's just make `yas-new-snippet` use the same template as `+snippets/new`:
+
+```emacs-lisp
+  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                    "# name: $1\n"
+                                    "# uuid: $2\n"
+                                    "# key: $3\n"
+                                    "# condition: ${4:t}\n"
+                                    "# --\n"
+                                    "$0"))
 ```
 
 

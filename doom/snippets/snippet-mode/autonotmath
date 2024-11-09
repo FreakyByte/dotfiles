@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: autonotmath
+# uuid: snippet-autonotmath
+# key: autonotmath
+# condition: t
+# --
+(and (not (save-restriction (widen) (texmathp))) (quote auto))

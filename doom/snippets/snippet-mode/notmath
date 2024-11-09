@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: notmath
+# uuid: snippet-notmath
+# key: notmath
+# condition: t
+# --
+(not (save-restriction (widen) (texmathp)))

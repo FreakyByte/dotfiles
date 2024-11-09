@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: models
+# uuid: models
+# key: mdl
+# condition: (and (texmathp) 'auto)
+# --
+\models $0

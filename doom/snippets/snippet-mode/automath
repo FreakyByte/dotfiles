@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: automath
+# uuid: snippet-automath
+# key: automath
+# condition: t
+# --
+(and (texmathp) (quote auto))

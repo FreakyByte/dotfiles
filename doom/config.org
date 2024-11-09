@@ -509,17 +509,6 @@ This disables the annoying final newline when creating a snippet, which always s
   (setq-local mode-require-final-newline nil))
 #+end_src
 
-Some nicer shortcuts for creating snippets and etc. would also be nice.
-#+begin_src emacs-lisp
-(map! :leader
-      (:prefix ("y" . "YASnippet")
-       :desc "edit snippet" "e" #'yas-visit-snippet-file
-       :desc "insert snippet" "i" #'yas-insert-snippet
-       :desc "new snippet" "n" #'+snippets/new
-       :desc "find private snippet" "p" #'+snippets/find-private
-       :desc "reload all snippets" "r" #'yas-reload-all))
-#+end_src
-
 Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 #+begin_src emacs-lisp :tangle yes
 (setq yas-triggers-in-field t)
@@ -536,6 +525,38 @@ I use some snippets that modify the surrounding characters of the buffer (e.g. b
     (cl-pushnew '(yasnippet backquote-change)
                 warning-suppress-types
                 :test 'equal))
+#+end_src
+*** Keybindings (and avoiding remappings)
+Some nicer shortcuts for creating snippets etc. would also be nice.
+Doom however automatically remaps the functions ~yas-new-snippet~ and ~yas-visit-snippet-file~ to the "superior alternatives" ~+snippets/new~ and ~+snippets/edit~ (see [[file:~/.config/emacs/modules/editor/snippets/config.el::;; Replace commands with superior alternatives][~/config/emacs/modules/editor/snippets/config.el, line 81]]). I respectfully disagree with that. My main problem is ~+snippets/new~ doesn't save the snippet in the right folder when creating a snippet for a mode different from the current major mode. Other issues are discussed [[https://github.com/doomemacs/doomemacs/issues/4330][here]]. Since this issue is a bit older and hasn't seen recent activity, I'll opt for a workaround for now.
+#+begin_src emacs-lisp
+(defun yas-new-snippet-clone (&optional no-template)
+  "Clone of `yas-new-snippet' to avoid Doom Emacs remapping keys."
+  (interactive "P")
+  (yas-new-snippet no-template))
+(defun yas-visit-snippet-file-clone (&optional no-template)
+  "Clone of `yas-visit-snippet-file' to avoid Doom Emacs remapping keys."
+  (interactive)
+  (yas-visit-snippet-file))
+(map! :leader
+      (:prefix ("y" . "YASnippet")
+       :desc "edit snippet"             "e" #'yas-visit-snippet-file-clone
+       :desc "edit snippet (doom ver.)" "E" #'+snippets/edit
+       :desc "insert snippet"           "i" #'yas-insert-snippet
+       :desc "new snippet"              "n" #'yas-new-snippet-clone
+       :desc "new snippet (doom ver.)"  "N" #'+snippets/new
+       :desc "find private snippet"     "p" #'+snippets/find-private
+       :desc "reload all snippets"      "r" #'yas-reload-all))
+#+end_src
+Now let's just make ~yas-new-snippet~ use the same template as ~+snippets/new~:
+#+begin_src emacs-lisp
+  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                    "# name: $1\n"
+                                    "# uuid: $2\n"
+                                    "# key: $3\n"
+                                    "# condition: ${4:t}\n"
+                                    "# --\n"
+                                    "$0"))
 #+end_src
 *** Automatic snippet expansion
 YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [[https://github.com/ymarco/auto-activating-snippets][AAS]], was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [[https://github.com/joaotavora/yasnippet/issues/998][manually adding auto expanding capabilities to YAS.]] This way, snippets that are marked with the condition ='auto= will be auto-expanded.
