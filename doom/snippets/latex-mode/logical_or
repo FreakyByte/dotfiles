@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: or
+# uuid: logical_or
+# key: or
+# condition: (and (texmathp) (quote auto))
+# --
+\vee $0

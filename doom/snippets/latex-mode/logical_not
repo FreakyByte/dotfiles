@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: not
+# uuid: logical_not
+# key: not
+# condition: (and (texmathp) (quote auto))
+# --
+\neg $0

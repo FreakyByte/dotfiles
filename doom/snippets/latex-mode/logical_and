@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: and
+# uuid: logical_and
+# key: and
+# condition: (and (texmathp) (quote auto))
+# --
+\wedge $0
