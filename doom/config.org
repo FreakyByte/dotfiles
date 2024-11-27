@@ -296,24 +296,48 @@ In contrast, the variable ~frame-opacity~ is used for the current opacity. So th
 
 Now follows a function to toggle the transparent background on and off.
 #+begin_src emacs-lisp
-(defun toggle-background-opacity ()
-        "toggle transparent background"
+(defvar opacity-type "background" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
+(defun update-background-opacity ()
+        "update transparency to the value of `frame-opacity' and the type `opacity-type'"
         (interactive)
-        (if (eq frame-opacity 100)
+        (cond
+         ((equal opacity-type "background")
+                (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
+                (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity))
+                (set-frame-parameter (selected-frame) 'alpha 100)
+                (add-to-list 'default-frame-alist `(alpha . 100)))
+          ((equal opacity-type "full-frame")
+                (set-frame-parameter (selected-frame) 'alpha-background 100)
+                (add-to-list 'default-frame-alist `(alpha-background . 100))
+                (set-frame-parameter (selected-frame) 'alpha frame-opacity)
+                (add-to-list 'default-frame-alist `(alpha . ,frame-opacity)))))
+
+(defun toggle-frame-opacity ()
+        "toggle opacity of the frame"
+        (interactive)
+        (if (= frame-opacity 100)
             (setq frame-opacity frame-default-opacity)
             (setq frame-opacity 100))
-        (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
-        (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity)))
+        (update-background-opacity))
+(defun toggle-opacity-type ()
+        "toggle between transparent background and fully transparent frame"
+        (interactive)
+        (if (equal opacity-type "background")
+            (setq opacity-type "full-frame")
+            (setq opacity-type "background"))
+        (update-background-opacity))
 
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity))
+       :desc "transparent background"          "t"     #'toggle-frame-opacity
+       :desc "transparency type"               "T"     #'toggle-opacity-type))
 #+end_src
+The background transparency has been added to emacs only [[https://kristofferbalintona.me/posts/202206071000/][somewhat recently]]. It doesn't work perfectly though, for example transparent PNG-images are not rendered as transparent, and it [[https://lists.gnu.org/archive/html/bug-gnu-emacs/2022-12/msg01080.html][doesn't look like this will be fixed soon]]. So I use the ~opacity-type~ to be able to choose which kind of transparency I want.
 
 This will make the background transparent at startup.
 #+begin_src emacs-lisp
 (setq frame-opacity 100)
-(toggle-background-opacity)
+(toggle-frame-opacity)
 #+end_src
 
 ** Whitespace

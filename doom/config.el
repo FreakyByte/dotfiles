@@ -130,21 +130,44 @@
 
 (defconst frame-default-opacity 85)
 
-(defun toggle-background-opacity ()
-        "toggle transparent background"
+(defvar opacity-type "background" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
+(defun update-background-opacity ()
+        "update transparency to the value of `frame-opacity' and the type `opacity-type'"
         (interactive)
-        (if (eq frame-opacity 100)
+        (cond
+         ((equal opacity-type "background")
+                (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
+                (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity))
+                (set-frame-parameter (selected-frame) 'alpha 100)
+                (add-to-list 'default-frame-alist `(alpha . 100)))
+          ((equal opacity-type "full-frame")
+                (set-frame-parameter (selected-frame) 'alpha-background 100)
+                (add-to-list 'default-frame-alist `(alpha-background . 100))
+                (set-frame-parameter (selected-frame) 'alpha frame-opacity)
+                (add-to-list 'default-frame-alist `(alpha . ,frame-opacity)))))
+
+(defun toggle-frame-opacity ()
+        "toggle opacity of the frame"
+        (interactive)
+        (if (= frame-opacity 100)
             (setq frame-opacity frame-default-opacity)
             (setq frame-opacity 100))
-        (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
-        (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity)))
+        (update-background-opacity))
+(defun toggle-opacity-type ()
+        "toggle between transparent background and fully transparent frame"
+        (interactive)
+        (if (equal opacity-type "background")
+            (setq opacity-type "full-frame")
+            (setq opacity-type "background"))
+        (update-background-opacity))
 
 (map! :leader
  (:prefix ("t" . "toggle")
-       :desc "transparency"          "t"     #'toggle-background-opacity))
+       :desc "transparent background"          "t"     #'toggle-frame-opacity
+       :desc "transparency type"               "T"     #'toggle-opacity-type))
 
 (setq frame-opacity 100)
-(toggle-background-opacity)
+(toggle-frame-opacity)
 
 (use-package! whitespace
   :config (setq whitespace-style '(face empty indentation space-after-tab space-before-tab))
