@@ -53,38 +53,44 @@
 (use-package ewal)
 (use-package ewal-doom-themes)
 
-(after! doom-themes
-        (custom-theme-set-faces! doom-theme
-          `(default :background ,(ewal-load-color 'background))
-          `(seperator-line :background ,(ewal-load-color 'background))
-          `(hl-line :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .1))
-          `(org-block :background ,(ewal--color-chshade
-                      (ewal-load-color 'background) -0.3))
-
+(defvar ewal-background-list
+  '((default :background (ewal-load-color 'background))
+    (separator-line :background (ewal-load-color 'background))
+    (hl-line :background (ewal--color-chshade (ewal-load-color 'background) .1))
+    (org-block :background (ewal--color-chshade (ewal-load-color 'background) -0.3))
         ;; Tabs:
-        `(tab-bar :background ,(ewal-load-color 'background))
-        `(centaur-tabs-selected :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .1))
-        `(tab-bar-tab :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .1))
-        `(centaur-tabs-unselected :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .05))
-        `(tab-bar-tab-inactive :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .05))
-        `(tab-line :background ,(ewal-load-color 'background))
-
+    (tab-bar :background (ewal-load-color 'background))
+    (tab-bar-tab :background (ewal--color-chshade (ewal-load-color 'background) .1))
+    (tab-bar-tab-inactive :background (ewal--color-chshade (ewal-load-color 'background) .05))
+    (tab-line :background (ewal-load-color 'background))
         ;; Mode line:
-        `(mode-line :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .15))
-        `(mode-line-inactive :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .05))
-        `(mode-line-emphasis :background ,(ewal--color-chshade
-                        (ewal-load-color 'background) .20))
-
+    (mode-line :background (ewal--color-chshade (ewal-load-color 'background) .15))
+    (mode-line-inactive :background (ewal--color-chshade (ewal-load-color 'background) .05))
+    (mode-line-emphasis :background (ewal--color-chshade (ewal-load-color 'background) .20))
         ;; minibuffer (underneath mode line) and stuff
-        `(solaire-default-face :background ,(ewal-load-color 'background))
-        ))
+    (solaire-default-face :background (ewal-load-color 'background)))
+  "list of faces to customize when styling emacs with ewal")
+
+(defvar ewal-background-active nil "non-nil if background is currently styled using ewal")
+
+(defun toggle-ewal-background ()
+  "toggle ewal background colors on and off"
+  (interactive)
+  (if ewal-background-active
+        (doom/reload-theme)
+        (dolist (spec ewal-background-list)
+                (let ((face (nth 0 spec))
+                (attribute (nth 1 spec))
+                (value (nth 2 spec)))
+                (set-face-attribute face nil attribute (eval value)))))
+  (setq ewal-background-active (not ewal-background-active)))
+
+(map! :leader
+ (:prefix ("t" . "toggle")
+       :desc "background colors"        "B"     #'toggle-ewal-background))
+
+(after! (doom-themes org hl-line)
+        (toggle-ewal-background))
 
 (setq doom-modeline-height 35)
 
