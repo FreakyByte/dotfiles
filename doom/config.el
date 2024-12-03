@@ -1135,6 +1135,8 @@ INTER signals whether the function has been called interactively."
        :desc "math align*"      "M"     #'evil-tex-toggle-math-align
        :desc "section"          "S"     #'evil-tex-toggle-section))
 
+(add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "LaTeXMk")))
+
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
 
 (add-hook 'TeX-mode-hook 'rainbow-delimiters-mode-disable

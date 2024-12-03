@@ -1563,6 +1563,11 @@ These changes make everything feel more intuitive to me.
        :desc "section"          "S"     #'evil-tex-toggle-section))
 #+end_src
 
+Always use latexmk.
+#+begin_src emacs-lisp
+(add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "LaTeXMk")))
+#+end_src
+
 The following turns of all flycheck-warnings in AUCTex, since for the most part I just find them annoying.
 #+begin_src emacs-lisp
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
