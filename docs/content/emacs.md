@@ -390,14 +390,11 @@ Now follows a function to toggle the transparent background on and off.
         (cond
          ((equal opacity-type "background")
                 (set-frame-parameter (selected-frame) 'alpha-background frame-opacity)
-                (add-to-list 'default-frame-alist `(alpha-background . ,frame-opacity))
-                (set-frame-parameter (selected-frame) 'alpha 100)
-                (add-to-list 'default-frame-alist `(alpha . 100)))
+                (set-frame-parameter (selected-frame) 'alpha 100))
           ((equal opacity-type "full-frame")
                 (set-frame-parameter (selected-frame) 'alpha-background 100)
-                (add-to-list 'default-frame-alist `(alpha-background . 100))
-                (set-frame-parameter (selected-frame) 'alpha frame-opacity)
-                (add-to-list 'default-frame-alist `(alpha . ,frame-opacity)))))
+                (set-frame-parameter (selected-frame) 'alpha frame-opacity))))
+(add-hook! 'doom-switch-frame-hook :append #'update-background-opacity)
 
 (defun toggle-frame-opacity ()
         "toggle opacity of the frame"
