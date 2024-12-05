@@ -502,6 +502,7 @@ Especially when using LaTeX, there's gonna be a lot of files in my directory whi
         "out"
         "snm"
         "vrb"
+        "tdl"
         ))
 (setq treemacs-file-ignore-globs
       '(;; LaTeX

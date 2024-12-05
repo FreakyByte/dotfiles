@@ -286,6 +286,7 @@
         "out"
         "snm"
         "vrb"
+        "tdl"
         ))
 (setq treemacs-file-ignore-globs
       '(;; LaTeX
