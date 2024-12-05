@@ -167,6 +167,7 @@ keys.extend([
     Key([mod], "w", lazy.spawn(web_browser), desc="Launch Web Browser"),
     Key([mod], "e", lazy.spawn(emacs), desc="Launch Emacs"),
     Key([mod], "a", lazy.spawn("emacsclient --eval \"(emacs-everywhere)\""), desc="Use Emacs ANYWHERE"),
+    Key([mod], "z", lazy.spawn("zotero"), desc="Launch Zotero"),
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
