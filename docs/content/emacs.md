@@ -268,19 +268,29 @@ Now let's change the menu options on the dashboard. I added `doom-dashboard-widg
   '((t :inherit font-lock-string-face))
   "Face for projects on doom-dashboard.")
 (defun doom-dashboard-widget-projects ()
-  "Create list of menu buttons for each project in `projectile-known-projects'."
+  "Create list of menu buttons for each project in `projectile-known-projects', and bind key appropriately."
         (dolist (project projectile-known-projects)
          (insert
           (+doom-dashboard--center (- +doom-dashboard--width 1)
-           (format "%s %s\n"
+           ; put together three things:
+           (format "%s %-35s%-6s\n"
+            ; 1. the icons
             (nerd-icons-faicon "nf-fa-angle_right" :face 'doom-dashboard-project)
+            ; 2. the project button
             (with-temp-buffer
              (insert-text-button project
                         'action `(lambda (_button) (projectile-switch-project-by-name ,project))
                         'face 'doom-dashboard-project
                         'follow-link t
                         'help-echo project)
-             (format "%-41s" (buffer-string))))))))
+             (buffer-string))
+            ; 3. the number (with face and keybindings)
+            (let* ((num (+ 1 (cl-position project projectile-known-projects)))
+                  (str (number-to-string num)))
+             (map! :map +doom-dashboard-mode-map :ng str
+                   `(lambda () (interactive) (projectile-switch-project-by-name ,project)))
+             (add-text-properties 0 (length str) (list 'face 'doom-dashboard-menu-desc) str)
+              str))))))
 ```
 
 The following is a hack to remove the blank lines between menu buttons. By investigating the last lines of the source code of `doom-dashboard-widget-shortmenu`, one can see that the newlines are inserted if `display-graphic-p` returns true. So let's temporarily overwrite this function with `ignore`, which always returns nil.
