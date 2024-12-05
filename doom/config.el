@@ -16,6 +16,11 @@
 (setq evil-vsplit-window-right t
       evil-split-window-below t)
 
+(defconst doom-module-config-file (concat doom-user-dir "config.org"))
+(map! :leader
+ (:prefix ("o" . "open")
+       :desc "Emacs config"     "c"     #'doom/goto-private-config-file))
+
 (setq shell-file-name (executable-find "bash"))
 
 (setq emacs-everywhere-frame-name-format "emacs-everywhere")
@@ -96,10 +101,62 @@
 
 (after! doom-themes
     (custom-theme-set-faces! 'doom-one
-        `(doom-dashboard-banner :foreground "pink" :weight bold)
-        ))
+        `(doom-dashboard-banner :foreground "pink" :weight bold)))
 (setq fancy-splash-image "~/.config/doom/I-am-doom.png")
-(setq +doom-dashboard-banner-padding '(0 . 0))
+(setq +doom-dashboard-banner-padding '(0 . 4))
+
+(setq +doom-dashboard-functions
+      '(doom-dashboard-widget-banner
+        doom-dashboard-widget-shortmenu
+        doom-dashboard-widget-projects))
+
+(setq +doom-dashboard-menu-sections
+ '(("Configure Emacs"
+    :icon (concat (nerd-icons-icon-for-mode 'emacs-lisp-mode :face 'doom-dashboard-menu-title) " ")
+    :action doom/goto-private-config-file
+    :key "SPC o c")
+   ("Take some notes"
+    :icon (concat (nerd-icons-faicon "nf-fa-file_pen" :face 'doom-dashboard-menu-title) " ")
+    :action org-roam-node-find-default
+    :key "SPC r f")
+   ("Read some literature"
+    :icon (concat (nerd-icons-faicon "nf-fa-book" :face 'doom-dashboard-menu-title) " ")
+    :action citar-open-files
+    :key "SPC l f")
+   ("Work on a project"
+    :icon (concat (nerd-icons-faicon "nf-fa-code" :face 'doom-dashboard-menu-title) " ")
+    :action projectile-switch-project
+    :key "SPC p p")))
+
+(require 'projectile)
+(defface doom-dashboard-project
+  '((t :inherit font-lock-string-face))
+  "Face for projects on doom-dashboard.")
+(defun doom-dashboard-widget-projects ()
+  "Create list of menu buttons for each project in `projectile-known-projects'."
+        (dolist (project projectile-known-projects)
+         (insert
+          (+doom-dashboard--center (- +doom-dashboard--width 1)
+           (format "%s %s\n"
+            (nerd-icons-faicon "nf-fa-angle_right" :face 'doom-dashboard-project)
+            (with-temp-buffer
+             (insert-text-button project
+                        'action `(lambda (_button) (projectile-switch-project-by-name ,project))
+                        'face 'doom-dashboard-project
+                        'follow-link t
+                        'help-echo project)
+             (format "%-41s" (buffer-string))))))))
+
+(defadvice! no-new-lines (oldfun)
+  :around #'doom-dashboard-widget-shortmenu
+  (cl-letf (((symbol-function 'display-graphic-p) #'ignore))
+    (funcall oldfun)))
+
+(map! :map +doom-dashboard-mode-map
+      :ng "c"       #'doom/goto-private-config-file
+      :ng "r"       #'org-roam-node-find-default
+      :ng "l"       #'citar-open-files
+      :ng "p"       #'projectile-switch-project)
 
 (setq display-line-numbers-type 'visual)
 
