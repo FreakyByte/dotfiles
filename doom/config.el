@@ -191,9 +191,9 @@
  (:prefix ("t" . "toggle")
        :desc "Global writeroom mode"  "W"     #'global-writeroom-mode))
 
-(defconst frame-default-opacity 85)
+(defconst frame-default-opacity 90)
 
-(defvar opacity-type "background" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
+(defvar opacity-type "full-frame" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
 (defun update-background-opacity ()
         "update transparency to the value of `frame-opacity' and the type `opacity-type'"
         (interactive)

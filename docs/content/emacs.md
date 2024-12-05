@@ -375,7 +375,7 @@ Zen mode (as it is called in doom emacs) or writeroom mode (the package it is ba
 I like me some transparent backgrounds. This value controls the opacity if transparent background is enabled.
 
 ```emacs-lisp
-(defconst frame-default-opacity 85)
+(defconst frame-default-opacity 90)
 ```
 
 In contrast, the variable `frame-opacity` is used for the current opacity. So this variable is set to `100` if transparency is disabled.
@@ -383,7 +383,7 @@ In contrast, the variable `frame-opacity` is used for the current opacity. So th
 Now follows a function to toggle the transparent background on and off.
 
 ```emacs-lisp
-(defvar opacity-type "background" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
+(defvar opacity-type "full-frame" "Type of opacity to use. If set to \"background\" only the background will be transparent. If set to \"full-frame\", the entire frame will be transparent. Needs to be refreshed using `update-background-opacity'")
 (defun update-background-opacity ()
         "update transparency to the value of `frame-opacity' and the type `opacity-type'"
         (interactive)
