@@ -17,9 +17,12 @@
       evil-split-window-below t)
 
 (defconst doom-module-config-file (concat doom-user-dir "config.org"))
+(defun open-emacs-config-file () "open `doom-module-config-file'"
+  (interactive)
+  (find-file doom-module-config-file))
 (map! :leader
  (:prefix ("o" . "open")
-       :desc "Emacs config"     "c"     #'doom/goto-private-config-file))
+       :desc "Emacs config"     "c"     #'open-emacs-config-file))
 
 (setq shell-file-name (executable-find "bash"))
 
@@ -113,7 +116,7 @@
 (setq +doom-dashboard-menu-sections
  '(("Configure Emacs"
     :icon (concat (nerd-icons-icon-for-mode 'emacs-lisp-mode :face 'doom-dashboard-menu-title) " ")
-    :action doom/goto-private-config-file
+    :action open-emacs-config-file
     :key "SPC o c")
    ("Take some notes"
     :icon (concat (nerd-icons-faicon "nf-fa-file_pen" :face 'doom-dashboard-menu-title) " ")
@@ -163,7 +166,7 @@
     (funcall oldfun)))
 
 (map! :map +doom-dashboard-mode-map
-      :ng "c"       #'doom/goto-private-config-file
+      :ng "c"       #'open-emacs-config-file
       :ng "r"       #'org-roam-node-find-default
       :ng "l"       #'citar-open-files
       :ng "p"       #'projectile-switch-project)

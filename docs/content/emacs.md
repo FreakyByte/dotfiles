@@ -56,9 +56,12 @@ Inspired by [tecosaur](https://tecosaur.github.io/emacs-config/config.html#bette
       evil-split-window-below t)
 
 (defconst doom-module-config-file (concat doom-user-dir "config.org"))
+(defun open-emacs-config-file () "open `doom-module-config-file'"
+  (interactive)
+  (find-file doom-module-config-file))
 (map! :leader
  (:prefix ("o" . "open")
-       :desc "Emacs config"     "c"     #'doom/goto-private-config-file))
+       :desc "Emacs config"     "c"     #'open-emacs-config-file))
 ```
 
 The [fish](https://fishshell.com/) shell is not [POSIX compatible](https://stackoverflow.com/questions/48732986/why-how-fish-does-not-support-posix), which among other things causes a bunch of garbage characters to appear whenever it is used in emacs (at least with my fish config). So it's better to have emacs use bash instead, especially in the interest of packages that rely on shell outputs
@@ -248,7 +251,7 @@ Now let's change the menu options on the dashboard. I added `doom-dashboard-widg
 (setq +doom-dashboard-menu-sections
  '(("Configure Emacs"
     :icon (concat (nerd-icons-icon-for-mode 'emacs-lisp-mode :face 'doom-dashboard-menu-title) " ")
-    :action doom/goto-private-config-file
+    :action open-emacs-config-file
     :key "SPC o c")
    ("Take some notes"
     :icon (concat (nerd-icons-faicon "nf-fa-file_pen" :face 'doom-dashboard-menu-title) " ")
@@ -306,7 +309,7 @@ Let's also add some shorter keybindings to the dashboard.
 
 ```emacs-lisp
 (map! :map +doom-dashboard-mode-map
-      :ng "c"       #'doom/goto-private-config-file
+      :ng "c"       #'open-emacs-config-file
       :ng "r"       #'org-roam-node-find-default
       :ng "l"       #'citar-open-files
       :ng "p"       #'projectile-switch-project)
