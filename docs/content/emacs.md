@@ -960,12 +960,6 @@ One of the killer features associated with org roam are fancy graphs, as e.g. pr
           org-roam-ui-open-on-start nil))
 ```
 
-There seems to be a bug in `org-roam-ui` that it only shows the first tag of a node when using emacs 29s `sqlite-builtin` (see [this issue](https://github.com/org-roam/org-roam-ui/issues/289)). So I unfortunately have to switch to using the system wide sqlite.
-
-```emacs-lisp
-(setq org-roam-database-connector 'sqlite)
-```
-
 
 #### Tagging links {#tagging-links}
 
