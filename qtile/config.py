@@ -296,9 +296,9 @@ def init_widget_list(with_systray):
                                 txt_maximized = "🗖 ",
                                 txt_minimized = "🗕 ",
                                 foreground = 'ffffff', # font color
-                                width = bar.CALCULATED,
                                 margin_y = 6,
-                                icon_size = 35
+                                icon_size = 35,
+                                stretch = False,
                         ),
                         widget.Spacer(),
                         widget.WidgetBox(
