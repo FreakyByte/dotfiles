@@ -130,12 +130,12 @@ wal_sorted_saturation = [pair[1] for pair in
                          sorted(zip(saturations, wal_colors_without_background),
                                 key=lambda pair: -pair[0])]
 
+wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
 hue_differences = [abs(col[0] - wal_background_hls[0]) for col in wal_hls_without_background]
 wal_sorted_huediff = [pair[1] for pair in
                          sorted(zip(hue_differences, wal_colors_without_background),
                                 key=lambda pair: -pair[0])]
 
-wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
 wal_background_lightness = wal_background_hls[1]
 
 # some magic numbers one can tweak

@@ -214,6 +214,7 @@ wal_sorted_saturation = [pair[1] for pair in
 
 Also it'd be cool to have access to the color which is most different in hue from the background color.
 #+begin_src python
+wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
 hue_differences = [abs(col[0] - wal_background_hls[0]) for col in wal_hls_without_background]
 wal_sorted_huediff = [pair[1] for pair in
                          sorted(zip(hue_differences, wal_colors_without_background),
@@ -222,7 +223,6 @@ wal_sorted_huediff = [pair[1] for pair in
 
 Another neat thing would be to have the background color at several different levels of lightness.
 #+begin_src python
-wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
 wal_background_lightness = wal_background_hls[1]
 
 # some magic numbers one can tweak
