@@ -28,6 +28,7 @@
   - [[#spell--and-grammar-checker][Spell- and grammar checker]]
   - [[#snippets][Snippets]]
   - [[#performance][Performance]]
+  - [[#debugging][Debugging]]
 - [[#org-mode][Org Mode]]
   - [[#org-paths][Org-Paths]]
   - [[#org-appearance][Org Appearance]]
@@ -545,13 +546,13 @@ We also need to do it for ~evil-org-delete-char~, since that has different input
 ** Windows and Buffers
 A key chord every time I want to switch windows or buffers is way too much work.
 #+begin_src emacs-lisp :tangle yes
-(map! :n "ö" 'evil-next-buffer
-      :n "Ö" 'evil-prev-buffer
-      :n "C-ö" 'switch-to-buffer
-      :n "C-j" 'evil-window-next
-      :n "C-k" 'evil-window-prev
-      :n "C-l" 'evil-window-vsplit
-      :n "C-ä" 'evil-window-split)
+(map! :n   "ö"   'evil-next-buffer
+      :n   "Ö"   'evil-prev-buffer
+      :nig "C-ö" 'switch-to-buffer
+      :nig "C-j" 'evil-window-next
+      :nig "C-k" 'evil-window-prev
+      :nig "C-l" 'evil-window-vsplit
+      :nig "C-ä" 'evil-window-split)
 (map! :after org
     :map org-mode-map
     "C-j" 'evil-window-next)
@@ -736,6 +737,15 @@ I am experiencing a bunch of little performance issues related to font-lock, so 
 Another one comes in form of lags while typing "long" lines, where long is not actually long, but just a couple hundred characters. This setting delays font-lock for a bit, which seems to help
 #+begin_src emacs-lisp :tangle yes
 (setq jit-lock-defer-time 0.25)
+#+end_src
+** Debugging
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix ("d" . "debugging")
+       :desc "debug on entry"             "e" #'debug-on-entry
+       :desc "view echo area messages"    "m" #'view-echo-area-messages
+       :desc "open sandbox"               "s" #'doom/sandbox
+       :desc "toggle debug on error"      "t" #'toggle-debug-on-error))
 #+end_src
 
 * Org Mode

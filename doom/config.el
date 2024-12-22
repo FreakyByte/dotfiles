@@ -330,13 +330,13 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (apply orig-fn count beg end type ?_ args))
 (advice-add 'evil-org-delete-char :around 'bb/evil-org-delete-char)
 
-(map! :n "ö" 'evil-next-buffer
-      :n "Ö" 'evil-prev-buffer
-      :n "C-ö" 'switch-to-buffer
-      :n "C-j" 'evil-window-next
-      :n "C-k" 'evil-window-prev
-      :n "C-l" 'evil-window-vsplit
-      :n "C-ä" 'evil-window-split)
+(map! :n   "ö"   'evil-next-buffer
+      :n   "Ö"   'evil-prev-buffer
+      :nig "C-ö" 'switch-to-buffer
+      :nig "C-j" 'evil-window-next
+      :nig "C-k" 'evil-window-prev
+      :nig "C-l" 'evil-window-vsplit
+      :nig "C-ä" 'evil-window-split)
 (map! :after org
     :map org-mode-map
     "C-j" 'evil-window-next)
@@ -469,6 +469,13 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
                 "TAB" 'yas-next-field-or-cdlatex))
 
 (setq jit-lock-defer-time 0.25)
+
+(map! :leader
+      (:prefix ("d" . "debugging")
+       :desc "debug on entry"             "e" #'debug-on-entry
+       :desc "view echo area messages"    "m" #'view-echo-area-messages
+       :desc "open sandbox"               "s" #'doom/sandbox
+       :desc "toggle debug on error"      "t" #'toggle-debug-on-error))
 
 (setq ;org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
