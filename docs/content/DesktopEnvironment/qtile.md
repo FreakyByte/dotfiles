@@ -42,12 +42,13 @@ weight = 1
 ### Imports {#imports}
 
 ```python
-from libqtile import bar, hook, layout, qtile, widget
+from libqtile import bar, hook, qtile, layout, widget
 from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
 import json
 import os
 import subprocess
+import colorsys
 ```
 
 
@@ -77,14 +78,21 @@ else:
 ```
 
 
-## Wallpaper and Pywal colors {#wallpaper-and-pywal-colors}
-
-I use [pywal](https://github.com/dylanaraps/pywal) to create colorschemes based on the current wallpaper. This lets me use these colors in qtile as well.
+## Wallpaper and Colors {#wallpaper-and-colors}
 
 ```python
 process = subprocess.Popen('~/.config/change-wallpaper.sh', shell=True, stdout=subprocess.PIPE)
 process.wait()
+```
 
+Somehow this runs the `change-wallpaper.sh` script twice, don't know why as of now.
+
+
+### Pywal {#pywal}
+
+I use [pywal](https://github.com/dylanaraps/pywal) to create colorschemes based on the current wallpaper. This lets me use these colors in qtile as well.
+
+```python
 colors = os.path.expanduser('~/.cache/wal/colors.json')
 colordict = json.load(open(colors))
 wal_foreground = colordict['special']['foreground']
@@ -93,7 +101,147 @@ wal_cursor = colordict['special']['cursor']
 wal_colors = [colordict['colors']['color' + str(i)] for i in range(16)]
 ```
 
-Somehow this runs the `change-wallpaper.sh` script twice, don't know why as of now.
+
+### Utility Functions {#utility-functions}
+
+I want to use the module [colorsys](https://docs.python.org/3/library/colorsys.html) to convert between different color systems. But this treats colors as tuples of floats between 0 and 1, whereas qtile treats them as hex strings. So we'll first need some conversion functions.
+
+```python
+def string_to_rgb(col):
+    col = col.strip('#')
+    if len(col) not in {6,8}:
+        raise ValueError("Not a valid color string.")
+    red = int(col[0:2], 16)/255
+    green = int(col[2:4], 16)/255
+    blue = int(col[4:6], 16)/255
+    if len(col) == 8:
+        alpha = int(col[6:8], 16)/255
+        return (red,green,blue,alpha)
+    else:
+        return (red,green,blue)
+
+def rgb_to_string(red,green,blue, alpha=None):
+    col = [red,green,blue,alpha]
+    if alpha == None:
+        col.remove(None)
+    if not all([0<=num<=1 for num in col]):
+        raise ValueError("Color values must be between 0 and 1.")
+    for i in range(len(col)):
+        col[i] = hex(round(255*col[i]))[2:]
+        while len(col[i]) < 2:
+            col[i] = "0" + col[i]
+    return ''.join(col)
+```
+
+What we want to do in the following is change the saturation and lightness of colors given to us by pywal. In the following function,
+
+-   `col` is an RGB or RGBA color, either as a hex string, as a tuple or as a list
+-   `value` represents a lightness or a saturation
+    -   if `value` is a float between 0 and 1, then set the lightness/saturation of `col` to `value`
+    -   if `value` is a string corresponding to a percentage, e.g. `"+10%"` or `"-5%"`, change the lightness/saturation accordingly
+-   `i` is just a helper index, corresponding to the index in HLS format. So for lightness `i=1`, and for saturation `i=2`. It just exists so I don't have to write the same function twice.
+
+<!--listend-->
+
+```python
+def modify_helper(col, value, i):
+    if type(col) == str:
+        col_rgb = list(string_to_rgb(col))
+    if type(col) == list:
+        col_rgb = col.copy
+    if type(col) == tuple:
+        col_rgb = list(col)
+
+    if len(col_rgb) == 4:
+        alpha = col_rgb[3]
+    else:
+        alpha = None
+
+    col_hsl = colorsys.rgb_to_hls(*col_rgb[0:3]) # remove alpha
+    current_value = col_hsl[i]
+    if type(value) == str:
+        value = value.strip('%')
+        perc = int(value)/100
+        new_value = max(0, min(1, current_value*(1+perc)))
+    else:
+        new_value = float(value)
+    col_hsl = list(col_hsl)
+    col_hsl[i] = new_value
+    col_rgb = colorsys.hls_to_rgb(*col_hsl)
+    col_rgb = list(col_rgb)
+    if alpha != None:
+        col_rgb.append(alpha)
+
+    if type(col) == str:
+        return rgb_to_string(*col_rgb)
+    if type(col) == list:
+        return list(col_rgb)
+    if type(col) == tuple:
+        return tuple(col_rgb)
+
+
+def modify_lightness(col,lightness):
+    return modify_helper(col,lightness,1)
+def modify_saturation(col,saturation):
+    return modify_helper(col,saturation,2)
+```
+
+
+### Picking Out Some Nice Colors {#picking-out-some-nice-colors}
+
+Now one thing I want is to pick out the color with the highest saturation (except from the background color). Or more generally, let's sort the colors by saturation.
+
+```python
+wal_colors_without_background = [col for col in wal_colors if col != wal_background]
+wal_hls_without_background = [colorsys.rgb_to_hls(*string_to_rgb(col))
+                              for col in wal_colors_without_background]
+
+saturations = [colorsys.rgb_to_hls(*string_to_rgb(col))[2] for col in wal_colors_without_background]
+wal_sorted_saturation = [pair[1] for pair in
+                         sorted(zip(saturations, wal_colors_without_background),
+                                key=lambda pair: -pair[0])]
+```
+
+Also it'd be cool to have access to the color which is most different in hue from the background color.
+
+```python
+hue_differences = [abs(col[0] - wal_background_hls[0]) for col in wal_hls_without_background]
+wal_sorted_huediff = [pair[1] for pair in
+                         sorted(zip(hue_differences, wal_colors_without_background),
+                                key=lambda pair: -pair[0])]
+```
+
+Another neat thing would be to have the background color at several different levels of lightness.
+
+```python
+wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
+wal_background_lightness = wal_background_hls[1]
+
+# some magic numbers one can tweak
+min_lightness = 0.5 * wal_background_lightness
+max_lightness = min(2*wal_background_lightness,1)
+num_lightness = 5
+
+lightnesses = [min_lightness + i*(max_lightness-min_lightness)/(num_lightness-1)
+               for i in range(num_lightness)]
+wal_background_versions = [modify_lightness(wal_background,l) for l in lightnesses]
+```
+
+
+### Ok but what colors do we actually want to use? {#ok-but-what-colors-do-we-actually-want-to-use}
+
+Now we finally set the colors used later in the config. For the primary color, let's lighten up the highest saturated color a bit.
+
+```python
+color_primary = modify_lightness(wal_sorted_saturation[0],0.7)
+color_primary = modify_saturation(color_primary,"+20%")
+
+color_secondary = modify_lightness(wal_sorted_saturation[1],0.85)
+color_secondary = modify_saturation(color_secondary,"+20%")
+
+bar_opacity = "C0"           # two hex digits
+color_bar = wal_background + bar_opacity
+```
 
 
 ## Random Config Variables {#random-config-variables}
@@ -140,7 +288,7 @@ keys = []
 ```
 
 
-## Layouts and Appearance {#layouts-and-appearance}
+## Layouts and Gaps {#layouts-and-gaps}
 
 Note that a "layout" in qtile doesn't just talk about how your windows will appear on your screen. It also specifies certain aspects of how you move around windows. This should be kept in mind when picking what layouts you want. For more info, see the [built-in layouts documentation](https://docs.qtile.org/en/latest/manual/ref/layouts.html) as well as my comments about my keybindings below.
 
@@ -153,8 +301,7 @@ layouts = [
     layout.MonadTall(
         border_width = 2,
         margin = 8,
-        border_focus = wal_colors[3],
-        border_normal = wal_background,
+        border_focus = color_primary,
         ),
     # layout.MonadWide(),
     layout.Max(),
@@ -165,7 +312,7 @@ I'll also set these options for the floating layout here since it fits here bett
 
 ```python
 floating_layout_theme = {"border_width": 2,
-                "border_focus": wal_colors[7],
+                "border_focus": color_secondary,
                 "border_normal": wal_background}
 ```
 
@@ -500,15 +647,14 @@ def init_widget_list(with_systray):
                                 hide_unused = False,
                                 highlight_color = ['151515C0','303030C0'], # background gradient
                                 inactive = '505050', # font color
-                                this_current_screen_border = wal_colors[7],
-                                this_screen_border = wal_colors[7],
+                                this_current_screen_border = color_primary,
+                                this_screen_border = color_primary,
                                 other_current_screen_border = None,
                                 other_screen_border = None,
                                 urgent_alert_method = 'line',
                                 urgent_border = 'FF0000',
                                 urgent_text = '000000',
                                 use_mouse_wheel = False,
-
                                 padding_x = 8 if laptop else None,
                                 fontsize = 18 if laptop else 15,
                         ),
@@ -522,7 +668,7 @@ def init_widget_list(with_systray):
                         widget.Spacer(),
                         widget.TaskList(
                                 highlight_method = 'border',
-                                border = wal_colors[3],
+                                border = color_primary,
                                 borderwidth = 2,
                                 unfocused_border = None,
                                 max_title_width = 250,
@@ -543,13 +689,14 @@ def init_widget_list(with_systray):
                                 text_closed = '󰝡',
                                 text_open = '󰝠',
                                 fontsize = 20,
-                                widgets=[widget.Systray(padding = 8)],
+                                widgets=[widget.Systray(padding = 8,
+                                        background = wal_background_versions[1] + bar_opacity)],
                                 padding = 0,
                         ),
                         widget.Clock(
                                 format="%H:%M, %A %-d. %B %Y",
                                 update_interval = 1.0,
-                                padding = 9,
+                                padding = 12,
                         ),
                         widget.BatteryIcon(
                                 update_interval = 60,
@@ -571,7 +718,7 @@ def init_widget_list(with_systray):
                         ),
                         widget.CurrentLayoutIcon(
                                 scale = 0.5,
-                                padding = 9,
+                                padding = 12,
                         ),
                 ]
         if not with_systray:
@@ -589,10 +736,11 @@ Now we package these into bars.
 my_bars = [bar.Bar(
             init_widget_list(with_systray),
             size = 40,
-            background = '#00000066', # transparent background
+            background = color_bar,
             opacity = 1, # but no transparency of widgets
             border_width = 0,
             reserve = True,
+            #margin = [5, 5, -2, 5],
         ) for with_systray in [True, False]]
 ```
 

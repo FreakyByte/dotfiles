@@ -24,12 +24,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile import bar, hook, layout, qtile, widget
+from libqtile import bar, hook, qtile, layout, widget
 from libqtile.config import Click, Drag, DropDown, Group, Key, Match, ScratchPad, Screen
 from libqtile.lazy import lazy
 import json
 import os
 import subprocess
+import colorsys
 
 hostname = subprocess.Popen("hostname", stdout=subprocess.PIPE ).communicate()[0]
 hostname = hostname.strip()  # remove trailing newline
@@ -53,6 +54,107 @@ wal_foreground = colordict['special']['foreground']
 wal_background = colordict['special']['background']
 wal_cursor = colordict['special']['cursor']
 wal_colors = [colordict['colors']['color' + str(i)] for i in range(16)]
+
+def string_to_rgb(col):
+    col = col.strip('#')
+    if len(col) not in {6,8}:
+        raise ValueError("Not a valid color string.")
+    red = int(col[0:2], 16)/255
+    green = int(col[2:4], 16)/255
+    blue = int(col[4:6], 16)/255
+    if len(col) == 8:
+        alpha = int(col[6:8], 16)/255
+        return (red,green,blue,alpha)
+    else:
+        return (red,green,blue)
+
+def rgb_to_string(red,green,blue, alpha=None):
+    col = [red,green,blue,alpha]
+    if alpha == None:
+        col.remove(None)
+    if not all([0<=num<=1 for num in col]):
+        raise ValueError("Color values must be between 0 and 1.")
+    for i in range(len(col)):
+        col[i] = hex(round(255*col[i]))[2:]
+        while len(col[i]) < 2:
+            col[i] = "0" + col[i]
+    return ''.join(col)
+
+def modify_helper(col, value, i):
+    if type(col) == str:
+        col_rgb = list(string_to_rgb(col))
+    if type(col) == list:
+        col_rgb = col.copy
+    if type(col) == tuple:
+        col_rgb = list(col)
+
+    if len(col_rgb) == 4:
+        alpha = col_rgb[3]
+    else:
+        alpha = None
+
+    col_hsl = colorsys.rgb_to_hls(*col_rgb[0:3]) # remove alpha
+    current_value = col_hsl[i]
+    if type(value) == str:
+        value = value.strip('%')
+        perc = int(value)/100
+        new_value = max(0, min(1, current_value*(1+perc)))
+    else:
+        new_value = float(value)
+    col_hsl = list(col_hsl)
+    col_hsl[i] = new_value
+    col_rgb = colorsys.hls_to_rgb(*col_hsl)
+    col_rgb = list(col_rgb)
+    if alpha != None:
+        col_rgb.append(alpha)
+
+    if type(col) == str:
+        return rgb_to_string(*col_rgb)
+    if type(col) == list:
+        return list(col_rgb)
+    if type(col) == tuple:
+        return tuple(col_rgb)
+
+
+def modify_lightness(col,lightness):
+    return modify_helper(col,lightness,1)
+def modify_saturation(col,saturation):
+    return modify_helper(col,saturation,2)
+
+wal_colors_without_background = [col for col in wal_colors if col != wal_background]
+wal_hls_without_background = [colorsys.rgb_to_hls(*string_to_rgb(col))
+                              for col in wal_colors_without_background]
+
+saturations = [colorsys.rgb_to_hls(*string_to_rgb(col))[2] for col in wal_colors_without_background]
+wal_sorted_saturation = [pair[1] for pair in
+                         sorted(zip(saturations, wal_colors_without_background),
+                                key=lambda pair: -pair[0])]
+
+hue_differences = [abs(col[0] - wal_background_hls[0]) for col in wal_hls_without_background]
+wal_sorted_huediff = [pair[1] for pair in
+                         sorted(zip(hue_differences, wal_colors_without_background),
+                                key=lambda pair: -pair[0])]
+
+wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
+wal_background_lightness = wal_background_hls[1]
+
+# some magic numbers one can tweak
+min_lightness = 0.5 * wal_background_lightness
+max_lightness = min(2*wal_background_lightness,1)
+num_lightness = 5
+
+lightnesses = [min_lightness + i*(max_lightness-min_lightness)/(num_lightness-1)
+               for i in range(num_lightness)]
+wal_background_versions = [modify_lightness(wal_background,l) for l in lightnesses]
+
+color_primary = modify_lightness(wal_sorted_saturation[0],0.7)
+color_primary = modify_saturation(color_primary,"+20%")
+
+color_secondary = modify_lightness(wal_sorted_saturation[1],0.85)
+color_secondary = modify_saturation(color_secondary,"+20%")
+
+bar_opacity = "C0"           # two hex digits
+color_bar = wal_background + bar_opacity
 
 follow_mouse_focus = True
 bring_front_click = "floating_only"
@@ -80,15 +182,14 @@ layouts = [
     layout.MonadTall(
         border_width = 2,
         margin = 8,
-        border_focus = wal_colors[3],
-        border_normal = wal_background,
+        border_focus = color_primary,
         ),
     # layout.MonadWide(),
     layout.Max(),
 ]
 
 floating_layout_theme = {"border_width": 2,
-                "border_focus": wal_colors[7],
+                "border_focus": color_secondary,
                 "border_normal": wal_background}
 
 groups = [Group(i) for i in "1234567890"]
@@ -264,15 +365,14 @@ def init_widget_list(with_systray):
                                 hide_unused = False,
                                 highlight_color = ['151515C0','303030C0'], # background gradient
                                 inactive = '505050', # font color
-                                this_current_screen_border = wal_colors[7],
-                                this_screen_border = wal_colors[7],
+                                this_current_screen_border = color_primary,
+                                this_screen_border = color_primary,
                                 other_current_screen_border = None,
                                 other_screen_border = None,
                                 urgent_alert_method = 'line',
                                 urgent_border = 'FF0000',
                                 urgent_text = '000000',
                                 use_mouse_wheel = False,
-
                                 padding_x = 8 if laptop else None,
                                 fontsize = 18 if laptop else 15,
                         ),
@@ -286,7 +386,7 @@ def init_widget_list(with_systray):
                         widget.Spacer(),
                         widget.TaskList(
                                 highlight_method = 'border',
-                                border = wal_colors[3],
+                                border = color_primary,
                                 borderwidth = 2,
                                 unfocused_border = None,
                                 max_title_width = 250,
@@ -307,13 +407,14 @@ def init_widget_list(with_systray):
                                 text_closed = '󰝡',
                                 text_open = '󰝠',
                                 fontsize = 20,
-                                widgets=[widget.Systray(padding = 8)],
+                                widgets=[widget.Systray(padding = 8,
+                                        background = wal_background_versions[1] + bar_opacity)],
                                 padding = 0,
                         ),
                         widget.Clock(
                                 format="%H:%M, %A %-d. %B %Y",
                                 update_interval = 1.0,
-                                padding = 9,
+                                padding = 12,
                         ),
                         widget.BatteryIcon(
                                 update_interval = 60,
@@ -335,7 +436,7 @@ def init_widget_list(with_systray):
                         ),
                         widget.CurrentLayoutIcon(
                                 scale = 0.5,
-                                padding = 9,
+                                padding = 12,
                         ),
                 ]
         if not with_systray:
@@ -349,10 +450,11 @@ def init_widget_list(with_systray):
 my_bars = [bar.Bar(
             init_widget_list(with_systray),
             size = 40,
-            background = '#00000066', # transparent background
+            background = color_bar,
             opacity = 1, # but no transparency of widgets
             border_width = 0,
             reserve = True,
+            #margin = [5, 5, -2, 5],
         ) for with_systray in [True, False]]
 
 screens = [
