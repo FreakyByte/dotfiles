@@ -1235,6 +1235,8 @@ INTER signals whether the function has been called interactively."
       :map LaTeX-mode-map
       "\"" 'insert-standard-quote)
 
+(setq major-mode-remap-alist major-mode-remap-defaults)
+
 (setq +latex-viewers '(pdf-tools zathura okular)
       TeX-view-program-selection '((output-pdf "Zathura") (output-pdf "Okular") (output-pdf "PDF Tools"))
       TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)

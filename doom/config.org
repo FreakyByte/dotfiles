@@ -1689,6 +1689,11 @@ So instead, after like 3 hours of trial and error, I'm settling for this hack.
       :map LaTeX-mode-map
       "\"" 'insert-standard-quote)
 #+end_src
+
+Workaround for [[https://github.com/doomemacs/doomemacs/issues/8191][this issue]] which makes doom not enter LaTeX-mode upon opening a tex file when using emacs ver. <30.
+#+begin_src emacs-lisp
+(setq major-mode-remap-alist major-mode-remap-defaults)
+#+end_src
 ** Viewer
 Set default viewer to ~pdf-tools~ and automatically refresh the document buffer.
 #+begin_src emacs-lisp

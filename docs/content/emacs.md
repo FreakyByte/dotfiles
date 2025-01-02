@@ -1874,6 +1874,12 @@ So instead, after like 3 hours of trial and error, I'm settling for this hack.
       "\"" 'insert-standard-quote)
 ```
 
+Workaround for [this issue](https://github.com/doomemacs/doomemacs/issues/8191) which makes doom not enter LaTeX-mode upon opening a tex file when using emacs ver. &lt;30.
+
+```emacs-lisp
+(setq major-mode-remap-alist major-mode-remap-defaults)
+```
+
 
 ### Viewer {#viewer}
 
