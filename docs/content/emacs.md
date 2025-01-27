@@ -50,7 +50,8 @@ Inspired by [tecosaur](https://tecosaur.github.io/emacs-config/config.html#bette
 (setq undo-limit 80000000                         ; Raise undo-limit to 80Mb
       evil-want-fine-undo t                       ; By default while in insert all changes are one big blob. Be more granular
       auto-save-default t                         ; Nobody likes to loose work, I certainly don't
-      truncate-string-ellipsis "…")
+      truncate-string-ellipsis "…"
+      completion-ignore-case t)
 
 (setq evil-vsplit-window-right t
       evil-split-window-below t)
@@ -872,15 +873,13 @@ Another one comes in form of lags while typing "long" lines, where long is not a
              "DONE(d)"
              "DELEGATED(D)"
              "CANCELLED(c)" ))
-        org-todo-keyword-faces
-        '(("WAIT" . "#ECBE7B")
-        ("TODELEGATE" . "pink")
-        ("IDEA" . "cyan")
-        ("DONE" . "#5b8c68")
-        ("DELEGATED" . "#a9a1e1")
-        ("CANCELLED" . "#ff6c6b")
-        )
-        ))
+        org-todo-keyword-faces '(("WAIT" . "#ECBE7B")
+                                ("TODELEGATE" . "pink")
+                                ("IDEA" . "cyan")
+                                ("DONE" . "#5b8c68")
+                                ("DELEGATED" . "#a9a1e1")
+                                ("CANCELLED" . "#ff6c6b"))
+        org-image-align 'center))
 
 (custom-set-faces!
   `(org-level-1 :inherit outline-1 :height 1.4)
@@ -888,8 +887,7 @@ Another one comes in form of lags while typing "long" lines, where long is not a
   `(org-level-3 :inherit outline-3 :height 1.1)
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
-  `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0)
-)
+  `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0))
 ```
 
 
@@ -1562,7 +1560,7 @@ Typing `\operatorname` is very annoying, even with cdlatex. So lets declare a bu
 
 ```emacs-lisp
 (setq org-latex-mathoperators (list
-        "acl" "Ad" "Aut" "bd" "card" "cl" "coker" "Covar" "dcl" "ded" "ED" "End" "Ext" "fr" "Frac" "GL" "Hom" "id" "im" "ind" "lexmin" "lexmax" "Li" "Mat" "ord" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor" "Var"))
+        "acl" "Ad" "Aut" "bd" "card" "cl" "coker" "Covar" "dcl" "ded" "dist" "ED" "End" "Ext" "fr" "Frac" "GL" "Hom" "id" "im" "ind" "lexmin" "lexmax" "Li" "Mat" "ord" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor" "Var"))
 (dolist (macro org-latex-mathoperators)
   (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
   (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)

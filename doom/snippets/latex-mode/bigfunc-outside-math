@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: bigfunc-outside-math
+# uuid: bigfunc-outside-math
+# key: bigfunc
+# condition: (not (save-restriction (widen) (texmathp)))
+# --
+\begin{align*}
+    ${1:f}\colon ${2:A} &\to ${3:B}\\\\
+    ${4:x} &\mapsto ${5:f(x)}
+\end{align*}
+$0
