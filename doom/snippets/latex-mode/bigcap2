@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: bigcap2
+# uuid: bigcap2
+# key: \cap
+# condition: (texmathp)
+# --
+\bigcap_{${1:i \in I}} $0
