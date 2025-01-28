@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: upper-minkowski-dimension
+# uuid: upper-minkowski-dimension
+# key: dimM
+# condition: (and (texmathp) (quote auto))
+# --
+\overline{\dim}_M $0
