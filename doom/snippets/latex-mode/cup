@@ -2,6 +2,6 @@
 # name: cup
 # uuid: cup
 # key: uu
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \cup $0

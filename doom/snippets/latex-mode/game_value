@@ -4,4 +4,4 @@
 # key: <g
 # condition: t
 # --
-\langle ${1:\quad} \mid ${2:\quad} \rangle$0
+\langle ${1:\quad} \mid ${2:\quad} \rangle $0

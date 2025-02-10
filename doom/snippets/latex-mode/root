@@ -2,6 +2,6 @@
 # name: sqrt[]{}
 # uuid: root
 # key: root
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\sqrt[$1]{$2}$0
+\sqrt[$1]{$2} $0

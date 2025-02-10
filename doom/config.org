@@ -41,6 +41,7 @@
   - [[#viewer][Viewer]]
   - [[#appearance-1][Appearance]]
   - [[#cdlatex][CDLaTeX]]
+  - [[#reftex][RefTeX]]
 - [[#literature--citations][Literature & Citations]]
   - [[#note-taking][Note Taking]]
   - [[#appearance-2][Appearance]]
@@ -626,9 +627,10 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 #+begin_src emacs-lisp :tangle yes
 (setq yas-triggers-in-field t)
 #+end_src
-Also I don't want to have to insert an unnecessary space before being able to expand a snippet.
+
+YAS kind of wrecks my undo history sometimes. Maybe this helps.
 #+begin_src emacs-lisp
-(setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
+(setq yas-snippet-revival nil)
 #+end_src
 
 I use some snippets that modify the surrounding characters of the buffer (e.g. by deleting the space before the snippet). This causes YAS to throw a warning. Let's disable that.
@@ -639,6 +641,30 @@ I use some snippets that modify the surrounding characters of the buffer (e.g. b
                 warning-suppress-types
                 :test 'equal))
 #+end_src
+
+*** Where Snippets start
+The following variable determines how YAS detects the beginning of a snippet. (This is the default value.)
+#+begin_src emacs-lisp
+(setq yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+#+end_src
+
+One could also be more lenient with snippet expansion by replacing =yas-try-key-from-whitespace= with =yas-longest-key-from-whitespace= in the above. Let's illustrate this with an example. Suppose =bla= is a snippet key that expands to =blub=. Now there's two possibilities:
+- Typing =blibla= and hitting tab does nothing, one would need to do =bli bla= and then hit tab to get =bli blup=. This is the default behaviour, achieved by =yas-try-key-from-whitespace=.
+- Typing =blibla= and hitting tab expands to =bliblub=. This would achieved by =yas-longest-key-from-whitespace=.
+The second sometimes avoids hitting the space key, but sometimes makes snippets expand accidentally. This is especially problematic if you have very short snippet keys that appear as parts of words, and especially especially when auto-expanding (see below).
+
+I've changed my mind on this multiple times, which is why this paragraph of documentation is here. Right now I favor the default behaviour.
+
+*** Avoiding Backslashes
+#+begin_src emacs-lisp
+(defadvice! include-backslash (oldfun)
+  :around #'yas--templates-for-key-at-point
+  (setq my-syntax-table (copy-syntax-table (syntax-table)))
+  (modify-syntax-entry ?\\ "w" my-syntax-table)
+  (with-syntax-table my-syntax-table (funcall oldfun)))
+#+end_src
+This advice makes YAS think that a backslash has [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-Class-Table.html][syntax class]] word while detecting the begining of a snippet. In practice this means that backslashes will always be viewed as a part of the (potential) snippet key. For example, if =bla= is a snippet key that expands to =blub=, then =\​bla= will not expand (assuming there is no different snippet with key =\​bla=). The big advantage of this is that I can have e.g. a snippet that auto-expands from =sqrt= to =\​sqrt{}= without screwing things up whenever I type the full command manually after all.
+
 *** Keybindings (and avoiding remappings)
 Some nicer shortcuts for creating snippets etc. would also be nice.
 Doom however automatically remaps the functions ~yas-new-snippet~ and ~yas-visit-snippet-file~ to the "superior alternatives" ~+snippets/new~ and ~+snippets/edit~ (see [[file:~/.config/emacs/modules/editor/snippets/config.el::;; Replace commands with superior alternatives][~/config/emacs/modules/editor/snippets/config.el, line 81]]). I respectfully disagree with that. My main problem is ~+snippets/new~ doesn't save the snippet in the right folder when creating a snippet for a mode different from the current major mode. Other issues are discussed [[https://github.com/doomemacs/doomemacs/issues/4330][here]]. Since this issue is a bit older and hasn't seen recent activity, I'll opt for a workaround for now.
@@ -663,23 +689,27 @@ Doom however automatically remaps the functions ~yas-new-snippet~ and ~yas-visit
 #+end_src
 Now let's just make ~yas-new-snippet~ use the same template as ~+snippets/new~:
 #+begin_src emacs-lisp
-  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
-                                    "# name: $1\n"
-                                    "# uuid: $2\n"
-                                    "# key: $3\n"
-                                    "# condition: ${4:t}\n"
-                                    "# --\n"
-                                    "$0"))
+(setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                  "# name: $1\n"
+                                  "# uuid: $2\n"
+                                  "# key: $3\n"
+                                  "# condition: ${4:t}\n"
+                                  "# --\n"
+                                  "$0"))
 #+end_src
 *** Automatic snippet expansion
 YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [[https://github.com/ymarco/auto-activating-snippets][AAS]], was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [[https://github.com/joaotavora/yasnippet/issues/998][manually adding auto expanding capabilities to YAS.]] This way, snippets that are marked with the condition ='auto= will be auto-expanded.
 #+begin_src emacs-lisp :tangle yes
-  (defun yas-try-expanding-auto-snippets ()
-    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
-      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
-        (yas-expand))))
-  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
+(defun yas-try-expanding-auto-snippets ()
+  (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+    (let ((yas-buffer-local-condition ''(require-snippet-condition . auto))
+          ;(yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+          )
+      (yas-expand))))
+(add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 #+end_src
+One thing we can do here is temporarily change ~yas-key-syntaxes~. This way we have the option to change the setting [[*Where Snippets start][Where Snippets start]] for automatic snippets only.
+
 *** The TAB key
 The tab key is getting intentionally overloaded with snippets, cdlatex and various org-mode things. But one thing that annoyingly interferes with these is autocomplete. Lets unbind the tab key from that and rather use Return for autocomplete and arrow keys (or C-j, C-k) for picking completion suggestions.
 #+begin_src emacs-lisp :tangle yes
@@ -733,12 +763,19 @@ Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. Th
 #+end_src
 
 ** Performance
+*** Font-Lock
 I am experiencing a bunch of little performance issues related to font-lock, so syntax highlighting and other visuals of text. One big one seems to be related to having many folded org headings on the screen, so should try to avoid that.
 
 Another one comes in form of lags while typing "long" lines, where long is not actually long, but just a couple hundred characters. This setting delays font-lock for a bit, which seems to help
 #+begin_src emacs-lisp :tangle yes
 (setq jit-lock-defer-time 0.25)
 #+end_src
+*** Org-Element Cache
+Org-Element hangs when expanding snippets that change the buffer. Got no better solution than to turn it off.
+#+begin_src emacs-lisp
+(setq org-element-use-cache nil)
+#+end_src
+
 ** Debugging
 #+begin_src emacs-lisp
 (map! :leader
@@ -1626,15 +1663,18 @@ The [[https://github.com/spwhitton/org-d20][org-d20]] minor mode allows for roll
       )
 #+end_src
 * LaTeX
+#+begin_src emacs-lisp
+(set-file-template! #'LaTeX-mode :mode #'latex-mode)
+#+end_src
 ** "Fixing" defaults
 There are a couple of things that I, a person who learned LaTeX long before emacs, find quite annoying in how Doom is setup do deal with LaTeX by default.
 These changes make everything feel more intuitive to me.
 #+begin_src emacs-lisp
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
-;;... so I map toggle keybindings to localleader instead
-(map! :localleader
-      :map evil-tex-mode-map
-      (:prefix ("t" . "toggle") ;; TODO this is not displaying descriptions properly, probably related to https://github.com/hlissner/doom-emacs/issues/4288
+;;... so I map toggle keybindings somewhere else instead
+(map! :ni "C-t" nil) ;; unmap +workspace/new
+(map! :map (evil-tex-mode-map org-mode-map)
+      (:prefix ("C-t" . "toggle")
        :desc "command"          "c"     #'evil-tex-toggle-command
        :desc "delimiter"        "d"     #'evil-tex-toggle-delim
        :desc "environment"      "e"     #'evil-tex-toggle-env
@@ -1767,7 +1807,31 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
 #+end_src
+** RefTeX
+Let RefTeX recognize some more environments, what prefix to use for their labels, and how to reference them.
+#+begin_src emacs-lisp
+(setq reftex-label-alist
+   '(("axiom"       ?a "ax:"  "~\\ref{%s}" 1 ("axiom"       "ax.")   -3)
+     ("definition"  ?d "def:" "~\\ref{%s}" 1 ("definition"  "def.")  -3)
+     ("corollary"   ?h "thm:" "~\\ref{%s}" 1 ("corollary"   "cor.")  -3)
+     ("fact"        ?h "thm:" "~\\ref{%s}" 1 ("fact")                -3)
+     ("lemma"       ?h "thm:" "~\\ref{%s}" 1 ("lemma"       "lem.")  -3)
+     ("proposition" ?h "thm:" "~\\ref{%s}" 1 ("proposition" "prop.") -3)
+     ("theorem"     ?h "thm:" "~\\ref{%s}" 1 ("theorem"     "thm.")  -3)))
+#+end_src
 
+How should RefTeX come up with labels? For everything whose code is in the first string, RefTeX will try to guess an appropriate label from the context. For everything in the second string, RefTeX will query the user for a label.
+#+begin_src emacs-lisp
+(setq reftex-insert-label-flags '("sadh" "sftadh"))
+#+end_src
+
+Nicer keybindings:
+#+begin_src emacs-lisp
+(map! :localleader :map evil-tex-mode-map
+      "l"       #'reftex-label
+      "r"       (lambda () (interactive) (reftex-reference " ")) ; type "any"
+      "R"       #'reftex-reference)
+#+end_src
 * Literature & Citations
 The ~:biblio~ module of Doom makes citations a lot easier. Built on [[https://blog.tecosaur.com/tmio/2021-07-31-citations.html][org-cite]], [[https://github.com/emacs-citar/citar][citar]], and [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]], it provides a uniform way of inserting citations in org-mode and LaTeX-mode, viewing saved PDFs and writing roam-notes on them.
 

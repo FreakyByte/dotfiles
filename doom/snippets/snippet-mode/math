@@ -4,4 +4,4 @@
 # key: math
 # condition: t
 # --
-(texmathp)
+(save-restriction (widen) (texmathp))

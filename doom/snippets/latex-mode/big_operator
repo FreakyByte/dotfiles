@@ -4,5 +4,11 @@
 # group: math
 # name: big_operator
 # uuid: big_operator
+# condition: (save-restriction (widen) (texmathp))
 # --
-\\big${1:$$(yas/choose-value '("oplus" "otimes" "odot" "cup" "cap" "uplus" "sqcup" "vee" "wedge"))}_{$2}^{${3:\infty}}$0
+\\big${1:$$(yas-auto-next (yas-choose-value '("oplus" "otimes" "odot" "cup" "cap" "uplus" "sqcup" "vee" "wedge")))}${2:$(when (> (length yas-text) 0) "_")
+}${2:$(when (> (length yas-text) 1) "{")
+}${2:i=0}${2:$(when (> (length yas-text) 1) "}")
+}${3:$(when (> (length yas-text) 0) "^")
+}${3:$(when (> (length yas-text) 1) "{")
+}${3:\infty}${3:$(when (> (length yas-text) 1) "}")} $0

@@ -2,7 +2,7 @@
 # name: partial derivative
 # key: pdiff
 # uuid: pdiff
-# condition: (texmathp)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \\frac{\\partial $1}{\\partial ${2:x}} $0

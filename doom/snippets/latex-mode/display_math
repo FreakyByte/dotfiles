@@ -1,7 +1,8 @@
 # key: dm
 # name: Display Math
 # uuid: display_math
-# condition: (not (texmathp))
+# condition: (not (save-restriction (widen) (texmathp)))
 # group: math
 # --
-\[$0\]
+\[$1\]
+$0

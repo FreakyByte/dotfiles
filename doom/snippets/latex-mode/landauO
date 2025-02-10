@@ -2,6 +2,6 @@
 # name: landauO
 # uuid: landauO
 # key: OO
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\mathcal{O}($1)$0
+\mathcal{O}($1) $0

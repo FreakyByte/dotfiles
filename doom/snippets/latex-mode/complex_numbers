@@ -2,6 +2,6 @@
 # name: complex numbers
 # uuid: complex_numbers
 # key: CC
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \mathbb{C}$0

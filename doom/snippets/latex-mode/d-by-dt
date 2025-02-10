@@ -2,7 +2,7 @@
 # name: d-by-dt
 # uuid: d-by-dt
 # key: ddt
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
-\\frac{\\mathrm{d} $1}{\\mathrm{d} ${2:t}}$0
+\\frac{\\mathrm{d}}{\\mathrm{d} ${1:t}} $0

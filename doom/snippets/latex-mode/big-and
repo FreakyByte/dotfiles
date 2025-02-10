@@ -1,0 +1,10 @@
+# key: AND
+# name: big-and
+# condition: (and (save-restriction (widen) (texmathp)) 'auto)
+# --
+\bigwedge${1:$(when (> (length yas-text) 0) "_")
+}${1:$(when (> (length yas-text) 1) "{")
+}${1:i=0}${1:$(when (> (length yas-text) 1) "}")
+}${2:$(when (> (length yas-text) 0) "^")
+}${2:$(when (> (length yas-text) 1) "{")
+}${2:\infty}${2:$(when (> (length yas-text) 1) "}")} $0

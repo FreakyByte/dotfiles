@@ -385,13 +385,21 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq yas-triggers-in-field t)
 
-(setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
+(setq yas-snippet-revival nil)
 
 (use-package warnings
     :config
     (cl-pushnew '(yasnippet backquote-change)
                 warning-suppress-types
                 :test 'equal))
+
+(setq yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+
+(defadvice! include-backslash (oldfun)
+  :around #'yas--templates-for-key-at-point
+  (setq my-syntax-table (copy-syntax-table (syntax-table)))
+  (modify-syntax-entry ?\\ "w" my-syntax-table)
+  (with-syntax-table my-syntax-table (funcall oldfun)))
 
 (defun yas-new-snippet-clone (&optional no-template)
   "Clone of `yas-new-snippet' to avoid Doom Emacs remapping keys."
@@ -411,19 +419,21 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        :desc "find private snippet"     "p" #'+snippets/find-private
        :desc "reload all snippets"      "r" #'yas-reload-all))
 
-  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
-                                    "# name: $1\n"
-                                    "# uuid: $2\n"
-                                    "# key: $3\n"
-                                    "# condition: ${4:t}\n"
-                                    "# --\n"
-                                    "$0"))
+(setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                  "# name: $1\n"
+                                  "# uuid: $2\n"
+                                  "# key: $3\n"
+                                  "# condition: ${4:t}\n"
+                                  "# --\n"
+                                  "$0"))
 
-  (defun yas-try-expanding-auto-snippets ()
-    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
-      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
-        (yas-expand))))
-  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
+(defun yas-try-expanding-auto-snippets ()
+  (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+    (let ((yas-buffer-local-condition ''(require-snippet-condition . auto))
+          ;(yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+          )
+      (yas-expand))))
+(add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 
 (after! company
         (map! :map company-search-map
@@ -470,6 +480,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
                 "TAB" 'yas-next-field-or-cdlatex))
 
 (setq jit-lock-defer-time 0.25)
+
+(setq org-element-use-cache nil)
 
 (map! :leader
       (:prefix ("d" . "debugging")
@@ -1194,11 +1206,13 @@ INTER signals whether the function has been called interactively."
        )
       )
 
+(set-file-template! #'LaTeX-mode :mode #'latex-mode)
+
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
-;;... so I map toggle keybindings to localleader instead
-(map! :localleader
-      :map evil-tex-mode-map
-      (:prefix ("t" . "toggle") ;; TODO this is not displaying descriptions properly, probably related to https://github.com/hlissner/doom-emacs/issues/4288
+;;... so I map toggle keybindings somewhere else instead
+(map! :ni "C-t" nil) ;; unmap +workspace/new
+(map! :map (evil-tex-mode-map org-mode-map)
+      (:prefix ("C-t" . "toggle")
        :desc "command"          "c"     #'evil-tex-toggle-command
        :desc "delimiter"        "d"     #'evil-tex-toggle-delim
        :desc "environment"      "e"     #'evil-tex-toggle-env
@@ -1295,6 +1309,22 @@ INTER signals whether the function has been called interactively."
      (?a    "\\abs"           nil          t    nil  nil)
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
+
+(setq reftex-label-alist
+   '(("axiom"       ?a "ax:"  "~\\ref{%s}" 1 ("axiom"       "ax.")   -3)
+     ("definition"  ?d "def:" "~\\ref{%s}" 1 ("definition"  "def.")  -3)
+     ("corollary"   ?h "thm:" "~\\ref{%s}" 1 ("corollary"   "cor.")  -3)
+     ("fact"        ?h "thm:" "~\\ref{%s}" 1 ("fact")                -3)
+     ("lemma"       ?h "thm:" "~\\ref{%s}" 1 ("lemma"       "lem.")  -3)
+     ("proposition" ?h "thm:" "~\\ref{%s}" 1 ("proposition" "prop.") -3)
+     ("theorem"     ?h "thm:" "~\\ref{%s}" 1 ("theorem"     "thm.")  -3)))
+
+(setq reftex-insert-label-flags '("sadh" "sftadh"))
+
+(map! :localleader :map evil-tex-mode-map
+      "l"       #'reftex-label
+      "r"       (lambda () (interactive) (reftex-reference " ")) ; type "any"
+      "R"       #'reftex-reference)
 
 (setq! citar-bibliography '("/home/reiti/Zotero/biblioteca.bib"))
 (setq! org-cite-global-bibliography citar-bibliography)

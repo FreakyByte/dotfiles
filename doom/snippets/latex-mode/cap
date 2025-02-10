@@ -1,5 +1,5 @@
 # key: aa
 # name: cap
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \cap $0

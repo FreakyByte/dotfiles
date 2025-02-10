@@ -4,4 +4,4 @@
 # key: automath
 # condition: t
 # --
-(and (texmathp) (quote auto))
+(and (save-restriction (widen) (texmathp)) (quote auto))

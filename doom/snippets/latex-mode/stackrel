@@ -2,6 +2,8 @@
 # name: stackrel
 # uuid: stackrel
 # key: stackrel
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\\stackrel{${1:above}}{${2:below}} $0
+\\stackrel${1:$(when (> (length yas-text) 0) "[")
+}${1:below}${1:$(when (> (length yas-text) 0) "]")
+}{${2:above}}{${3:bin}} $0

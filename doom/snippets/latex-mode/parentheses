@@ -2,6 +2,6 @@
 # name: parentheses
 # uuid: parentheses
 # key: ()
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\left($1\right)$0
+\left($1\right) $0

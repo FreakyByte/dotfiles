@@ -2,6 +2,6 @@
 # name: finite field
 # uuid: finite_field
 # key: FF
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \mathbb{F}_{$1}$0

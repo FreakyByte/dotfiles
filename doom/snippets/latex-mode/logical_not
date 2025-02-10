@@ -2,6 +2,6 @@
 # name: not
 # uuid: logical_not
 # key: not
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \neg $0

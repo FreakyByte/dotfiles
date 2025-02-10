@@ -2,6 +2,6 @@
 # name: probability
 # uuid: prob
 # key: prob
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\mathbb{P}\left($1\right)$0
+\mathbb{P}\left($1\right) $0

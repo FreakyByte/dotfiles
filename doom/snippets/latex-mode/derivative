@@ -2,7 +2,7 @@
 # name: derivative
 # uuid: derivative
 # key: diff
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
-\\frac{\\mathrm{d} $1}{\\mathrm{d} ${2:x}}$0
+\\frac{\\mathrm{d} $1}{\\mathrm{d} ${2:x}} $0

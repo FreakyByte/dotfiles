@@ -2,9 +2,9 @@
 # name: cases
 # uuid: cases
 # key: case
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # group: math
 # --
 \\begin{cases}
   $1
-\\end{cases}$0
+\\end{cases} $0

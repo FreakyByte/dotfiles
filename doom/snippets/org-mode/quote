@@ -5,6 +5,6 @@
 # condition: t
 # --
 #+BEGIN_QUOTE
-  ${1:something smart}
+${1:something smart}
 #+END_QUOTE
 $0

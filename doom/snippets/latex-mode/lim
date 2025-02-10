@@ -2,6 +2,6 @@
 # name: lim
 # uuid: lim
 # key: lim
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # --
 \lim_{${1:n} \to ${2:\infty}} $0

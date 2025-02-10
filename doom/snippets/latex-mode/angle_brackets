@@ -2,6 +2,6 @@
 # name: angle_brackets
 # uuid: angle_brackets
 # key: <>
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \left\langle $1 \right\rangle $0

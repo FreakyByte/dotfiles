@@ -2,6 +2,6 @@
 # name: times
 # uuid: times
 # key: xx
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\times
+\times $0

@@ -4,4 +4,4 @@
 # uuid: emph
 # condition: (not (save-restriction (widen) (texmathp)))
 # --
-\emph{${1:text}}$0
+\emph{${1:text}} $0

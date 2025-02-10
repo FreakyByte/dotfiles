@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: stackbin
+# uuid: stackbin
+# key: stackbin
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\\stackbin${1:$(when (> (length yas-text) 0) "[")
+}${1:below}${1:$(when (> (length yas-text) 0) "]")
+}{${2:above}}{${3:bin}} $0

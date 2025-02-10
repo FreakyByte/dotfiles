@@ -1,0 +1,62 @@
+# -*- mode: snippet -*-
+# name: LaTeX Template
+# uuid: latex_template
+# key: __
+# condition: t
+# --
+\documentclass{`(yas-choose-value '("article" "book" "scrartcl" "scrbook" "kaobook"))`}
+
+\title{$1}
+\author{${2:`(user-full-name)`}}
+\date{${3:\today}}
+
+
+
+\usepackage[english]{babel}
+\usepackage[english=american]{csquotes}
+
+\usepackage{amsmath, amssymb, amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{fact}[theorem]{Fact}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\usepackage[
+  backend=biber,
+  style=numeric,
+  sorting=none,
+  doi=false,
+  isbn=false,
+  url=false,
+  eprint=false,
+]{biblatex}
+\addbibresource{~/Zotero/biblioteca.bib}
+
+\usepackage{enumitem}
+\usepackage{csquotes}
+\usepackage{parskip}
+\setlength\parindent{0pt}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{lipsum}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage{graphicx}
+\usepackage{tikz, pgfplots}
+
+
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+$0
+
+\end{document}

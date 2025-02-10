@@ -2,6 +2,6 @@
 # name: del
 # uuid: del
 # key: del
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # --
 \partial $0

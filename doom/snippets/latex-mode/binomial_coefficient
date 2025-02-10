@@ -4,6 +4,6 @@
 # group: math
 # name: binomial_coefficient
 # uuid: binomial_coefficient
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\binom{${1:n}}{${2:k}}$0
+\binom{${1:n}}{${2:k}} $0

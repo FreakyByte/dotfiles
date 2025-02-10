@@ -2,6 +2,6 @@
 # name: bigcap2
 # uuid: bigcap2
 # key: \cap
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # --
 \bigcap_{${1:i \in I}} $0

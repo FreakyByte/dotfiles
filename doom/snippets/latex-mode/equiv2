@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: equiv2
+# uuid: equiv2
+# key: ==
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\equiv $0

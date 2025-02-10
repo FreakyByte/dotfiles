@@ -5,5 +5,5 @@
 # condition: t
 # --
 #+begin_src python
-    $0
+$0
 #+end_src

@@ -2,6 +2,6 @@
 # name: monster
 # uuid: monster
 # key: MM
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\mathbb{M}
+\mathbb{M}$0

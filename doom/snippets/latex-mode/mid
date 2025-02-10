@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: mid
+# uuid: mid
+# key: |
+# condition: (save-restriction (widen) (texmathp))
+# --
+\mid $0

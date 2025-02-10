@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: liminf
 # uuid: liminf
-# key: linf
-# condition: (and (texmathp) 'auto)
+# key: liminf
+# condition: (save-restriction (widen) (texmathp))
 # --
 \liminf_{${1:n} \to ${2:\infty}} $0

@@ -2,7 +2,7 @@
 # name: Exists
 # uuid: exists
 # key: EE
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \exists $0

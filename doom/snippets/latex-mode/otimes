@@ -2,7 +2,7 @@
 # name: otimes
 # uuid: otimes
 # key: ox
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
-\otimes
+\otimes $0

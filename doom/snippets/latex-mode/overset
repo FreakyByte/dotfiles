@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: overset
+# uuid: overset
+# key: overset
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\overset{${1:above}}{${2:regular}} $0

@@ -2,6 +2,6 @@
 # name: homology
 # uuid: homology
 # key: HH
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\mathcal{H}
+\mathcal{H}$0

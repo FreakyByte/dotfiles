@@ -2,7 +2,7 @@
 # name: inverse
 # uuid: inverse
 # key: inv
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 `(delete-backward-char 1)`^{-1}

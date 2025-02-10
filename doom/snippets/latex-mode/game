@@ -3,4 +3,4 @@
 # uuid: game
 # key: game
 # --
-\\{ ${1:\quad} \mid ${2:\quad} \\}$0
+\\{ ${1:\quad} \mid ${2:\quad} \\} $0

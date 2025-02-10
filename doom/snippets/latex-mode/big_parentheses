@@ -2,6 +2,6 @@
 # name: big_parentheses
 # uuid: big_parentheses
 # key: big
-# condition: t
+# condition: (save-restriction (widen) (texmathp))
 # --
 \\${1:$$(yas/choose-value '("big" "Big" "bigg" "Bigg"))}l( $0  \\$1r)

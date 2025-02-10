@@ -2,7 +2,7 @@
 # name: floor function
 # uuid: floor
 # key: floor
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \\left\\lfloor $1 \\right\\rfloor $0

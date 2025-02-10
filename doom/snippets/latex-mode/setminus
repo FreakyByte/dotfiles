@@ -2,6 +2,6 @@
 # name: setminus
 # uuid: setminus
 # key: \
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # --
 \setminus

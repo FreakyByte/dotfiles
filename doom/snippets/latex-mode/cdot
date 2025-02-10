@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: cdot
+# uuid: cdot
+# key: **
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\cdot $0

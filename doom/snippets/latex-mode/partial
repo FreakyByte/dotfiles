@@ -2,6 +2,6 @@
 # name: partial
 # uuid: partial
 # key: part
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \partial $0

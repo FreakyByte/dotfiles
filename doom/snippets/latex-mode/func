@@ -2,6 +2,6 @@
 # name: function_template
 # uuid: function
 # key: func
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 ${1:f}\colon ${2:A} \to ${3:B} $0

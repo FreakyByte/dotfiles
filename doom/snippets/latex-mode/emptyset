@@ -2,6 +2,6 @@
 # name: emptyset
 # uuid: emptyset
 # key: emp
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \emptyset $0

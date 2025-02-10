@@ -2,6 +2,6 @@
 # name: frac
 # key: frac
 # uuid: frac
-# condition: (texmathp)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\frac{${1:numerator}}{${2:denominator}}$0
+\frac{${1:num}}{${2:denom}} $0

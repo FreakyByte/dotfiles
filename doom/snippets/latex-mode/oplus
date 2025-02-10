@@ -1,7 +1,7 @@
 # key: o+
 # name: oplus
 # uuid: oplus
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
-\oplus
+\oplus $0

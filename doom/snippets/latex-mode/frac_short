@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: frac_short
+# uuid: fr
+# key: fr
+# condition: (save-restriction (widen) (texmathp))
+# --
+\frac{${1:num}}{${2:denom}} $0

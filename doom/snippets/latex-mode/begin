@@ -5,5 +5,6 @@
 # condition: t
 # --
 \begin{${1:environment}}
-  $0
+  $2
 \end{$1}
+$0

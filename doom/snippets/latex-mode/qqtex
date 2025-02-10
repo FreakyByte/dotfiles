@@ -2,6 +2,6 @@
 # name: qqtex
 # uuid: qqtex
 # key: qqtex
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # --
 \qquad \text{$1} \qquad $0

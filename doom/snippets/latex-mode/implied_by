@@ -2,7 +2,7 @@
 # name: implied by
 # uuid: implied_by
 # key: <=
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \impliedby $0

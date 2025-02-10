@@ -2,6 +2,6 @@
 # name: or
 # uuid: logical_or
 # key: or
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \vee $0

@@ -2,6 +2,6 @@
 # name: mapsto
 # uuid: mapsto
 # key: mto
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \mapsto $0

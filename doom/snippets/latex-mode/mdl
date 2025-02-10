@@ -2,6 +2,6 @@
 # name: models
 # uuid: models
 # key: mdl
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \models $0

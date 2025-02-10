@@ -1,0 +1,5 @@
+# key: underset
+# name: underset
+# condition: (and (save-restriction (widen) (texmathp)) 'auto)
+# --
+\underset{${1:below}}{${2:regular}} $0

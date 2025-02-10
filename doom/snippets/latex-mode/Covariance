@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Covariance
+# uuid: Covar
+# key: Covar
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\Covar\left[$1, $2\right] $0

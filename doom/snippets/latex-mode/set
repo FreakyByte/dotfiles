@@ -2,7 +2,7 @@
 # name: set
 # uuid: set
 # key: set
-# condition: (texmathp)
+# condition: (save-restriction (widen) (texmathp))
 # group: math
 # --
-\\left\\{ $1 : $2\\right\\}$0
+\\left\\{ $1 : $2\\right\\} $0

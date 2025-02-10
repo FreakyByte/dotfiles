@@ -2,6 +2,6 @@
 # name: and
 # uuid: logical_and
 # key: and
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \wedge $0

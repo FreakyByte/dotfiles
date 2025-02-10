@@ -4,5 +4,6 @@
 # uuid: enumerate
 # --
 \begin{enumerate}
-  $0
+  \item $1
 \end{enumerate}
+$0

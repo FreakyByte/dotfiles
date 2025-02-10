@@ -1,0 +1,6 @@
+# key: ll
+# name: ell
+# uuid: ell
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\ell$0

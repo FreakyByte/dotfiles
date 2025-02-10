@@ -3,6 +3,6 @@
 # uuid: subseteq
 # key: cc
 # group: math
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \subseteq $0

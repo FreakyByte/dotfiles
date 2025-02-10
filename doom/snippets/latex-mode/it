@@ -4,5 +4,6 @@
 # uuid: itemize
 # --
 \begin{itemize}
-  $0
+  \item $1
 \end{itemize}
+$0

@@ -2,6 +2,6 @@
 # name: real numbers
 # uuid: real_numbers
 # key: RR
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \mathbb{R}$0

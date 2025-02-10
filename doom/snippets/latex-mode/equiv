@@ -2,6 +2,6 @@
 # name: equiv
 # uuid: equiv
 # key: eqv
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\\equiv $0
+\equiv $0

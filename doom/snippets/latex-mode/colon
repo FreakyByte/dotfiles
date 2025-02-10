@@ -2,6 +2,6 @@
 # name: colon
 # uuid: colon
 # key: ::
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\colon
+\colon $0

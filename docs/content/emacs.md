@@ -684,10 +684,10 @@ Hey boy, I heard you like snippets... so I put some snippets in your snippets...
 (setq yas-triggers-in-field t)
 ```
 
-Also I don't want to have to insert an unnecessary space before being able to expand a snippet.
+YAS kind of wrecks my undo history sometimes. Maybe this helps.
 
 ```emacs-lisp
-(setq yas-key-syntaxes '(yas-longest-key-from-whitespace "w_.()" "w_." "w_" "w"))
+(setq yas-snippet-revival nil)
 ```
 
 I use some snippets that modify the surrounding characters of the buffer (e.g. by deleting the space before the snippet). This causes YAS to throw a warning. Let's disable that.
@@ -699,6 +699,37 @@ I use some snippets that modify the surrounding characters of the buffer (e.g. b
                 warning-suppress-types
                 :test 'equal))
 ```
+
+
+#### Where Snippets start {#where-snippets-start}
+
+The following variable determines how YAS detects the beginning of a snippet. (This is the default value.)
+
+```emacs-lisp
+(setq yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+```
+
+One could also be more lenient with snippet expansion by replacing `yas-try-key-from-whitespace` with `yas-longest-key-from-whitespace` in the above. Let's illustrate this with an example. Suppose `bla` is a snippet key that expands to `blub`. Now there's two possibilities:
+
+-   Typing `blibla` and hitting tab does nothing, one would need to do `bli bla` and then hit tab to get `bli blup`. This is the default behaviour, achieved by `yas-try-key-from-whitespace`.
+-   Typing `blibla` and hitting tab expands to `bliblub`. This would achieved by `yas-longest-key-from-whitespace`.
+
+The second sometimes avoids hitting the space key, but sometimes makes snippets expand accidentally. This is especially problematic if you have very short snippet keys that appear as parts of words, and especially especially when auto-expanding (see below).
+
+I've changed my mind on this multiple times, which is why this paragraph of documentation is here. Right now I favor the default behaviour.
+
+
+#### Avoiding Backslashes {#avoiding-backslashes}
+
+```emacs-lisp
+(defadvice! include-backslash (oldfun)
+  :around #'yas--templates-for-key-at-point
+  (setq my-syntax-table (copy-syntax-table (syntax-table)))
+  (modify-syntax-entry ?\\ "w" my-syntax-table)
+  (with-syntax-table my-syntax-table (funcall oldfun)))
+```
+
+This advice makes YAS think that a backslash has [syntax class](https://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-Class-Table.html) word while detecting the begining of a snippet. In practice this means that backslashes will always be viewed as a part of the (potential) snippet key. For example, if `bla` is a snippet key that expands to `blub`, then `\​bla` will not expand (assuming there is no different snippet with key `\​bla`). The big advantage of this is that I can have e.g. a snippet that auto-expands from `sqrt` to `\​sqrt{}` without screwing things up whenever I type the full command manually after all.
 
 
 #### Keybindings (and avoiding remappings) {#keybindings--and-avoiding-remappings}
@@ -729,13 +760,13 @@ Doom however automatically remaps the functions `yas-new-snippet` and `yas-visit
 Now let's just make `yas-new-snippet` use the same template as `+snippets/new`:
 
 ```emacs-lisp
-  (setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
-                                    "# name: $1\n"
-                                    "# uuid: $2\n"
-                                    "# key: $3\n"
-                                    "# condition: ${4:t}\n"
-                                    "# --\n"
-                                    "$0"))
+(setq yas-new-snippet-default (concat "# -*- mode: snippet -*-\n"
+                                  "# name: $1\n"
+                                  "# uuid: $2\n"
+                                  "# key: $3\n"
+                                  "# condition: ${4:t}\n"
+                                  "# --\n"
+                                  "$0"))
 ```
 
 
@@ -744,12 +775,16 @@ Now let's just make `yas-new-snippet` use the same template as `+snippets/new`:
 YAS has no built-in way to auto-expand snippets, i.e. expand them without hitting tab. Another snippet engine, [AAS](https://github.com/ymarco/auto-activating-snippets), was made for this purpose. However, I prefer not dealing with two separate systems at the same time, so I opted for [manually adding auto expanding capabilities to YAS.](https://github.com/joaotavora/yasnippet/issues/998) This way, snippets that are marked with the condition `'auto` will be auto-expanded.
 
 ```emacs-lisp
-  (defun yas-try-expanding-auto-snippets ()
-    (when (and (boundp 'yas-minor-mode) yas-minor-mode)
-      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
-        (yas-expand))))
-  (add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
+(defun yas-try-expanding-auto-snippets ()
+  (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+    (let ((yas-buffer-local-condition ''(require-snippet-condition . auto))
+          ;(yas-key-syntaxes '(yas-try-key-from-whitespace "w_.()" "w_." "w_" "w"))
+          )
+      (yas-expand))))
+(add-hook 'post-self-insert-hook #'yas-try-expanding-auto-snippets)
 ```
+
+One thing we can do here is temporarily change `yas-key-syntaxes`. This way we have the option to change the setting [Where Snippets start](#where-snippets-start) for automatic snippets only.
 
 
 #### The TAB key {#the-tab-key}
@@ -810,12 +845,24 @@ Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. Th
 
 ### Performance {#performance}
 
+
+#### Font-Lock {#font-lock}
+
 I am experiencing a bunch of little performance issues related to font-lock, so syntax highlighting and other visuals of text. One big one seems to be related to having many folded org headings on the screen, so should try to avoid that.
 
 Another one comes in form of lags while typing "long" lines, where long is not actually long, but just a couple hundred characters. This setting delays font-lock for a bit, which seems to help
 
 ```emacs-lisp
 (setq jit-lock-defer-time 0.25)
+```
+
+
+#### Org-Element Cache {#org-element-cache}
+
+Org-Element hangs when expanding snippets that change the buffer. Got no better solution than to turn it off.
+
+```emacs-lisp
+(setq org-element-use-cache nil)
 ```
 
 
@@ -1802,6 +1849,10 @@ The [org-d20](https://github.com/spwhitton/org-d20) minor mode allows for rollin
 
 ## LaTeX {#latex}
 
+```emacs-lisp
+(set-file-template! #'LaTeX-mode :mode #'latex-mode)
+```
+
 
 ### "Fixing" defaults {#fixing-defaults}
 
@@ -1810,10 +1861,10 @@ These changes make everything feel more intuitive to me.
 
 ```emacs-lisp
 (setq evil-tex-toggle-override-m nil) ;; I want to use m for "move" (evil-cut)
-;;... so I map toggle keybindings to localleader instead
-(map! :localleader
-      :map evil-tex-mode-map
-      (:prefix ("t" . "toggle") ;; TODO this is not displaying descriptions properly, probably related to https://github.com/hlissner/doom-emacs/issues/4288
+;;... so I map toggle keybindings somewhere else instead
+(map! :ni "C-t" nil) ;; unmap +workspace/new
+(map! :map (evil-tex-mode-map org-mode-map)
+      (:prefix ("C-t" . "toggle")
        :desc "command"          "c"     #'evil-tex-toggle-command
        :desc "delimiter"        "d"     #'evil-tex-toggle-delim
        :desc "environment"      "e"     #'evil-tex-toggle-env
@@ -1966,6 +2017,37 @@ Let's also add a few more symbols/modifiers. (cf. [tecosaur](https://tecosaur.gi
      (?a    "\\abs"           nil          t    nil  nil)
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
+```
+
+
+### RefTeX {#reftex}
+
+Let RefTeX recognize some more environments, what prefix to use for their labels, and how to reference them.
+
+```emacs-lisp
+(setq reftex-label-alist
+   '(("axiom"       ?a "ax:"  "~\\ref{%s}" 1 ("axiom"       "ax.")   -3)
+     ("definition"  ?d "def:" "~\\ref{%s}" 1 ("definition"  "def.")  -3)
+     ("corollary"   ?h "thm:" "~\\ref{%s}" 1 ("corollary"   "cor.")  -3)
+     ("fact"        ?h "thm:" "~\\ref{%s}" 1 ("fact")                -3)
+     ("lemma"       ?h "thm:" "~\\ref{%s}" 1 ("lemma"       "lem.")  -3)
+     ("proposition" ?h "thm:" "~\\ref{%s}" 1 ("proposition" "prop.") -3)
+     ("theorem"     ?h "thm:" "~\\ref{%s}" 1 ("theorem"     "thm.")  -3)))
+```
+
+How should RefTeX come up with labels? For everything whose code is in the first string, RefTeX will try to guess an appropriate label from the context. For everything in the second string, RefTeX will query the user for a label.
+
+```emacs-lisp
+(setq reftex-insert-label-flags '("sadh" "sftadh"))
+```
+
+Nicer keybindings:
+
+```emacs-lisp
+(map! :localleader :map evil-tex-mode-map
+      "l"       #'reftex-label
+      "r"       (lambda () (interactive) (reftex-reference " ")) ; type "any"
+      "R"       #'reftex-reference)
 ```
 
 

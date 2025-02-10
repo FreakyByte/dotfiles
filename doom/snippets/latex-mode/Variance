@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Variance
+# uuid: Var
+# key: Var
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\Var\left[$1\right] $0

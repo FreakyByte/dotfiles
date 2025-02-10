@@ -2,6 +2,6 @@
 # name: integers
 # uuid: integers
 # key: ZZ
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
 \mathbb{Z}$0

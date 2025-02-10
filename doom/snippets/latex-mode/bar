@@ -2,8 +2,8 @@
 # name: bar
 # key: bar
 # uuid: bar
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # expand-env: ((argument (quote t)))
 # group: math
 # --
-`(condition-case nil (progn (backward-sexp) (kill-sexp) (delete-char 1)) (error (setq argument 'nil)))`\\bar{`(if argument (current-kill 0))`}$0
+`(condition-case nil (progn (push-mark) (evil-backward-word-begin) (setq barrer (current-word)) (delete-region (point) (mark))) (error (setq argument 'nil)))`\\bar{`(if barrer barrer)`}$0

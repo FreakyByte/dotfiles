@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: PP
+# uuid: PP
+# key: PP
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\mathbb{P}\left($1\right) $0

@@ -2,7 +2,7 @@
 # name: norm
 # uuid: norm
 # key: norm
-# condition: (and (texmathp) 'auto)
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \left\|$1\right\|$0

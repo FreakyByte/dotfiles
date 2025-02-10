@@ -1,7 +1,7 @@
 # key: =>
 # name: implies
 # uuid: implies
-# condition: (and (texmathp) (quote auto))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \implies $0

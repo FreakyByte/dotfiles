@@ -2,6 +2,6 @@
 # name: surreal_numbers
 # uuid: surreal_numbers
 # key: No
-# condition: t
+# condition: (save-restriction (widen) (texmathp))
 # --
-\mathbf{No}
+\mathbf{No}$0
