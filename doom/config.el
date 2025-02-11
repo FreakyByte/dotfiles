@@ -483,12 +483,24 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 
 (setq org-element-use-cache nil)
 
+(defun helpful-toggle-edebug-query ()
+  "Query the user for a function, and then toggle edebug for that function using `helpful--toggle-edebug'."
+  (interactive)
+  (helpful--toggle-edebug (car (help-fns--describe-function-or-command-prompt))))
+
 (map! :leader
       (:prefix ("d" . "debugging")
-       :desc "debug on entry"             "e" #'debug-on-entry
-       :desc "view echo area messages"    "m" #'view-echo-area-messages
-       :desc "open sandbox"               "s" #'doom/sandbox
-       :desc "toggle debug on error"      "t" #'toggle-debug-on-error))
+       :desc "edebug defun at point"            "d" #'edebug-defun
+       :desc "debug on entry"                   "e" #'debug-on-entry
+       :desc "cancel debug on entry"            "E" #'cancel-debug-on-entry
+       :desc "toggle edebug for function"       "f" #'helpful-toggle-edebug-query
+       :desc "view echo area messages"          "m" #'view-echo-area-messages
+       :desc "start/stop profiler"              "p" #'doom/toggle-profiler
+       :desc "trace function"                   "r" #'trace-function
+       :desc "open sandbox"                     "s" #'doom/sandbox
+       :desc "toggle debug on error"            "t" #'toggle-debug-on-error
+       :desc "untrace function"                 "u" #'untrace-function
+       :desc "untrace all functions"            "U" #'untrace-all))
 
 (setq ;org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
