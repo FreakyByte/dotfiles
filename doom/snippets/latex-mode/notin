@@ -1,8 +1,7 @@
 # -*- mode: snippet -*-
-# name: dots
-# uuid: dots
-# key: ...
+# name: notin
+# uuid: notin
+# key: nin
 # condition: (and (save-restriction (widen) (texmathp)) (quote auto))
-# group: math
 # --
-\dots$0
+\notin $0

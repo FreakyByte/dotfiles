@@ -4,4 +4,4 @@
 # key: m
 # condition: (not (save-restriction (widen) (texmathp)))
 # --
-\\($1\\) $0
+\\($1\\)$0

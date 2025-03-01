@@ -4,4 +4,4 @@
 # key: \
 # condition: (save-restriction (widen) (texmathp))
 # --
-\setminus
+\setminus $0

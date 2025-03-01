@@ -1,0 +1,5 @@
+# key: as
+# name: almost_surely
+# condition: (save-restriction (widen) (texmathp))
+# --
+\qquad ${1:\mathbb{P}}\text{-a.s.} $0
