@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forking independence
+# uuid: fork
+# key: fork
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\fork${1:$(when (> (length yas-text) 0) "[")}${1:C}${1:$(when (> (length yas-text) 0) "]")} $0

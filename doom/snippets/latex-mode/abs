@@ -1,8 +1,7 @@
 # -*- mode: snippet -*-
-# name: d-by-dx
-# uuid: d-by-dx
-# key: ddx
+# name: abs
+# uuid: abs
+# key: abs
 # condition: (and (save-restriction (widen) (texmathp)) (quote auto))
-# group: math
 # --
-\\frac{\\mathrm{d}}{\\mathrm{d} x} $0
+\left|$1\right|$0
