@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: not forking independent
+# uuid: nonfork
+# key: nfork
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\not\fork${1:$(when (> (length yas-text) 0) "[")}${1:C}${1:$(when (> (length yas-text) 0) "]")} $0

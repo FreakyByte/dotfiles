@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: square subset
+# uuid: sqsubset
+# key: sqcc
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\sqsubset $0

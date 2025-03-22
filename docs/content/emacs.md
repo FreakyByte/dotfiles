@@ -1619,11 +1619,19 @@ Typing `\operatorname` is very annoying, even with cdlatex. So lets declare a bu
 
 ```emacs-lisp
 (setq org-latex-mathoperators (list
-        "acl" "Ad" "Aut" "bd" "Binom" "card" "cl" "coker" "Cov" "Covar" "dcl" "ded" "dist" "ED" "End" "Exp" "Ext" "fr" "Frac" "Geom" "GL" "Hom" "id" "im" "ind" "lexmin" "lexmax" "Li" "Mat" "ord" "Poisson" "Pois" "RM" "sinc" "SL" "SO" "Spec" "st" "Sub" "Th" "tp" "Tor" "Unif" "Var"))
+        "acl" "Ad" "Aut" "bd" "Binom" "card" "cl" "coker" "Cov" "Covar" "dcl" "ded" "dist" "ED" "EM" "End" "Exp" "Ext" "fr" "Frac" "Gal" "Geom" "GL" "Hom" "id" "im" "ind" "lexmin" "lexmax" "Li" "Mat" "ord" "Poisson" "Pois" "RM" "sinc" "SL" "SO" "Spec" "st" "SU" "Sub" "Th" "tp" "Tor" "Unif" "Var"))
 (dolist (macro org-latex-mathoperators)
   (setq org-latex-preview-preamble (concat org-latex-preview-preamble "\\DeclareMathOperator{\\" macro "}{" macro "}"))
   (add-to-list 'org-roam-ui-latex-macros (cons (concat "\\" macro) (concat "\\operatorname{" macro "}")) t)
   )
+```
+
+`\​char` is already a defined command, so let's use `\​ch` for the characteristic of a field.
+
+```emacs-lisp
+(setq org-latex-preview-preamble (concat org-latex-preview-preamble
+                                         "\\DeclareMathOperator{\\ch}{char}"))
+(add-to-list 'org-roam-ui-latex-macros (cons "\\ch" "\\operatorname{char}") t)
 ```
 
 One needs a fork to study model theory. (cf. [tex.stackexchange.com](https://tex.stackexchange.com/a/42111/181941))
