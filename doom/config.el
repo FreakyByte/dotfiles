@@ -509,38 +509,27 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (setq org-agenda-files nil) ;currently not using org-agenda
 (setq org-directory nil) ;currently not using org-agenda
 
+(after! org-modern
+  (setq org-modern-star 'replace
+        org-modern-replace-stars "❭"
+        org-modern-list '((?+ . ?✦) (?- . ?➤))
+        org-modern-todo nil
+        org-modern-table nil
+        org-modern-timestamp '(" %d. %b %Y " . " %H:%M ")))
 (after! org
   (setq org-ellipsis " ▼ "
-        ;;org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
-        org-superstar-headline-bullets-list '("❭")
-        org-superstar-item-bullet-alist '((?+ . ?✦) (?- . ?➤)) ; changes +/- symbols in item lists
-        org-hide-emphasis-markers t     ; do not show e.g. the asterisks when writing something in boldface
+        org-hide-emphasis-markers t
         org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil
-        org-hidden-keywords '(title)  ; hide #+TITLE:
-        org-log-done 'time
-        org-agenda-skip-scheduled-if-done t     ; do not show scheduled items in agenda if they're already done
-        org-agenda-skip-deadline-if-done t     ; do not show deadlines in agenda if they're already done
-        org-deadline-warning-days 7
-        org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
-          '((sequence
-             "TODO(t)"
-             "WAIT(w)"
-             "TODELEGATE(T)"
-             "IDEA(i)"
-             "|"
-             "DONE(d)"
-             "DELEGATED(D)"
-             "CANCELLED(c)" ))
+        org-hidden-keywords '(title)
+        org-image-align 'center
         org-todo-keyword-faces '(("WAIT" . "#ECBE7B")
                                 ("TODELEGATE" . "pink")
                                 ("IDEA" . "cyan")
                                 ("DONE" . "#5b8c68")
                                 ("DELEGATED" . "#a9a1e1")
-                                ("CANCELLED" . "#ff6c6b"))
-        org-image-align 'center))
-
+                                ("CANCELLED" . "#ff6c6b"))))
 (custom-set-faces!
   `(org-level-1 :inherit outline-1 :height 1.4)
   `(org-level-2 :inherit outline-2 :height 1.25)
@@ -548,6 +537,22 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-level-4 :inherit outline-4 :height 1.05)
   `(org-level-5 :inherit outline-5 :height 1.0)
   `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0))
+
+(after! org
+  (setq
+        org-log-done 'time
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-deadline-warning-days 7
+        org-todo-keywords '((sequence
+             "TODO(t)"
+             "WAIT(w)"
+             "TODELEGATE(T)"
+             "IDEA(i)"
+             "|"
+             "DONE(d)"
+             "DELEGATED(D)"
+             "CANCELLED(c)" ))))
 
 (setq org-roam-default-template '("d" "default" plain "%?" :target
             (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+filetags: :draft:\n#+title: ${title}\n\n")
