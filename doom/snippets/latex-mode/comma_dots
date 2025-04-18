@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: comma_dots
+# uuid: comma_dots
+# key: ,,
+# condition: 'auto
+# --
+, \dots, $0

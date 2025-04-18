@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: BMAT
-# uuid: BMAT
-# key: BMAT
-# condition: t
-# --
-\\begin{bmatrix} ${1: $(lazytab-position-cursor-and-edit)} \\end{bmatrix} $0
