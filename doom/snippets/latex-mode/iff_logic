@@ -1,7 +1,7 @@
 # key: iff
 # name: iff_logic
 # uuid: iff_logic
-# condition: (save-restriction (widen) (texmathp))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \leftrightarrow $0

@@ -2,6 +2,11 @@
 # name: bigcup
 # uuid: bigcup
 # key: cup
-# condition: (save-restriction (widen) (texmathp))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # --
-\bigcup_{${1:i \in I}} $0
+\bigcup{1:$(when (> (length yas-text) 0) "_")
+}${1:$(when (> (length yas-text) 1) "{")
+}${1:i=0}${1:$(when (> (length yas-text) 1) "}")
+}${2:$(when (> (length yas-text) 0) "^")
+}${2:$(when (> (length yas-text) 1) "{")
+}${2:\infty}${2:$(when (> (length yas-text) 1) "}")} $0

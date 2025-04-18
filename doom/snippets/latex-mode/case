@@ -2,7 +2,7 @@
 # name: cases
 # uuid: cases
 # key: case
-# condition: (save-restriction (widen) (texmathp))
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
 # group: math
 # --
 \\begin{cases}
