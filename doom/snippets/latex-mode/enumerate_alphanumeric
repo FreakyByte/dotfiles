@@ -5,6 +5,5 @@
 # condition: t
 # --
 \begin{enumerate}[label=(\alph*)]
-    \item $1
+    \item $0
 \end{enumerate}
-$0

@@ -9,6 +9,5 @@
 }${2:$(when (> (length yas-text) 1) " \\\\label{")
 }${2: $(unless yas/modified-p (yas-auto-next (reftex-label "lemma" 'dont-insert)))}${2:$(when (> (length yas-text) 1) "}")
 }
-  $3
+  $0
 \end{lemma}
-$0

@@ -4,5 +4,4 @@
 # condition: (not (save-restriction (widen) (texmathp)))
 # group: math
 # --
-\[$1\]
-$0
+\[$0\]
