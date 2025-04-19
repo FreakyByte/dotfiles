@@ -479,6 +479,16 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
                 [tab] 'yas-next-field-or-cdlatex
                 "TAB" 'yas-next-field-or-cdlatex))
 
+(defun cdlatex-tab-or-indent ()
+  "Indent when at the beginning of a line (or if current point is preceeded only by whitespace). Otherwise, call `cdlatex-tab'."
+  (interactive)
+  (if (or (bolp) (looking-back "^[ \t]+"))
+      (indent-for-tab-command)
+      (cdlatex-tab)))
+(map! :map LaTeX-mode-map
+                :i [tab] 'cdlatex-tab-or-indent
+                :i "TAB" 'cdlatex-tab-or-indent)
+
 (setq jit-lock-defer-time 0.25)
 
 (setq org-element-use-cache nil)

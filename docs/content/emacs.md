@@ -842,6 +842,20 @@ Though sometimes cdlatex and YAS fight for whose turn it is with the tab key. Th
                 "TAB" 'yas-next-field-or-cdlatex))
 ```
 
+Let's also bind `cdlatex-tab` in LaTeX-mode, but wrapped in a function that makes sure we can still insert tabs as long as we're at the beginning of the line:
+
+```emacs-lisp
+(defun cdlatex-tab-or-indent ()
+  "Indent when at the beginning of a line (or if current point is preceeded only by whitespace). Otherwise, call `cdlatex-tab'."
+  (interactive)
+  (if (or (bolp) (looking-back "^[ \t]+"))
+      (indent-for-tab-command)
+      (cdlatex-tab)))
+(map! :map LaTeX-mode-map
+                :i [tab] 'cdlatex-tab-or-indent
+                :i "TAB" 'cdlatex-tab-or-indent)
+```
+
 
 ### Performance {#performance}
 
