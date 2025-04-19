@@ -308,6 +308,7 @@ Now let's change the menu options on the dashboard. I added ~doom-dashboard-widg
                    `(lambda () (interactive) (projectile-switch-project-by-name ,project)))
              (add-text-properties 0 (length str) (list 'face 'doom-dashboard-menu-desc) str)
               str))))))
+(setq projectile-switch-project-action 'magit-status)
 #+end_src
 
 The following is a hack to remove the blank lines between menu buttons. By investigating the last lines of the source code of ~doom-dashboard-widget-shortmenu~, one can see that the newlines are inserted if ~display-graphic-p~ returns true. So let's temporarily overwrite this function with ~ignore~, which always returns nil.

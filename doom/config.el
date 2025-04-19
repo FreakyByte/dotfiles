@@ -160,6 +160,7 @@
                    `(lambda () (interactive) (projectile-switch-project-by-name ,project)))
              (add-text-properties 0 (length str) (list 'face 'doom-dashboard-menu-desc) str)
               str))))))
+(setq projectile-switch-project-action 'magit-status)
 
 (defadvice! no-new-lines (oldfun)
   :around #'doom-dashboard-widget-shortmenu
