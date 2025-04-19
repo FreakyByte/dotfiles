@@ -539,6 +539,9 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0))
 
 (after! org
+  (setq org-pretty-entities-include-sub-superscripts nil))
+
+(after! org
   (setq
         org-log-done 'time
         org-agenda-skip-scheduled-if-done t

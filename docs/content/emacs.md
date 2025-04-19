@@ -938,6 +938,13 @@ Org-Element hangs when expanding snippets that change the buffer. Got no better 
   `(org-document-title :family "K2D" :foreground "#9BDB4D" :background nil :height 2.0))
 ```
 
+This one in particular causes problems with `cdlatex`'s automatic insertion of curly braces when typing sub- or superscipts.
+
+```emacs-lisp
+(after! org
+  (setq org-pretty-entities-include-sub-superscripts nil))
+```
+
 
 ### Org: Organizational Settings {#org-organizational-settings}
 
