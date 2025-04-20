@@ -166,7 +166,8 @@
              (add-text-properties 0 (length str) (list 'face 'doom-dashboard-menu-desc) str)
               str))))))
 (after! (projectile doom)
-    (setq! +workspaces-switch-project-function #'doom-project-browse))
+    (setq! +workspaces-switch-project-function #'doom-project-browse)
+    (add-to-list 'projectile-ignored-projects "~/.config/emacs/"))
 
 (defadvice! no-new-lines (oldfun)
   :around #'doom-dashboard-widget-shortmenu
