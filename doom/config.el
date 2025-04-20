@@ -138,6 +138,7 @@
   "Face for projects on doom-dashboard.")
 (defun doom-dashboard-widget-projects ()
   "Create list of menu buttons for each project in `projectile-known-projects', and bind key appropriately."
+        (projectile-known-projects)
         (dolist (project projectile-known-projects)
          (insert
           (+doom-dashboard--center (- +doom-dashboard--width 1)
@@ -148,7 +149,9 @@
             ; 2. the project button
             (with-temp-buffer
              (insert-text-button project
-                        'action `(lambda (_button) (projectile-switch-project-by-name ,project))
+                        'action `(lambda (_button) (let
+                                ((projectile-switch-project-action 'magit-status))
+                                (projectile-switch-project-by-name ,project)))
                         'face 'doom-dashboard-project
                         'follow-link t
                         'help-echo project)
@@ -157,10 +160,13 @@
             (let* ((num (+ 1 (cl-position project projectile-known-projects)))
                   (str (number-to-string num)))
              (map! :map +doom-dashboard-mode-map :ng str
-                   `(lambda () (interactive) (projectile-switch-project-by-name ,project)))
+                   `(lambda () (interactive) (let
+                                ((projectile-switch-project-action 'magit-status))
+                                (projectile-switch-project-by-name ,project))))
              (add-text-properties 0 (length str) (list 'face 'doom-dashboard-menu-desc) str)
               str))))))
-(setq projectile-switch-project-action 'magit-status)
+(after! (projectile doom)
+    (setq! +workspaces-switch-project-function #'doom-project-browse))
 
 (defadvice! no-new-lines (oldfun)
   :around #'doom-dashboard-widget-shortmenu
