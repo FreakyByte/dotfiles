@@ -378,6 +378,15 @@ Big Font Mode is actually even more resilient: It doesn't seem to let `perfect-m
 (defadvice doom-big-font-mode (before deactivate-perfect-margins) (perfect-margin-mode 0))
 ```
 
+With `perfect-margin-mode`, the doom documentation needs a bit more space than its default `80`. These `80` are specified in the `.dir-locals.el`, so we need to override that.
+
+```emacs-lisp
+(add-hook 'doom-docs-mode-hook
+  (lambda ()
+    (setq-local ignored-local-variables (push 'fill-column ignored-local-variables))
+    (setq-local fill-column 90)))
+```
+
 
 ### Zen/Writeroom {#zen-writeroom}
 

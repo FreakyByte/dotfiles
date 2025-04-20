@@ -207,6 +207,11 @@
 
 (defadvice doom-big-font-mode (before deactivate-perfect-margins) (perfect-margin-mode 0))
 
+(add-hook 'doom-docs-mode-hook
+  (lambda ()
+    (setq-local ignored-local-variables (push 'fill-column ignored-local-variables))
+    (setq-local fill-column 90)))
+
 (setq writeroom-width 45)
 (map! :leader
  (:prefix ("t" . "toggle")
