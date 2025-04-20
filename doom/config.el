@@ -1274,6 +1274,8 @@ INTER signals whether the function has been called interactively."
        :desc "math align*"      "M"     #'evil-tex-toggle-math-align
        :desc "section"          "S"     #'evil-tex-toggle-section))
 
+(setq +latex-indent-item-continuation-offset 'auto)
+
 (add-hook 'LaTeX-mode-hook (lambda () (setq TeX-command-default "LaTeXMk")))
 
 (setq flycheck-global-modes '(not LaTeX-mode latex-mode))
@@ -1303,13 +1305,15 @@ INTER signals whether the function has been called interactively."
 
 (setq major-mode-remap-alist major-mode-remap-defaults)
 
-(setq +latex-viewers '(pdf-tools zathura okular)
+(setq +latex-viewers '(zathura pdf-tools okular)
       TeX-view-program-selection '((output-pdf "Zathura") (output-pdf "Okular") (output-pdf "PDF Tools"))
-      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)
+      TeX-view-program-list '(("Zathura"
+        ("zathura "
+          (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ") " %o") "zathura")
+                              ("PDF Tools" TeX-pdf-tools-sync-view)
                               ("Okular" ("okular --noraise --unique file:%o" (mode-io-correlate "#src:%n%a")))
                               ("preview-pane" latex-preview-pane-mode))
-      TeX-source-correlate-start-server t
-      +latex-indent-item-continuation-offset 'auto)
+      TeX-source-correlate-start-server t)
 
 ;; Update PDF buffers after successful LaTeX runs
 (add-hook 'TeX-after-compilation-finished-functions
