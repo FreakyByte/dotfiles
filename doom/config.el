@@ -511,13 +511,16 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
        :desc "debug on entry"                   "e" #'debug-on-entry
        :desc "cancel debug on entry"            "E" #'cancel-debug-on-entry
        :desc "toggle edebug for function"       "f" #'helpful-toggle-edebug-query
+       :desc "remove edebug from function"      "F" #'edebug-remove-instrumentation
        :desc "view echo area messages"          "m" #'view-echo-area-messages
        :desc "start/stop profiler"              "p" #'doom/toggle-profiler
        :desc "trace function"                   "r" #'trace-function
        :desc "open sandbox"                     "s" #'doom/sandbox
        :desc "toggle debug on error"            "t" #'toggle-debug-on-error
        :desc "untrace function"                 "u" #'untrace-function
-       :desc "untrace all functions"            "U" #'untrace-all))
+       :desc "untrace all functions"            "U" #'untrace-all
+       :desc "debug on variable change"         "v" #'debug-on-variable-change
+       :desc "cancel debug on variable change"  "V" #'cancel-debug-on-variable-change))
 
 (setq ;org-directory "~/org/"
       org-roam-directory "~/Dropbox/roam"
