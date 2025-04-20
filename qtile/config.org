@@ -27,7 +27,7 @@
 - [[#keybindings][Keybindings]]
   - [[#navigation][Navigation]]
   - [[#layout][Layout]]
-  - [[#modyfing-window-properties][Modyfing Window Properties]]
+  - [[#modifying-window-properties][Modifying Window Properties]]
   - [[#ending-it-all][Ending It All]]
   - [[#starting-it-all][Starting It All]]
   - [[#groups-1][Groups]]
@@ -392,7 +392,7 @@ keys.extend([
     Key([mod], "s", lazy.function(switch_screens), desc="Switch the groups on the two screens"),
 ])
 #+end_src
-** Modyfing Window Properties
+** Modifying Window Properties
 #+begin_src python
 keys.extend([
     Key([mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen on the focused window",),
@@ -410,6 +410,7 @@ keys.extend([
     Key([mod, "control"], "l", lazy.spawn(lockscreen), desc="Lock screen"),
     Key([mod, "control"], "h", lazy.spawn(hibernate), desc="Hibernate"),
     Key([mod, "control"], "s", lazy.spawn(suspend), desc="Suspend system"),
+    Key([mod, "control"], "X", lazy.spawn("xkill"), desc="xkill"),
 ])
 #+end_src
 ** Starting It All
@@ -428,6 +429,8 @@ keys.extend([
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
+    Key([mod], "p", lazy.spawn("flameshot gui"), desc="Screenshot"),
+    Key([mod, "control"], "w", lazy.spawn(os.path.expanduser("~/.config/change-wallpaper.sh")), desc="Change Wallpaper"),
 ])
 #+end_src
 ** Groups

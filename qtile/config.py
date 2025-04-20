@@ -256,6 +256,7 @@ keys.extend([
     Key([mod, "control"], "l", lazy.spawn(lockscreen), desc="Lock screen"),
     Key([mod, "control"], "h", lazy.spawn(hibernate), desc="Hibernate"),
     Key([mod, "control"], "s", lazy.spawn(suspend), desc="Suspend system"),
+    Key([mod, "control"], "X", lazy.spawn("xkill"), desc="xkill"),
 ])
 
 keys.extend([
@@ -272,6 +273,8 @@ keys.extend([
 
     Key(["control", "mod1"], "Delete", lazy.spawn(sysmon), desc="Launch System Monitor"),
     Key([mod], "Print", lazy.spawn("flameshot gui"), desc="Screenshot"),
+    Key([mod], "p", lazy.spawn("flameshot gui"), desc="Screenshot"),
+    Key([mod, "control"], "w", lazy.spawn(os.path.expanduser("~/.config/change-wallpaper.sh")), desc="Change Wallpaper"),
 ])
 
 for i in groups:
