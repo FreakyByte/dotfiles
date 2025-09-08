@@ -927,7 +927,7 @@ INTER signals whether the function has been called interactively."
                    (plist-get diag :image-converters)
                    :key #'car))
                  (image-output-type (plist-get proc-info :image-output-type)))
-            (if org-latex-preview-process-precompiled
+            (if org-latex-preview-process-precompile
                 (insert "Precompile with "
                         (propertize (map-elt org-latex-precompile-compiler-map
                                              org-latex-compiler)
@@ -985,6 +985,22 @@ INTER signals whether the function has been called interactively."
             ;; dvisvgm version check
             (when (equal (car-safe image-converter)
                          "dvisvgm")
+              ;; dvisvgm ghostscript check
+              (let ((ghostscript-version
+                     (with-temp-buffer
+                       (insert (shell-command-to-string "dvisvgm --version=yes"))
+                       (goto-char (point-min))
+                       (and (search-forward "ghostscript" nil t)
+                            (replace-regexp-in-string
+                             "\"" ""
+                             (string-trim
+                              (buffer-substring (1+ (point)) (line-end-position))))))))
+                (unless ghostscript-version
+                  (insert (propertize
+                           (format "Error: dvisvgm does not have ghostscript support, \
+svg images will not be generated.")
+                           'face 'error)
+                          "\n\n")))
               (let* ((version-string (cadr image-converter))
                      (dvisvgm-ver (progn
                                     (string-match "\\([0-9.]+\\)" version-string)
@@ -995,7 +1011,20 @@ INTER signals whether the function has been called interactively."
                            (format "Warning: dvisvgm version %s < 3.0, displaymath will not be centered."
                                    dvisvgm-ver)
                            'face 'warning)
-                          "\n\n"))))
+                          "\n\n"))
+                (unless (string-match-p " RSVG" system-configuration-features)
+                  (insert (propertize
+                           "Error: Emacs was not compiled with SVG support,
+images cannot be displayed with dvisvgm"
+                           'face 'error)))))
+            ;; png support check
+            (when (member (car-safe image-converter)
+                          '("dvipng" "convert"))
+              (unless (string-match-p " PNG" system-configuration-features)
+                (insert (propertize
+                         (format "Error: Emacs was not compiled with PNG support,
+images cannot be displayed with %s"
+                                 (car-safe image-converter))))))
             (when (not (and latex-available image-converter))
               (insert "path: " (getenv "PATH") "\n\n")))
           ;; Settings
@@ -1003,7 +1032,7 @@ INTER signals whether the function has been called interactively."
                   "\n")
 
           (pcase-dolist (`(,var . ,msg)
-                         `((,org-latex-preview-process-precompiled . "Precompilation           ")
+                         `((,org-latex-preview-process-precompile . "Precompilation           ")
                            (,org-latex-preview-numbered . "Equation renumbering     ")
                            (,org-latex-preview-cache  . "Caching with org-persist ")))
             (insert (propertize "• " 'face 'org-list-dt)
@@ -1082,7 +1111,7 @@ INTER signals whether the function has been called interactively."
 
   ;; Turn on auto-mode, it's built into Org and much faster/more featured than
   ;; org-fragtog. (Remember to turn off/uninstall org-fragtog.)
-  (add-hook 'org-mode-hook 'org-latex-preview-auto-mode)
+  (add-hook! 'org-mode-hook '(org-latex-preview-mode org-latex-preview-whole-buffer))
 
   ;; Block C-n and C-p from opening up previews when using auto-mode
   (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)

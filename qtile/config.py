@@ -437,9 +437,10 @@ def init_widget_list(with_systray):
                                 notification_timeout = 0,
                                 padding = 0,
                         ),
-                        widget.CurrentLayoutIcon(
+                        widget.CurrentLayout(
                                 scale = 0.5,
                                 padding = 12,
+                                mode = "icon",
                         ),
                 ]
         if not with_systray:
