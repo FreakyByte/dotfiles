@@ -1963,6 +1963,56 @@ The [org-d20](https://github.com/spwhitton/org-d20) minor mode allows for rollin
 ```
 
 
+### ox-hugo {#ox-hugo}
+
+[Hugo](https://gohugo.io/) is an open-source static site generator. It takes markdown documents, converts them to HTML and displays those using nice themes. It also supports org files, but not all of their functionality. Instead, one can use the [ox-hugo](https://ox-hugo.scripter.co/) package for emacs (available in doom via the `+hugo` flag on the `:lang org` module), which converts org files to hugo compatible markdown.
+
+There is an issue when using ox-hugo to export LaTeX fragments while using the [new org-latex-preview](#the-fancy-new-system). I found the following workaround in a [Github issue](https://github.com/kaushalmodi/ox-hugo/issues/760). It is likely not a permanent fix as the `org-html-format-latex` function is obsolete to begin with. But it works for now!
+
+```emacs-lisp
+(defun fixed?-org-html-format-latex (latex-frag processing-type info)
+   "Format a LaTeX fragment LATEX-FRAG into HTML.
+PROCESSING-TYPE designates the tool used for conversion.  It can
+be `mathjax', `verbatim', `html', nil, t or symbols in
+`org-preview-latex-process-alist', e.g., `dvipng', `dvisvgm' or
+`imagemagick'.  See `org-html-with-latex' for more information.
+INFO is a plist containing export properties."
+  (let ((cache-relpath "") (cache-dir ""))
+    (unless (or (eq processing-type 'mathjax)
+                (eq processing-type 'html))
+      (let ((bfn (or (buffer-file-name)
+		     (make-temp-name
+		      (expand-file-name "latex" temporary-file-directory))))
+	    (latex-header
+	     (let ((header (plist-get info :latex-header)))
+	       (and header
+		    (concat (mapconcat
+			     (lambda (line) (concat "#+LATEX_HEADER: " line))
+			     (org-split-string header "\n")
+			     "\n")
+			    "\n")))))
+	(setq cache-relpath
+	      (concat (file-name-as-directory org-preview-latex-image-directory)
+		      (file-name-sans-extension
+		       (file-name-nondirectory bfn)))
+	      cache-dir (file-name-directory bfn))
+	(setq latex-frag (concat latex-header latex-frag))))
+    (org-export-with-buffer-copy nil ;; <-- this `nil' is the only difference
+                                 :to-buffer (get-buffer-create " *Org HTML Export LaTeX*")
+                                 :drop-visibility t :drop-narrowing t :drop-contents t
+                                 (erase-buffer)
+                                 (insert latex-frag)
+                                 (org-format-latex cache-relpath nil nil cache-dir nil
+                                                   "Creating LaTeX Image..." nil processing-type)
+                                 (buffer-string))))
+
+(advice-add #'org-html-format-latex
+            :override #'fixed?-org-html-format-latex)
+```
+
+Notice that, in the Github issue linked above, the advice is the wrong way around.
+
+
 ## LaTeX {#latex}
 
 ```emacs-lisp
