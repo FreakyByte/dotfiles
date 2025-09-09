@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: details
+# uuid: details
+# key: details
+# condition: t
+# --
+#+begin_details${1:$(when (> (length yas-text) 0) "\n#+begin_summary\n")
+}${1:Summary}${1:$(when (> (length yas-text) 0) "\n#+end_summary")}
+${2:text}
+#+end_details

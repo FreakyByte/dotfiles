@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: block
+# uuid: block
+# key: block
+# condition: (not (save-restriction (widen) (texmathp)))
+# --
+#+begin_${1:type} ${2:options}
+  $0
+#+end_$1
