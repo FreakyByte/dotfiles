@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: in
+# uuid: in
+# key: in
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\in $0

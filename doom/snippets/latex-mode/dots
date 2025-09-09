@@ -2,7 +2,7 @@
 # name: dots
 # uuid: dots
 # key: ...
-# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# condition: 'auto
 # group: math
 # --
 \dots$0

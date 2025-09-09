@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: not-equal
+# uuid: ne
+# key: ne
+# condition: (and (save-restriction (widen) (texmathp)) (quote auto))
+# --
+\ne $0
