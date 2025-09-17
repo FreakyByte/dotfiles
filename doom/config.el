@@ -1445,6 +1445,9 @@ INFO is a plist containing export properties."
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
 
+(after! cdlatex
+  (setq TeX-electric-sub-and-superscript t))
+
 (setq reftex-label-alist
    '(("axiom"       ?a "ax:"  "~\\ref{%s}" 1 ("axiom"       "ax.")   -3)
      ("definition"  ?d "def:" "~\\ref{%s}" 1 ("definition"  "def.")  -3)

@@ -1,5 +1,6 @@
 +++
 title = "DOOM Emacs Config"
+author = ["Michael Reitmeir"]
 draft = false
 weight = 2
 +++
@@ -2187,6 +2188,13 @@ Let's also add a few more symbols/modifiers. (cf. [tecosaur](https://tecosaur.gi
      (?a    "\\abs"           nil          t    nil  nil)
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
+```
+
+This nice feature which automatically inserts curly braces after sub/superscripts needs to be activated manually now.
+
+```emacs-lisp
+(after! cdlatex
+  (setq TeX-electric-sub-and-superscript t))
 ```
 
 

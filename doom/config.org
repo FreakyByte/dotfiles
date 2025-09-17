@@ -1968,6 +1968,12 @@ Let's also add a few more symbols/modifiers. (cf. [[https://tecosaur.github.io/e
      (?f    "\\mathfrak"      nil          t    nil  nil)
      (?s    "\\mathsf"        nil          t    nil  nil))))
 #+end_src
+
+This nice feature which automatically inserts curly braces after sub/superscripts needs to be activated manually now.
+#+begin_src emacs-lisp
+(after! cdlatex
+  (setq TeX-electric-sub-and-superscript t))
+#+end_src
 ** RefTeX
 Let RefTeX recognize some more environments, what prefix to use for their labels, and how to reference them.
 #+begin_src emacs-lisp
