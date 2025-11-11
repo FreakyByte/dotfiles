@@ -945,7 +945,7 @@ Org-Element hangs when expanding snippets that change the buffer. Got no better 
 (after! org-modern
   (setq org-modern-star 'replace
         org-modern-replace-stars "❭"
-        org-modern-list '((?+ . ?✦) (?- . ?➤))
+        org-modern-list '((?+ . "✦") (?- . "➤"))
         org-modern-todo nil
         org-modern-table nil
         org-modern-timestamp '(" %d. %b %Y " . " %H:%M ")))
