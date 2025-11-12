@@ -130,6 +130,11 @@ wal_sorted_saturation = [pair[1] for pair in
                          sorted(zip(saturations, wal_colors_without_background),
                                 key=lambda pair: -pair[0])]
 
+lightnesses = [colorsys.rgb_to_hls(*string_to_rgb(col))[1] for col in wal_colors_without_background]
+wal_sorted_lightness = [pair[1] for pair in
+                         sorted(zip(lightnesses, wal_colors_without_background),
+                                key=lambda pair: -pair[0])]
+
 wal_background_hls = colorsys.rgb_to_hls(*string_to_rgb(wal_background))
 hue_differences = [abs(col[0] - wal_background_hls[0]) for col in wal_hls_without_background]
 wal_sorted_huediff = [pair[1] for pair in
@@ -143,9 +148,9 @@ min_lightness = 0.5 * wal_background_lightness
 max_lightness = min(2*wal_background_lightness,1)
 num_lightness = 5
 
-lightnesses = [min_lightness + i*(max_lightness-min_lightness)/(num_lightness-1)
+lightness_variations = [min_lightness + i*(max_lightness-min_lightness)/(num_lightness-1)
                for i in range(num_lightness)]
-wal_background_versions = [modify_lightness(wal_background,l) for l in lightnesses]
+wal_background_versions = [modify_lightness(wal_background,l) for l in lightness_variations]
 
 color_primary = modify_lightness(wal_sorted_saturation[0],0.7)
 color_primary = modify_saturation(color_primary,"+20%")
@@ -154,7 +159,8 @@ color_secondary = modify_lightness(wal_sorted_saturation[1],0.85)
 color_secondary = modify_saturation(color_secondary,"+20%")
 
 bar_opacity = "C0"           # two hex digits
-color_bar = wal_background + bar_opacity
+color_bar_background = wal_background + bar_opacity
+color_bar_foreground = wal_colors[-1] + "FF"
 
 follow_mouse_focus = True
 bring_front_click = "floating_only"
@@ -183,9 +189,10 @@ layouts = [
         border_width = 2,
         margin = 8,
         border_focus = color_primary,
+        name = "",
         ),
     # layout.MonadWide(),
-    layout.Max(),
+    layout.Max(name = ""),
 ]
 
 floating_layout_theme = {"border_width": 2,
@@ -366,7 +373,8 @@ def init_widget_list(with_systray):
                                 disable_drag = True,
                                 font = "K2D ExtraBold",
                                 hide_unused = False,
-                                highlight_color = ['151515C0','303030C0'], # background gradient
+                                highlight_color = [color_bar_background, color_bar_background], # background gradient
+                                active = color_bar_foreground,
                                 inactive = '505050', # font color
                                 this_current_screen_border = color_primary,
                                 this_screen_border = color_primary,
@@ -398,10 +406,10 @@ def init_widget_list(with_systray):
                                 txt_floating = "🗗 ",
                                 txt_maximized = "🗖 ",
                                 txt_minimized = "🗕 ",
-                                foreground = 'ffffff', # font color
                                 margin_y = 6,
                                 icon_size = 35,
                                 stretch = False,
+                                foreground = "FFFFFF",
                         ),
                         widget.Spacer(),
                         widget.WidgetBox(
@@ -413,49 +421,68 @@ def init_widget_list(with_systray):
                                 widgets=[widget.Systray(padding = 8,
                                         background = wal_background_versions[1] + bar_opacity)],
                                 padding = 0,
+                                foreground = color_bar_foreground,
                         ),
+                        widget.Spacer(length=15),
                         widget.Clock(
-                                format="%H:%M, %A %-d. %B %Y",
+                                format="  %H:%M, %a %-d. %b %y",
                                 update_interval = 1.0,
-                                padding = 12,
+                                padding = 0,
+                                foreground = color_bar_foreground,
                         ),
-                        widget.BatteryIcon(
-                                update_interval = 60,
-                                theme_path = "~/.config/qtile/icons",
-                                scale = 1.05,
+                        widget.Spacer(length=16),
+                        widget.Volume(
+                                emoji = True,
+                                emoji_list = ['', '', '', ' '],
+                                foreground = color_bar_foreground,
                                 padding = 0,
                         ),
+                        widget.Volume(
+                                emoji = False,
+                                padding = 0,
+                                foreground = color_bar_foreground,
+                                mute_format = "",
+                                unmute_format = '  {volume}%',
+                        ),
+                        widget.Spacer(length=13),
                         widget.Battery(
-                                update_interval = 60,
-                                charge_char = "",
-                                discharge_char = "",
-                                format = "{percent:2.0%} / {hour:d}:{min:02d}h",
+                                update_interval = 2,
+                                charge_char = "󰂉",
+                                discharge_char = "󰁿",
+                                full_char = "󰁹",
+                                empty_char = "󰂎",
+                                not_charging_char = "󰂂",
+                                unknown_char = "󰂑",
+                                format = "{char} {percent:2.0%} / {hour:d}:{min:02d}h",
                                 hide_threshold = None,
                                 low_foreground = 'FF0000',
                                 low_percentage = 0.11,
                                 notify_below = 0.11,
                                 notification_timeout = 0,
                                 padding = 0,
+                                foreground = color_bar_foreground,
                         ),
+                        widget.Spacer(length=13),
                         widget.CurrentLayout(
-                                scale = 0.5,
-                                padding = 12,
-                                mode = "icon",
+                                foreground = color_bar_foreground,
+                                padding = 0,
+                                fontsize= 18,
                         ),
+                        widget.Spacer(length=12),
                 ]
         if not with_systray:
                 widget_list.pop(-5) # systray is third to last widget
         if config_in_use == "desktop":
-                widget_list.pop(-3) # remove battery and battery icon
-                widget_list.pop(-2)
+                widget_list.pop(-4) # remove battery and one spacer
+                widget_list.pop(-3)
                 # it's important that we pop things in ascending order
         return widget_list
 
 my_bars = [bar.Bar(
             init_widget_list(with_systray),
             size = 40,
-            background = color_bar,
-            opacity = 1, # but no transparency of widgets
+            background = color_bar_background, # this has bar_opacity baked in
+            opacity = 1, # but we want no transparency of widgets
             border_width = 0,
             reserve = True,
             #margin = [5, 5, -2, 5],
