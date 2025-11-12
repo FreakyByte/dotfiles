@@ -292,7 +292,7 @@ Now let's change the menu options on the dashboard. I added ~doom-dashboard-widg
          (insert
           (+doom-dashboard--center (- +doom-dashboard--width 1)
            ; put together three things:
-           (format "%s %-35s%-6s\n"
+           (format "%s %-35s%-2s\n"
             ; 1. the icons
             (nerd-icons-faicon "nf-fa-angle_right" :face 'doom-dashboard-project)
             ; 2. the project button
