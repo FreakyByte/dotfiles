@@ -801,7 +801,7 @@ nm-applet &
 emacs --daemon &
 touchegg &
 setxkbmap de -variant nodeadkeys &
-onboard &
+xmodmap ~/.Xmodmap
 ```
 
 Setting the keyboard layout is a workaround for a bug in Onboard that will change the layout of the on-screen keyboard while typing (cf. [here](https://www.reddit.com/r/linuxmint/comments/qonjkc/onboard_virtual_keyboard_switches_layout_while/) and [here](https://www.antixforum.com/forums/topic/onboard-does-not-work-with-azerty-keyboard/))
