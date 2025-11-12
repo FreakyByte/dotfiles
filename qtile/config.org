@@ -636,7 +636,7 @@ def init_widget_list(with_systray):
                         ),
                         widget.Spacer(length=13),
                         widget.Battery(
-                                update_interval = 2,
+                                update_interval = 60,
                                 charge_char = "󰂉",
                                 discharge_char = "󰁿",
                                 full_char = "󰁹",
