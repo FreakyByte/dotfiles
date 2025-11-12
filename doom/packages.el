@@ -104,3 +104,5 @@
 (package! doom-snippets :ignore t)
 
 (package! perfect-margin)
+
+(package! catppuccin-theme)
