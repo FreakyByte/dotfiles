@@ -753,11 +753,15 @@ def init_widget_list(with_systray):
                         widget.Spacer(length=12),
                 ]
         if not with_systray:
-                widget_list.pop(-5) # systray is third to last widget
+                # when counting list elements from the left,
+                # we want to pop them in descending order
+                widget_list.pop(7) # spacer is eight widget from the left
+                widget_list.pop(6) # systray is seventh widget from the left
         if config_in_use == "desktop":
-                widget_list.pop(-4) # remove battery and one spacer
-                widget_list.pop(-3)
-                # it's important that we pop things in ascending order
+                # when counting list elements from the right,
+                # we want to pop them in ascending order
+                widget_list.pop(-4) # battery is fourth widget from the right
+                widget_list.pop(-3) # spacer is third widget from the right
         return widget_list
 ```
 
