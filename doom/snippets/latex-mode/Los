@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Los
+# uuid: Los
+# key: Los
+# condition: (not (save-restriction (widen) (texmathp)))
+# --
+Łoś$0
